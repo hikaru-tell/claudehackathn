@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__devtools",
+      "mcp__context7",
+      "mcp__playwright",
+      "mcp__convex",
+      "mcp__gemini-cli",
+      "mcp___magicuidesign_mcp",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(pkill:*)",
+      "Bash(mkdir:*)"
+    ],
+    "deny": []
+  },
+  "enabledMcpjsonServers": ["devtools", "context7", "playwright", "convex", "gemini-cli"]
+}
