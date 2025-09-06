@@ -96,20 +96,25 @@ export function ComparisonChart({
       ctx.fillText(label, x, y);
     }
 
-    // 現在の素材（軸数に合わせてダミーデータを生成）
-    const currentScores = Array(axes.length)
-      .fill(0)
-      .map(() => Math.floor(Math.random() * 40) + 40); // 40-80の範囲
-    drawPolygon(ctx, centerX, centerY, radius, currentScores, '#dc2626', 0.2);
+    // 現在の素材の各成分を個別に描画
+    const currentComponents = currentMaterial.composition.split('/');
+    const componentColors = ['#dc2626', '#ea580c', '#f97316', '#fb923c']; // 赤系のグラデーション
 
-    // 提案素材
-    const colors = ['#16a34a', '#0891b2', '#9333ea'];
-    proposals.slice(0, 3).forEach((proposal, index) => {
-      // 軸数に合わせてスコアを生成（実際のアプリでは適切なマッピングを行う）
+    currentComponents.forEach((component, index) => {
+      if (index >= 4) return; // 最大4つまで表示
+      // 各成分ごとにランダムなスコアを生成（実際のアプリでは適切なデータを使用）
       const scores = Array(axes.length)
         .fill(0)
-        .map(() => Math.floor(Math.random() * 30) + 60); // 60-90の範囲
-      drawPolygon(ctx, centerX, centerY, radius, scores, colors[index], 0.3);
+        .map(() => Math.floor(Math.random() * 30) + 40 + index * 10); // 成分ごとに異なるスコア範囲
+      drawPolygon(
+        ctx,
+        centerX,
+        centerY,
+        radius,
+        scores,
+        componentColors[index] || '#dc2626',
+        0.2
+      );
     });
 
     // 凡例（改善されたレイアウト）
@@ -121,32 +126,19 @@ export function ComparisonChart({
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'left';
 
-    // 全ての素材を同じフォーマットで表示
-    const allItems = [
-      {
-        // 現在の素材のcompositionを"/"で分割して配列化し、最初の2要素を使用
-        label: currentMaterial.composition.split('/').slice(0, 2).join('/'),
-        color: '#dc2626',
-      },
-      ...proposals.slice(0, 3).map((proposal, index) => ({
-        label: proposal.composition.slice(0, 2).join('/'),
-        color: colors[index],
-      })),
-    ];
-
-    allItems.forEach((item, index) => {
+    // 凡例に現在の素材の個別成分を表示（既に定義済みの変数を使用）
+    currentComponents.forEach((component, index) => {
+      if (index >= 4) return; // 最大4つまで表示
       const x = legendStartX + index * legendItemWidth;
 
       // 色付きの四角
-      ctx.fillStyle = item.color;
+      ctx.fillStyle = componentColors[index] || '#dc2626';
       ctx.fillRect(x, legendY, 12, 12);
 
-      // ラベルテキスト
+      // ラベルテキスト（成分名）
       ctx.fillStyle = '#374151';
       const label =
-        item.label.length > 12
-          ? item.label.substring(0, 10) + '...'
-          : item.label;
+        component.length > 10 ? component.substring(0, 8) + '...' : component;
       ctx.fillText(label, x + 16, legendY + 8);
     });
   }, [currentMaterial, proposals, performanceReqs]);

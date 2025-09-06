@@ -96,21 +96,27 @@ export function SustainabilityChart({
       ctx.fillText(label, x, y);
     }
 
-    // 現在の素材（軸数に合わせてダミーデータを生成）
-    const currentScores = Array(axes.length)
-      .fill(0)
-      .map(() => Math.floor(Math.random() * 30) + 30); // 30-60の範囲（低め）
-    drawPolygon(ctx, centerX, centerY, radius, currentScores, '#dc2626', 0.2);
+    // 最初の提案素材の各成分を個別に描画（サステナビリティ素材）
+    if (proposals.length > 0) {
+      const sustainableComponents = proposals[0].composition; // 最初の提案素材を使用
+      const componentColors = ['#16a34a', '#22c55e', '#4ade80', '#86efac']; // 緑系のグラデーション
 
-    // 提案素材
-    const colors = ['#16a34a', '#0891b2', '#9333ea'];
-    proposals.slice(0, 3).forEach((proposal, index) => {
-      // 軸数に合わせてスコアを生成（サステナビリティは高めのスコア）
-      const scores = Array(axes.length)
-        .fill(0)
-        .map(() => Math.floor(Math.random() * 25) + 70); // 70-95の範囲
-      drawPolygon(ctx, centerX, centerY, radius, scores, colors[index], 0.3);
-    });
+      sustainableComponents.slice(0, 4).forEach((component, index) => {
+        // 各成分ごとにランダムなスコアを生成（サステナビリティは高めのスコア）
+        const scores = Array(axes.length)
+          .fill(0)
+          .map(() => Math.floor(Math.random() * 20) + 70 + index * 5); // 70-95の範囲
+        drawPolygon(
+          ctx,
+          centerX,
+          centerY,
+          radius,
+          scores,
+          componentColors[index] || '#16a34a',
+          0.3
+        );
+      });
+    }
 
     // 凡例（改善されたレイアウト）
     const legendY = height - 30;
@@ -121,34 +127,26 @@ export function SustainabilityChart({
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'left';
 
-    // 全ての素材を同じフォーマットで表示
-    const allItems = [
-      {
-        // 現在の素材のcompositionを"/"で分割して配列化し、最初の2要素を使用
-        label: currentMaterial.composition.split('/').slice(0, 2).join('/'),
-        color: '#dc2626',
-      },
-      ...proposals.slice(0, 3).map((proposal, index) => ({
-        label: proposal.composition.slice(0, 2).join('/'),
-        color: colors[index],
-      })),
-    ];
+    // サステナビリティ素材（最初の提案）の個別成分を表示
+    if (proposals.length > 0) {
+      const sustainableComponents = proposals[0].composition;
+      const componentColors = ['#16a34a', '#22c55e', '#4ade80', '#86efac']; // 緑系のグラデーション
 
-    allItems.forEach((item, index) => {
-      const x = legendStartX + index * legendItemWidth;
+      // 各成分を個別に表示
+      sustainableComponents.slice(0, 4).forEach((component, index) => {
+        const x = legendStartX + index * legendItemWidth;
 
-      // 色付きの四角
-      ctx.fillStyle = item.color;
-      ctx.fillRect(x, legendY, 12, 12);
+        // 色付きの四角
+        ctx.fillStyle = componentColors[index] || '#16a34a';
+        ctx.fillRect(x, legendY, 12, 12);
 
-      // ラベルテキスト
-      ctx.fillStyle = '#374151';
-      const label =
-        item.label.length > 12
-          ? item.label.substring(0, 10) + '...'
-          : item.label;
-      ctx.fillText(label, x + 16, legendY + 8);
-    });
+        // ラベルテキスト（成分名）
+        ctx.fillStyle = '#374151';
+        const label =
+          component.length > 10 ? component.substring(0, 8) + '...' : component;
+        ctx.fillText(label, x + 16, legendY + 8);
+      });
+    }
   }, [currentMaterial, proposals, performanceReqs]);
 
   function drawPolygon(
