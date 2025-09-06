@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 import {
   ExtractedRequirements,
   MaterialComposition,
@@ -6,9 +6,9 @@ import {
   DeepResearchResult,
   DeepResearchMaterial,
   MaterialCitation,
-} from "../types";
+} from '../types';
 
-// OpenAI API設定
+// OpenAI API configuration
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export interface GPTSearchRequest {
@@ -17,34 +17,38 @@ export interface GPTSearchRequest {
   searchQuery?: string;
 }
 
-// OpenAI Deep Research プロンプト生成
+// Generate OpenAI Deep Research prompt
 export function generateDeepResearchPrompt(
   requirements: ExtractedRequirements,
   currentMaterials: MaterialComposition,
-  customQuery?: string,
+  customQuery?: string
 ): string {
   const { composition, properties } = currentMaterials;
 
-  // 要件をテキスト化
+  // Convert requirements to text
   const performanceReqs = [];
   if (requirements.tensileStrength) {
-    performanceReqs.push(`引張強度: ${requirements.tensileStrength} N/15mm`);
+    performanceReqs.push(
+      `Tensile Strength: ${requirements.tensileStrength} N/15mm`
+    );
   }
   if (requirements.oxygenPermeability) {
     performanceReqs.push(
-      `酸素透過率: ${requirements.oxygenPermeability} cc/m²·day·atm以下`,
+      `Oxygen Permeability: ${requirements.oxygenPermeability} cc/m²·day·atm or less`
     );
   }
   if (requirements.waterVaporPermeability) {
     performanceReqs.push(
-      `水蒸気透過率: ${requirements.waterVaporPermeability} g/m²·day以下`,
+      `Water Vapor Permeability: ${requirements.waterVaporPermeability} g/m²·day or less`
     );
   }
   if (requirements.heatResistance) {
-    performanceReqs.push(`耐熱温度: ${requirements.heatResistance}℃以上`);
+    performanceReqs.push(
+      `Heat Resistance Temperature: ${requirements.heatResistance}°C or higher`
+    );
   }
 
-  // カスタムクエリがある場合はそれを優先
+  // Prioritize custom query if available
   if (customQuery) {
     return customQuery;
   }
@@ -53,11 +57,11 @@ export function generateDeepResearchPrompt(
 You are a specialized researcher in packaging materials. Please investigate the latest research papers and practical implementation cases under the following conditions:
 
 [Current Material]
-- Composition: ${composition || "Unknown"}
-- Properties: ${properties?.join(", ") || "Unknown"}
+- Composition: ${composition || 'Unknown'}
+- Properties: ${properties?.join(', ') || 'Unknown'}
 
 [Performance Requirements]
-${performanceReqs.join("\n")}
+${performanceReqs.join('\n')}
 
 [Research Items]
 1. Latest material research trends since 2020
@@ -105,46 +109,46 @@ Please provide concrete material names, manufacturers, physical property data, a
 `;
 
   console.log(
-    "🧠 Generated Deep Research Prompt (preview):",
-    prompt.substring(0, 200) + "...",
+    '🧠 Generated Deep Research Prompt (preview):',
+    prompt.substring(0, 200) + '...'
   );
   return prompt;
 }
 
-// Deep Research結果をパース
+// Parse Deep Research results
 export function parseDeepResearchResult(
-  researchText: string,
+  researchText: string
 ): DeepResearchResult {
   const materials: DeepResearchMaterial[] = [];
   const trends: string[] = [];
   const considerations: string[] = [];
   const citations: MaterialCitation[] = [];
 
-  // セクションごとに分割
+  // Split by sections
   const sections = researchText.split(/\n(?=\d\.)/);
 
   sections.forEach((section) => {
-    // 推奨素材の抽出（引用元情報付き）
-    if (section.includes("推奨素材") || section.includes("TOP")) {
-      const materialBlocks = section.split(/素材名[:：]/);
+    // Extract recommended materials (with citation information)
+    if (section.includes('Recommended Materials') || section.includes('TOP')) {
+      const materialBlocks = section.split(/Material Name[:：]/);
 
       materialBlocks.forEach((block) => {
         if (block.trim()) {
-          const lines = block.split("\n");
+          const lines = block.split('\n');
           const materialName = lines[0]?.trim();
 
-          if (materialName && !materialName.includes("推奨素材")) {
-            // 引用元を探す
+          if (materialName && !materialName.includes('Recommended Materials')) {
+            // Search for citations
             const citationMatch = block.match(
-              /引用元[:：]?\s*\[?([^\]\n]+)\]?/,
+              /References?[:：]?\s*\[?([^\]\n]+)\]?/
             );
             const materialCitations: MaterialCitation[] = [];
 
             if (citationMatch) {
               const citationText = citationMatch[1];
-              // 簡易的な引用解析
+              // Simple citation parsing
               const citationParts = citationText
-                .split(",")
+                .split(',')
                 .map((s) => s.trim());
 
               if (citationParts.length >= 2) {
@@ -152,15 +156,15 @@ export function parseDeepResearchResult(
                   title: citationParts[0],
                   authors: citationParts[1],
                   year: parseInt(citationParts[2]) || new Date().getFullYear(),
-                  type: "paper",
+                  type: 'paper',
                 });
               }
             }
 
             materials.push({
               name: materialName.split(/[,、]/)[0].trim(),
-              source: "OpenAI Deep Research",
-              confidence: "high",
+              source: 'OpenAI Deep Research',
+              confidence: 'high',
               citations:
                 materialCitations.length > 0 ? materialCitations : undefined,
             });
@@ -169,41 +173,41 @@ export function parseDeepResearchResult(
       });
     }
 
-    // 技術トレンドの抽出
-    if (section.includes("トレンド") || section.includes("動向")) {
+    // Extract technology trends
+    if (section.includes('Trends') || section.includes('Technology Trends')) {
       const trendLines = section
-        .split("\n")
-        .filter((line) => line.includes("-") || line.includes("・"));
+        .split('\n')
+        .filter((line) => line.includes('-') || line.includes('・'));
       trends.push(
-        ...trendLines.map((line) => line.replace(/^[-・]\s*/, "").trim()),
+        ...trendLines.map((line) => line.replace(/^[-・]\s*/, '').trim())
       );
     }
 
-    // 考慮事項の抽出
-    if (section.includes("考慮") || section.includes("課題")) {
+    // Extract considerations
+    if (section.includes('Considerations') || section.includes('Challenges')) {
       const considerationLines = section
-        .split("\n")
-        .filter((line) => line.includes("-") || line.includes("・"));
+        .split('\n')
+        .filter((line) => line.includes('-') || line.includes('・'));
       considerations.push(
         ...considerationLines.map((line) =>
-          line.replace(/^[-・]\s*/, "").trim(),
-        ),
+          line.replace(/^[-・]\s*/, '').trim()
+        )
       );
     }
 
-    // 引用文献リストの抽出
-    if (section.includes("引用文献") || section.includes("文献リスト")) {
-      const citationLines = section.split("\n").slice(1);
+    // Extract reference list
+    if (section.includes('References') || section.includes('Reference List')) {
+      const citationLines = section.split('\n').slice(1);
 
       citationLines.forEach((line) => {
-        if (line.trim() && !line.startsWith("#")) {
-          // 各種パターンで引用を解析
+        if (line.trim() && !line.startsWith('#')) {
+          // Parse citations with various patterns
           const patterns = [
-            // パターン1: "タイトル" (著者, 年)
+            // Pattern 1: "Title" (Author, Year)
             /"([^"]+)"\s*\(([^,]+),\s*(\d{4})\)/,
-            // パターン2: タイトル, 著者, 年
+            // Pattern 2: Title, Author, Year
             /^([^,]+),\s*([^,]+),\s*(\d{4})/,
-            // パターン3: [1] タイトル - 著者 (年)
+            // Pattern 3: [1] Title - Author (Year)
             /\[\d+\]\s*([^-]+)\s*-\s*([^(]+)\s*\((\d{4})\)/,
           ];
 
@@ -214,11 +218,11 @@ export function parseDeepResearchResult(
                 title: match[1].trim(),
                 authors: match[2].trim(),
                 year: parseInt(match[3]),
-                type: line.includes("特許")
-                  ? "patent"
-                  : line.includes("レポート")
-                    ? "report"
-                    : "paper",
+                type: line.includes('Patent')
+                  ? 'patent'
+                  : line.includes('Report')
+                    ? 'report'
+                    : 'paper',
               });
               break;
             }
@@ -228,12 +232,12 @@ export function parseDeepResearchResult(
     }
   });
 
-  // 材料名のパターンマッチング（追加）
+  // Material name pattern matching (additional)
   const materialPatterns = [
     /(?:PLA|PBS|PHA|PBAT|PCL|TPS|PHB|P3HB|P4HB)/gi,
-    /(?:バイオ|リサイクル|再生|Bio-)(?:PET|PE|PP|PA)/gi,
-    /(?:セルロース|キチン|デンプン|アルギン酸)(?:系|ベース)?/gi,
-    /(?:ポリ乳酸|ポリヒドロキシアルカノエート|ポリブチレンサクシネート)/gi,
+    /(?:Bio|Recycled|Regenerated|Bio-)(?:PET|PE|PP|PA)/gi,
+    /(?:Cellulose|Chitin|Starch|Alginate)(?:-based|\s+based)?/gi,
+    /(?:Polylactic\s+Acid|Polyhydroxyalkanoate|Polybutylene\s+Succinate)/gi,
   ];
 
   materialPatterns.forEach((pattern) => {
@@ -243,36 +247,36 @@ export function parseDeepResearchResult(
         if (!materials.some((m) => m.name === match)) {
           materials.push({
             name: match,
-            source: "OpenAI Deep Research (Pattern Match)",
-            confidence: "medium",
+            source: 'OpenAI Deep Research (Pattern Match)',
+            confidence: 'medium',
           });
         }
       });
     }
   });
 
-  // URL抽出
+  // Extract URLs
   const urlPattern = /https?:\/\/[^\s]+/g;
   const urlMatches = researchText.match(urlPattern);
   if (urlMatches) {
     urlMatches.forEach((url) => {
-      // 既存の引用にURLを追加
+      // Add URL to existing citations
       const urlDomain = new URL(url).hostname;
       const existingCitation = citations.find(
         (c) =>
           !c.url &&
-          (c.title?.toLowerCase().includes(urlDomain.split(".")[0]) ||
-            c.authors?.toLowerCase().includes(urlDomain.split(".")[0])),
+          (c.title?.toLowerCase().includes(urlDomain.split('.')[0]) ||
+            c.authors?.toLowerCase().includes(urlDomain.split('.')[0]))
       );
 
       if (existingCitation) {
         existingCitation.url = url;
       } else {
-        // 新しい引用として追加
+        // Add as new citation
         citations.push({
           title: `Online Resource: ${urlDomain}`,
           url: url,
-          type: "website",
+          type: 'website',
           year: new Date().getFullYear(),
         });
       }
@@ -289,41 +293,41 @@ export function parseDeepResearchResult(
   };
 }
 
-// OpenAI APIでDeep Research実行
+// Execute Deep Research with OpenAI API
 export async function executeDeepResearch(
   requirements: ExtractedRequirements,
   currentMaterials: MaterialComposition,
-  customQuery?: string,
+  customQuery?: string
 ): Promise<DeepResearchResult | null> {
   if (!OPENAI_API_KEY) {
-    console.log("⚠️ OpenAI API key not configured, skipping deep research");
+    console.log('⚠️ OpenAI API key not configured, skipping deep research');
     return null;
   }
 
   try {
-    console.log("🔬 Starting OpenAI Deep Research...");
+    console.log('🔬 Starting OpenAI Deep Research...');
     const prompt = generateDeepResearchPrompt(
       requirements,
       currentMaterials,
-      customQuery,
+      customQuery
     );
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4-turbo-preview",
+        model: 'gpt-4-turbo-preview',
         messages: [
           {
-            role: "system",
+            role: 'system',
             content:
-              "You are a materials science expert specializing in sustainable packaging materials. Provide detailed, accurate, and up-to-date information based on recent research and industry developments. Always respond in Japanese.",
+              'You are a materials science expert specializing in sustainable packaging materials. Provide detailed, accurate, and up-to-date information based on recent research and industry developments. Always respond in English.',
           },
           {
-            role: "user",
+            role: 'user',
             content: prompt,
           },
         ],
@@ -334,59 +338,68 @@ export async function executeDeepResearch(
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("OpenAI API error:", response.status, errorData);
+      console.error('OpenAI API error:', response.status, errorData);
       return null;
     }
 
     const data = await response.json();
     const researchResult = data.choices[0]?.message?.content;
 
-    console.log("✅ Deep Research completed");
+    console.log('✅ Deep Research completed');
 
-    // 研究結果を構造化データに変換
+    // Convert research results to structured data
     return parseDeepResearchResult(researchResult);
   } catch (error) {
-    console.error("Deep Research error:", error);
+    console.error('Deep Research error:', error);
     return null;
   }
 }
 
-// GPT検索のメインAPI
+// Main API for GPT search
 export async function POST(req: NextRequest) {
   try {
     const body: GPTSearchRequest = await req.json();
     const { currentMaterials, requirements, searchQuery } = body;
 
-    console.log("🤖 GPT search started...");
+    console.log('🤖 GPT search started...');
 
-    // 要件を簡易的に抽出
+    // Extract requirements simply
     const extractedRequirements: ExtractedRequirements = {};
     requirements.forEach((req) => {
       const value = parseFloat(req.value);
-      if (req.name.includes("引張強度"))
+      if (
+        req.name.includes('Tensile Strength') ||
+        req.name.includes('引張強度')
+      )
         extractedRequirements.tensileStrength = value;
-      if (req.name.includes("酸素透過率"))
+      if (
+        req.name.includes('Oxygen Permeability') ||
+        req.name.includes('酸素透過率')
+      )
         extractedRequirements.oxygenPermeability = value;
-      if (req.name.includes("水蒸気透過率"))
+      if (
+        req.name.includes('Water Vapor Permeability') ||
+        req.name.includes('水蒸気透過率')
+      )
         extractedRequirements.waterVaporPermeability = value;
-      if (req.name.includes("耐熱温度"))
+      if (req.name.includes('Heat Resistance') || req.name.includes('耐熱温度'))
         extractedRequirements.heatResistance = value;
     });
 
-    // Deep Research実行
+    // Execute Deep Research
     const researchResult = await executeDeepResearch(
       extractedRequirements,
       currentMaterials,
-      searchQuery,
+      searchQuery
     );
 
     if (!researchResult) {
       return NextResponse.json(
         {
-          error: "OpenAI API not available",
-          message: "Please configure OPENAI_API_KEY in environment variables",
+          error: 'OpenAI API not available',
+          message: 'Please configure OPENAI_API_KEY in environment variables',
         },
-        { status: 503 },
+        { status: 503 }
       );
     }
 
@@ -398,20 +411,20 @@ export async function POST(req: NextRequest) {
           generateDeepResearchPrompt(
             extractedRequirements,
             currentMaterials,
-            searchQuery,
-          ).substring(0, 500) + "...",
-        model: "gpt-4-turbo-preview",
+            searchQuery
+          ).substring(0, 500) + '...',
+        model: 'gpt-4-turbo-preview',
         timestamp: new Date().toISOString(),
       },
     });
   } catch (error) {
-    console.error("GPT search error:", error);
+    console.error('GPT search error:', error);
     return NextResponse.json(
       {
-        error: "GPT search failed",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: 'GPT search failed',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
