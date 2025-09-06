@@ -7,6 +7,7 @@ import { Card } from '../components/Card';
 import { Button } from '../components/Button';
 import { ProposalCard } from './ProposalCard';
 import { ComparisonChart } from './ComparisonChart';
+import { SustainabilityChart } from './SustainabilityChart';
 import { scenarios } from '../scenarios/data';
 import { generateMockProposals } from './mockData';
 
@@ -15,16 +16,17 @@ export default function ProposalsPage() {
   const router = useRouter();
   const scenarioId = searchParams.get('scenario');
   const [isLoading, setIsLoading] = useState(true);
-  const [proposals, setProposals] = useState<any[]>([]);
+  const [proposals, setProposals] = useState<
+    {
+      materialName: string;
+      scores: Record<string, number>;
+    }[]
+  >([]);
 
   // URLパラメータから性能要件を取得
   const performanceReqs = searchParams.get('performanceReqs')
     ? JSON.parse(searchParams.get('performanceReqs')!)
     : [];
-  const sustainabilityReqs = searchParams.get('sustainabilityReqs')
-    ? JSON.parse(searchParams.get('sustainabilityReqs')!)
-    : [];
-  const additionalNotes = searchParams.get('additionalNotes') || '';
 
   const scenario = scenarios.find((s) => s.id === scenarioId);
 
@@ -111,11 +113,18 @@ export default function ProposalsPage() {
             <>
               {/* 比較チャート */}
               <div className="mb-8">
-                <ComparisonChart
-                  currentMaterial={scenario.currentMaterial}
-                  proposals={proposals}
-                  performanceReqs={performanceReqs}
-                />
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <ComparisonChart
+                    currentMaterial={scenario.currentMaterial}
+                    proposals={proposals}
+                    performanceReqs={performanceReqs}
+                  />
+                  <SustainabilityChart
+                    currentMaterial={scenario.currentMaterial}
+                    proposals={proposals}
+                    performanceReqs={performanceReqs}
+                  />
+                </div>
               </div>
 
               {/* 提案リスト */}

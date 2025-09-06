@@ -3,17 +3,23 @@
 import { useEffect, useRef } from 'react';
 import { Card } from '../components/Card';
 
-interface ComparisonChartProps {
-  currentMaterial: any;
-  proposals: any[];
+interface SustainabilityChartProps {
+  currentMaterial: {
+    composition: string;
+    properties: string[];
+  };
+  proposals: {
+    materialName: string;
+    scores: Record<string, number>;
+  }[];
   performanceReqs: string[];
 }
 
-export function ComparisonChart({
+export function SustainabilityChart({
   currentMaterial,
   proposals,
   performanceReqs,
-}: ComparisonChartProps) {
+}: SustainabilityChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -33,7 +39,7 @@ export function ComparisonChart({
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // レーダーチャートの軸（性能要件が設定されている場合はそれを使用、なければデフォルト）
+    // レーダーチャートの軸（性能要件と同じ軸を使用）
     const axes =
       performanceReqs.length > 0
         ? performanceReqs.slice(0, 8) // 最大8軸まで
@@ -92,16 +98,16 @@ export function ComparisonChart({
     // 現在の素材（軸数に合わせてダミーデータを生成）
     const currentScores = Array(axes.length)
       .fill(0)
-      .map(() => Math.floor(Math.random() * 40) + 40); // 40-80の範囲
+      .map(() => Math.floor(Math.random() * 30) + 30); // 30-60の範囲（低め）
     drawPolygon(ctx, centerX, centerY, radius, currentScores, '#dc2626', 0.2);
 
     // 提案素材
     const colors = ['#16a34a', '#0891b2', '#9333ea'];
     proposals.slice(0, 3).forEach((proposal, index) => {
-      // 軸数に合わせてスコアを生成（実際のアプリでは適切なマッピングを行う）
+      // 軸数に合わせてスコアを生成（サステナビリティは高めのスコア）
       const scores = Array(axes.length)
         .fill(0)
-        .map(() => Math.floor(Math.random() * 30) + 60); // 60-90の範囲
+        .map(() => Math.floor(Math.random() * 25) + 70); // 70-95の範囲
       drawPolygon(ctx, centerX, centerY, radius, scores, colors[index], 0.3);
     });
 
@@ -167,7 +173,7 @@ export function ComparisonChart({
   }
 
   return (
-    <Card title="現在の素材構成">
+    <Card title="サステナビリティ素材構成">
       <div className="flex justify-center">
         <canvas
           ref={canvasRef}
