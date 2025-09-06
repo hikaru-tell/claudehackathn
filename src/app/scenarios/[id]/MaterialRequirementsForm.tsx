@@ -1,13 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Card } from "../../components/Card";
-import { Button } from "../../components/Button";
-import { Scenario } from "../data";
+import { useState } from 'react';
+import { Card } from '../../components/Card';
+import { Button } from '../../components/Button';
+import { Scenario } from '../data';
+
+interface RequirementsData {
+  scenarioId: string;
+  performanceReqs: string[];
+  sustainabilityReqs: string[];
+  additionalNotes: string;
+}
 
 interface MaterialRequirementsFormProps {
   scenario: Scenario;
-  onSubmit: (data: any) => void;
+  onSubmit: (data: RequirementsData) => void;
 }
 
 export function MaterialRequirementsForm({
@@ -20,16 +27,18 @@ export function MaterialRequirementsForm({
   const [sustainabilityReqs, setSustainabilityReqs] = useState(
     scenario.requirements.sustainability
   );
-  const [additionalNotes, setAdditionalNotes] = useState("");
+  const [additionalNotes, setAdditionalNotes] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({
+    const requirementsData = {
       scenarioId: scenario.id,
       performanceReqs,
       sustainabilityReqs,
       additionalNotes,
-    });
+    };
+
+    onSubmit(requirementsData);
   };
 
   return (
@@ -58,8 +67,30 @@ export function MaterialRequirementsForm({
                   }}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newReqs = performanceReqs.filter(
+                      (_, i) => i !== index
+                    );
+                    setPerformanceReqs(newReqs);
+                  }}
+                  className="px-3 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  削除
+                </button>
               </div>
             ))}
+            <button
+              type="button"
+              onClick={() => {
+                setPerformanceReqs([...performanceReqs, '']);
+              }}
+              className="flex items-center space-x-2 px-4 py-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg border-2 border-dashed border-green-300 hover:border-green-400 transition-colors w-full"
+            >
+              <span className="text-lg">+</span>
+              <span>性能要件を追加</span>
+            </button>
           </div>
         </div>
 
@@ -86,8 +117,30 @@ export function MaterialRequirementsForm({
                   }}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newReqs = sustainabilityReqs.filter(
+                      (_, i) => i !== index
+                    );
+                    setSustainabilityReqs(newReqs);
+                  }}
+                  className="px-3 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  削除
+                </button>
               </div>
             ))}
+            <button
+              type="button"
+              onClick={() => {
+                setSustainabilityReqs([...sustainabilityReqs, '']);
+              }}
+              className="flex items-center space-x-2 px-4 py-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg border-2 border-dashed border-green-300 hover:border-green-400 transition-colors w-full"
+            >
+              <span className="text-lg">+</span>
+              <span>サステナビリティ要件を追加</span>
+            </button>
           </div>
         </div>
 

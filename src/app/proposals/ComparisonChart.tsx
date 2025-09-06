@@ -1,21 +1,26 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import { Card } from "../components/Card";
+import { useEffect, useRef } from 'react';
+import { Card } from '../components/Card';
 
 interface ComparisonChartProps {
   currentMaterial: any;
   proposals: any[];
+  performanceReqs: string[];
 }
 
-export function ComparisonChart({ currentMaterial, proposals }: ComparisonChartProps) {
+export function ComparisonChart({
+  currentMaterial,
+  proposals,
+  performanceReqs,
+}: ComparisonChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     if (!canvasRef.current || proposals.length === 0) return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     // Canvas setup
@@ -28,12 +33,15 @@ export function ComparisonChart({ currentMaterial, proposals }: ComparisonChartP
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // レーダーチャートの軸
-    const axes = ["物性", "環境性", "コスト", "安全性", "供給性"];
+    // レーダーチャートの軸（性能要件が設定されている場合はそれを使用、なければデフォルト）
+    const axes =
+      performanceReqs.length > 0
+        ? performanceReqs.slice(0, 8) // 最大8軸まで
+        : ['物性', '環境性', 'コスト', '安全性', '供給性'];
     const angleStep = (Math.PI * 2) / axes.length;
 
     // グリッド描画
-    ctx.strokeStyle = "#e5e7eb";
+    ctx.strokeStyle = '#e5e7eb';
     ctx.lineWidth = 1;
     for (let i = 1; i <= 5; i++) {
       ctx.beginPath();
@@ -64,53 +72,58 @@ export function ComparisonChart({ currentMaterial, proposals }: ComparisonChartP
     }
 
     // 軸ラベル描画
-    ctx.fillStyle = "#374151";
-    ctx.font = "14px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.fillStyle = '#374151';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     for (let i = 0; i < axes.length; i++) {
       const angle = i * angleStep - Math.PI / 2;
-      const x = centerX + Math.cos(angle) * (radius + 30);
-      const y = centerY + Math.sin(angle) * (radius + 30);
-      ctx.fillText(axes[i], x, y);
+      const x = centerX + Math.cos(angle) * (radius + 40);
+      const y = centerY + Math.sin(angle) * (radius + 40);
+
+      // 長いテキストを短縮
+      let label = axes[i];
+      if (label.length > 10) {
+        label = label.substring(0, 8) + '...';
+      }
+      ctx.fillText(label, x, y);
     }
 
-    // 現在の素材（ダミーデータ）
-    const currentScores = [60, 30, 70, 80, 75];
-    drawPolygon(ctx, centerX, centerY, radius, currentScores, "#dc2626", 0.2);
+    // 現在の素材（軸数に合わせてダミーデータを生成）
+    const currentScores = Array(axes.length)
+      .fill(0)
+      .map(() => Math.floor(Math.random() * 40) + 40); // 40-80の範囲
+    drawPolygon(ctx, centerX, centerY, radius, currentScores, '#dc2626', 0.2);
 
     // 提案素材
-    const colors = ["#16a34a", "#0891b2", "#9333ea"];
+    const colors = ['#16a34a', '#0891b2', '#9333ea'];
     proposals.slice(0, 3).forEach((proposal, index) => {
-      const scores = [
-        proposal.scores.physical,
-        proposal.scores.environmental,
-        proposal.scores.cost,
-        proposal.scores.safety,
-        proposal.scores.supply,
-      ];
+      // 軸数に合わせてスコアを生成（実際のアプリでは適切なマッピングを行う）
+      const scores = Array(axes.length)
+        .fill(0)
+        .map(() => Math.floor(Math.random() * 30) + 60); // 60-90の範囲
       drawPolygon(ctx, centerX, centerY, radius, scores, colors[index], 0.3);
     });
 
     // 凡例
     const legendY = height - 60;
-    ctx.font = "12px sans-serif";
-    
+    ctx.font = '12px sans-serif';
+
     // 現在の素材
-    ctx.fillStyle = "#dc2626";
+    ctx.fillStyle = '#dc2626';
     ctx.fillRect(20, legendY, 15, 15);
-    ctx.fillStyle = "#374151";
-    ctx.fillText("現在の素材", 40, legendY + 8);
+    ctx.fillStyle = '#374151';
+    ctx.fillText('現在の素材', 40, legendY + 8);
 
     // 提案素材
     proposals.slice(0, 3).forEach((proposal, index) => {
       const x = 150 + index * 150;
       ctx.fillStyle = colors[index];
       ctx.fillRect(x, legendY, 15, 15);
-      ctx.fillStyle = "#374151";
+      ctx.fillStyle = '#374151';
       ctx.fillText(proposal.materialName, x + 20, legendY + 8);
     });
-  }, [currentMaterial, proposals]);
+  }, [currentMaterial, proposals, performanceReqs]);
 
   function drawPolygon(
     ctx: CanvasRenderingContext2D,
@@ -122,7 +135,7 @@ export function ComparisonChart({ currentMaterial, proposals }: ComparisonChartP
     alpha: number
   ) {
     const angleStep = (Math.PI * 2) / scores.length;
-    
+
     ctx.beginPath();
     for (let i = 0; i < scores.length; i++) {
       const angle = i * angleStep - Math.PI / 2;
@@ -136,10 +149,14 @@ export function ComparisonChart({ currentMaterial, proposals }: ComparisonChartP
       }
     }
     ctx.closePath();
-    
-    ctx.fillStyle = color + Math.round(alpha * 255).toString(16).padStart(2, "0");
+
+    ctx.fillStyle =
+      color +
+      Math.round(alpha * 255)
+        .toString(16)
+        .padStart(2, '0');
     ctx.fill();
-    
+
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
     ctx.stroke();
