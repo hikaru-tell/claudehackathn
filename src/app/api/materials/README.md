@@ -98,8 +98,8 @@ const response = await fetch('/api/materials/search', {
 ### DB検索のみ（高速）
 
 ```javascript
-const response = await fetch('/api/materials/DBsearch', {
-  method: 'POST',
+const response = await fetch("/api/materials/DBsearch", {
+  method: "POST",
   // 同じボディ
 });
 ```
@@ -107,11 +107,11 @@ const response = await fetch('/api/materials/DBsearch', {
 ### GPT検索のみ（詳細調査）
 
 ```javascript
-const response = await fetch('/api/materials/GPTsearch', {
-  method: 'POST',
+const response = await fetch("/api/materials/GPTsearch", {
+  method: "POST",
   body: JSON.stringify({
     // ... 通常のパラメータ
-    searchQuery: '2024年の最新バイオプラスチック開発状況',
+    searchQuery: "2024年の最新バイオプラスチック開発状況",
   }),
 });
 ```

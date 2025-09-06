@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { Header } from '../components/Header';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
-import { scenarios } from './data';
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { Header } from "../components/Header";
+import { Card } from "../components/Card";
+import { Button } from "../components/Button";
+import { scenarios } from "./data";
 
 export default function ScenariosPage() {
   const router = useRouter();
@@ -27,16 +27,16 @@ export default function ScenariosPage() {
 
   const analyzeFiles = async (files: File[]) => {
     const analysisResults = [];
-    console.log('AI analysis started: Number of files', files.length);
+    console.log("AI analysis started: Number of files", files.length);
 
     for (const file of files) {
       try {
         console.log(`Analyzing: ${file.name}`);
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
 
-        const response = await fetch('/api/analyze-requirements', {
-          method: 'POST',
+        const response = await fetch("/api/analyze-requirements", {
+          method: "POST",
           body: formData,
         });
 
@@ -44,7 +44,7 @@ export default function ScenariosPage() {
 
         if (response.ok) {
           const result = await response.json();
-          console.log('AI analysis result:', result);
+          console.log("AI analysis result:", result);
           analysisResults.push({
             fileName: file.name,
             ...result,
@@ -58,7 +58,7 @@ export default function ScenariosPage() {
       }
     }
 
-    console.log('All analysis results:', analysisResults);
+    console.log("All analysis results:", analysisResults);
     return analysisResults;
   };
 
@@ -76,13 +76,13 @@ export default function ScenariosPage() {
         // Pass analysis results as query parameters
         const queryParams = new URLSearchParams();
         if (analysisResults.length > 0) {
-          queryParams.set('analysis', JSON.stringify(analysisResults));
+          queryParams.set("analysis", JSON.stringify(analysisResults));
         }
 
-        const url = `/scenarios/${selectedScenario}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+        const url = `/scenarios/${selectedScenario}${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
         router.push(url);
       } catch (error) {
-        console.error('Analysis error:', error);
+        console.error("Analysis error:", error);
         // Proceed to next page even if error occurs
         router.push(`/scenarios/${selectedScenario}`);
       } finally {
@@ -102,7 +102,8 @@ export default function ScenariosPage() {
               Select Product Scenario
             </h2>
             <p className="text-gray-600">
-              Choose a product category to analyze and upload product information
+              Choose a product category to analyze and upload product
+              information
             </p>
           </div>
 
@@ -118,8 +119,8 @@ export default function ScenariosPage() {
                     key={scenario.id}
                     className={`cursor-pointer transition-all ${
                       selectedScenario === scenario.id
-                        ? 'ring-2 ring-green-600 shadow-xl'
-                        : 'hover:shadow-lg'
+                        ? "ring-2 ring-green-600 shadow-xl"
+                        : "hover:shadow-lg"
                     }`}
                   >
                     <div onClick={() => setSelectedScenario(scenario.id)}>
@@ -298,14 +299,14 @@ export default function ScenariosPage() {
           </div>
 
           <div className="flex justify-between mt-8">
-            <Button variant="outline" onClick={() => router.push('/')}>
+            <Button variant="outline" onClick={() => router.push("/")}>
               Back
             </Button>
             <Button
               onClick={handleNext}
               disabled={!selectedScenario || isAnalyzing}
             >
-              {isAnalyzing ? 'Analyzing...' : 'Start Analysis'}
+              {isAnalyzing ? "Analyzing..." : "Start Analysis"}
             </Button>
           </div>
         </div>

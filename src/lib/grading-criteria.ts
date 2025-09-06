@@ -4,7 +4,7 @@
  */
 
 export interface GradingCriteria {
-  grade: 'A' | 'B' | 'C' | 'D';
+  grade: "A" | "B" | "C" | "D";
   label: string;
   description: string;
   scoreRange: {
@@ -20,48 +20,48 @@ export interface GradingCriteria {
 
 export const GRADING_CRITERIA: GradingCriteria[] = [
   {
-    grade: 'A',
-    label: '優秀',
+    grade: "A",
+    label: "優秀",
     description:
-      '非常に優れた性能・持続可能性を持つ素材。実用化レベルで高い評価。',
+      "非常に優れた性能・持続可能性を持つ素材。実用化レベルで高い評価。",
     scoreRange: { min: 85, max: 100 },
     color: {
-      bg: 'bg-green-100',
-      text: 'text-green-800',
-      border: 'border-green-300',
+      bg: "bg-green-100",
+      text: "text-green-800",
+      border: "border-green-300",
     },
   },
   {
-    grade: 'B',
-    label: '良好',
-    description: '良好な性能・持続可能性を持つ素材。実用化に向けて有望。',
+    grade: "B",
+    label: "良好",
+    description: "良好な性能・持続可能性を持つ素材。実用化に向けて有望。",
     scoreRange: { min: 70, max: 84 },
     color: {
-      bg: 'bg-blue-100',
-      text: 'text-blue-800',
-      border: 'border-blue-300',
+      bg: "bg-blue-100",
+      text: "text-blue-800",
+      border: "border-blue-300",
     },
   },
   {
-    grade: 'C',
-    label: '普通',
-    description: '標準的な性能・持続可能性。改善の余地がある素材。',
+    grade: "C",
+    label: "普通",
+    description: "標準的な性能・持続可能性。改善の余地がある素材。",
     scoreRange: { min: 55, max: 69 },
     color: {
-      bg: 'bg-yellow-100',
-      text: 'text-yellow-800',
-      border: 'border-yellow-300',
+      bg: "bg-yellow-100",
+      text: "text-yellow-800",
+      border: "border-yellow-300",
     },
   },
   {
-    grade: 'D',
-    label: '要改善',
-    description: '性能・持続可能性に課題がある素材。大幅な改善が必要。',
+    grade: "D",
+    label: "要改善",
+    description: "性能・持続可能性に課題がある素材。大幅な改善が必要。",
     scoreRange: { min: 0, max: 54 },
     color: {
-      bg: 'bg-red-100',
-      text: 'text-red-800',
-      border: 'border-red-300',
+      bg: "bg-red-100",
+      text: "text-red-800",
+      border: "border-red-300",
     },
   },
 ];

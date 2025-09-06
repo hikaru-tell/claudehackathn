@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
+import { NextRequest, NextResponse } from "next/server";
+import Anthropic from "@anthropic-ai/sdk";
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -10,9 +10,9 @@ async function extractTextFromFile(file: File): Promise<string> {
   const fileType = file.type;
   const fileName = file.name.toLowerCase();
 
-  if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
+  if (fileType === "application/pdf" || fileName.endsWith(".pdf")) {
     // For PDF files - temporarily return mock data
-    console.log('Skipping PDF parsing, using mock data');
+    console.log("Skipping PDF parsing, using mock data");
 
     // Return sample text instead of actual PDF content
     return `
@@ -61,18 +61,15 @@ This product is a multi-layer film for food packaging.
 }
 
 export async function POST(req: NextRequest) {
-  console.log('AI analysis API called');
+  console.log("AI analysis API called");
 
   try {
     const formData = await req.formData();
-    const file = formData.get('file') as File;
+    const file = formData.get("file") as File;
 
     if (!file) {
-      console.error('File not found');
-      return NextResponse.json(
-        { error: 'File not found' },
-        { status: 400 }
-      );
+      console.error("File not found");
+      return NextResponse.json({ error: "File not found" }, { status: 400 });
     }
 
     console.log(`File received: ${file.name}, Size: ${file.size} bytes`);
@@ -81,16 +78,16 @@ export async function POST(req: NextRequest) {
     const text = await extractTextFromFile(file);
     console.log(`Text extraction complete: ${text.length} characters`);
 
-    console.log('Calling Claude API...');
+    console.log("Calling Claude API...");
 
     // Analyze performance requirements using Claude API
     const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: "claude-sonnet-4-20250514",
       max_tokens: 1000,
       temperature: 0.3,
       messages: [
         {
-          role: 'user',
+          role: "user",
           content: `Analyze the product performance requirements and material information from the following document and extract them in JSON format.
 Please output in the following format:
 {
@@ -123,13 +120,13 @@ If material composition is not specified, please estimate and suggest an appropr
       ],
     });
 
-    console.log('Claude API response received');
+    console.log("Claude API response received");
 
     // Extract JSON from Claude's response
     const responseText =
-      message.content[0].type === 'text' ? message.content[0].text : '';
+      message.content[0].type === "text" ? message.content[0].text : "";
 
-    console.log('Claude response content length:', responseText.length);
+    console.log("Claude response content length:", responseText.length);
 
     // Parse JSON
     let requirements;
@@ -138,26 +135,26 @@ If material composition is not specified, please estimate and suggest an appropr
       const jsonMatch = responseText.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         requirements = JSON.parse(jsonMatch[0]);
-        console.log('JSON parsing successful:', requirements);
+        console.log("JSON parsing successful:", requirements);
       } else {
-        throw new Error('JSON format response not found');
+        throw new Error("JSON format response not found");
       }
     } catch (parseError) {
-      console.error('JSON parsing error:', parseError);
-      console.error('Response text:', responseText);
+      console.error("JSON parsing error:", parseError);
+      console.error("Response text:", responseText);
       return NextResponse.json(
-        { error: 'Failed to parse requirements', details: responseText },
-        { status: 500 }
+        { error: "Failed to parse requirements", details: responseText },
+        { status: 500 },
       );
     }
 
-    console.log('Returning analysis results');
+    console.log("Returning analysis results");
     return NextResponse.json(requirements);
   } catch (error) {
-    console.error('API Error:', error);
+    console.error("API Error:", error);
     return NextResponse.json(
-      { error: 'Server error occurred' },
-      { status: 500 }
+      { error: "Server error occurred" },
+      { status: 500 },
     );
   }
 }

@@ -7,7 +7,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "RiNeco - Sustainable Packaging Material AI",
-  description: "AI platform to support replacement with eco-friendly packaging materials",
+  description:
+    "AI platform to support replacement with eco-friendly packaging materials",
 };
 
 export default function RootLayout({

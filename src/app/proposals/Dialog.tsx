@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 interface DialogProps {
   isOpen: boolean;
@@ -18,8 +18,8 @@ export function Dialog({
   onConfirm,
   title,
   message,
-  confirmText = 'Yes',
-  cancelText = 'Cancel',
+  confirmText = "Yes",
+  cancelText = "Cancel",
 }: DialogProps) {
   if (!isOpen) return null;
 

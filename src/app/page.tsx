@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { Header } from './components/Header';
-import { Button } from './components/Button';
-import { Card } from './components/Card';
+import { useRouter } from "next/navigation";
+import { Header } from "./components/Header";
+import { Button } from "./components/Button";
+import { Card } from "./components/Card";
 
 export default function Home() {
   const router = useRouter();
@@ -18,13 +18,15 @@ export default function Home() {
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-[var(--brand-base)] mb-4">
               Your First Step to
-              <span className="text-[var(--brand-main)]">Sustainable Packaging</span>
+              <span className="text-[var(--brand-main)]">
+                Sustainable Packaging
+              </span>
             </h1>
             <p className="text-xl text-[var(--brand-base)]/70 mb-8">
-              AI suggests sustainable alternative materials and finds
-              the optimal packaging to reduce environmental impact
+              AI suggests sustainable alternative materials and finds the
+              optimal packaging to reduce environmental impact
             </p>
-            <Button size="lg" onClick={() => router.push('/scenarios')}>
+            <Button size="lg" onClick={() => router.push("/scenarios")}>
               Start Analysis
             </Button>
           </div>
@@ -37,7 +39,8 @@ export default function Home() {
                 Easy 3 Steps
               </h3>
               <p className="text-[var(--brand-base)]/70">
-                Simply select a product, input requirements, and review AI recommendations
+                Simply select a product, input requirements, and review AI
+                recommendations
               </p>
             </Card>
 
@@ -47,7 +50,8 @@ export default function Home() {
                 Environmental Care
               </h3>
               <p className="text-[var(--brand-base)]/70">
-                Comprehensive evaluation of CO2 reduction, recyclability, and biodegradability
+                Comprehensive evaluation of CO2 reduction, recyclability, and
+                biodegradability
               </p>
             </Card>
 
@@ -57,7 +61,8 @@ export default function Home() {
                 Data-Driven
               </h3>
               <p className="text-[var(--brand-base)]/70">
-                Integrated analysis of latest material databases and web information
+                Integrated analysis of latest material databases and web
+                information
               </p>
             </Card>
           </div>
@@ -67,17 +72,25 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-4">
               {[
                 {
-                  icon: '🥔',
-                  name: 'Potato Chip Bags',
-                  desc: 'Content protection and long-term storage',
+                  icon: "🥔",
+                  name: "Potato Chip Bags",
+                  desc: "Content protection and long-term storage",
                 },
-                { icon: '🧊', name: 'Frozen Food Pouches', desc: 'Cold resistance and sealing' },
                 {
-                  icon: '☕',
-                  name: 'Coffee Bean Packaging',
-                  desc: 'Oxygen barrier and aroma retention',
+                  icon: "🧊",
+                  name: "Frozen Food Pouches",
+                  desc: "Cold resistance and sealing",
                 },
-                { icon: '🥤', name: 'Beverage Bottles', desc: 'Transparency and carbonation retention' },
+                {
+                  icon: "☕",
+                  name: "Coffee Bean Packaging",
+                  desc: "Oxygen barrier and aroma retention",
+                },
+                {
+                  icon: "🥤",
+                  name: "Beverage Bottles",
+                  desc: "Transparency and carbonation retention",
+                },
               ].map((item, index) => (
                 <div
                   key={index}

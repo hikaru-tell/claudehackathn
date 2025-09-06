@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { Card } from '../components/Card';
+import { useEffect, useRef, useState } from "react";
+import { Card } from "../components/Card";
 
 interface SustainabilityChartProps {
   currentMaterial: {
@@ -31,7 +31,7 @@ export function SustainabilityChart({
     if (!canvasRef.current || proposals.length === 0) return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Canvas setup
@@ -49,12 +49,12 @@ export function SustainabilityChart({
       performanceReqs.length > 0
         ? performanceReqs
             .slice(0, 8) // Maximum 8 axes
-            .map((req) => (typeof req === 'object' ? req.name : req))
-        : ['Physical', 'Environmental', 'Cost', 'Safety', 'Supply Chain'];
+            .map((req) => (typeof req === "object" ? req.name : req))
+        : ["Physical", "Environmental", "Cost", "Safety", "Supply Chain"];
     const angleStep = (Math.PI * 2) / axes.length;
 
     // Draw grid
-    ctx.strokeStyle = '#e5e7eb';
+    ctx.strokeStyle = "#e5e7eb";
     ctx.lineWidth = 1;
     for (let i = 1; i <= 5; i++) {
       ctx.beginPath();
@@ -79,16 +79,16 @@ export function SustainabilityChart({
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(
         centerX + Math.cos(angle) * radius,
-        centerY + Math.sin(angle) * radius
+        centerY + Math.sin(angle) * radius,
       );
       ctx.stroke();
     }
 
     // 軸ラベル描画
-    ctx.fillStyle = '#374151';
-    ctx.font = '11px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.fillStyle = "#374151";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
     for (let i = 0; i < axes.length; i++) {
       const angle = i * angleStep - Math.PI / 2;
       const x = centerX + Math.cos(angle) * (radius + 35);
@@ -97,7 +97,7 @@ export function SustainabilityChart({
       // 長いテキストを短縮
       let label = axes[i];
       if (label.length > 8) {
-        label = label.substring(0, 6) + '...';
+        label = label.substring(0, 6) + "...";
       }
       ctx.fillText(label, x, y);
     }
@@ -106,7 +106,7 @@ export function SustainabilityChart({
     if (proposals.length > 0 && selectedProposalIndex < proposals.length) {
       const sustainableComponents =
         proposals[selectedProposalIndex].composition; // 選択された提案素材を使用
-      const componentColors = ['#16a34a', '#22c55e', '#4ade80', '#86efac']; // 緑系のグラデーション
+      const componentColors = ["#16a34a", "#22c55e", "#4ade80", "#86efac"]; // 緑系のグラデーション
 
       sustainableComponents.slice(0, 4).forEach((component, index) => {
         // 各成分ごとにランダムなスコアを生成（サステナビリティは高めのスコア）
@@ -119,8 +119,8 @@ export function SustainabilityChart({
           centerY,
           radius,
           scores,
-          componentColors[index] || '#16a34a',
-          0.3
+          componentColors[index] || "#16a34a",
+          0.3,
         );
       });
     }
@@ -131,27 +131,27 @@ export function SustainabilityChart({
     const totalWidth = 4 * legendItemWidth; // 4つの項目分の幅
     const legendStartX = (width - totalWidth) / 2; // 中央揃え
 
-    ctx.font = '11px sans-serif';
-    ctx.textAlign = 'left';
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "left";
 
     // サステナビリティ素材（選択された提案）の個別成分を表示
     if (proposals.length > 0 && selectedProposalIndex < proposals.length) {
       const sustainableComponents =
         proposals[selectedProposalIndex].composition;
-      const componentColors = ['#16a34a', '#22c55e', '#4ade80', '#86efac']; // 緑系のグラデーション
+      const componentColors = ["#16a34a", "#22c55e", "#4ade80", "#86efac"]; // 緑系のグラデーション
 
       // 各成分を個別に表示
       sustainableComponents.slice(0, 4).forEach((component, index) => {
         const x = legendStartX + index * legendItemWidth;
 
         // 色付きの四角
-        ctx.fillStyle = componentColors[index] || '#16a34a';
+        ctx.fillStyle = componentColors[index] || "#16a34a";
         ctx.fillRect(x, legendY, 12, 12);
 
         // ラベルテキスト（成分名）
-        ctx.fillStyle = '#374151';
+        ctx.fillStyle = "#374151";
         const label =
-          component.length > 10 ? component.substring(0, 8) + '...' : component;
+          component.length > 10 ? component.substring(0, 8) + "..." : component;
         ctx.fillText(label, x + 16, legendY + 8);
       });
     }
@@ -164,7 +164,7 @@ export function SustainabilityChart({
     radius: number,
     scores: number[],
     color: string,
-    alpha: number
+    alpha: number,
   ) {
     const angleStep = (Math.PI * 2) / scores.length;
 
@@ -186,7 +186,7 @@ export function SustainabilityChart({
       color +
       Math.round(alpha * 255)
         .toString(16)
-        .padStart(2, '0');
+        .padStart(2, "0");
     ctx.fill();
 
     ctx.strokeStyle = color;

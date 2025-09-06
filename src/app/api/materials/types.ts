@@ -4,7 +4,7 @@ export interface MaterialRequirement {
   name: string;
   value: string;
   unit?: string;
-  importance: 'high' | 'medium' | 'low';
+  importance: "high" | "medium" | "low";
 }
 
 export interface MaterialComposition {
@@ -54,7 +54,7 @@ export interface MaterialsSearchRequest {
 export interface DeepResearchMaterial {
   name: string;
   source: string;
-  confidence: 'high' | 'medium' | 'low';
+  confidence: "high" | "medium" | "low";
   citations?: MaterialCitation[];
 }
 
@@ -64,7 +64,7 @@ export interface MaterialCitation {
   organization?: string;
   year?: number;
   url?: string;
-  type: 'paper' | 'patent' | 'report' | 'website' | 'other';
+  type: "paper" | "patent" | "report" | "website" | "other";
 }
 
 export interface DeepResearchResult {

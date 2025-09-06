@@ -5,7 +5,7 @@
 Convexリアルタイムデータベースを中核とした4層アーキテクチャを採用。フロントエンドからConvexを経由してデータアクセスし、外部APIと連携して総合的な提案を生成。
 
 ```
-[ユーザー] 
+[ユーザー]
     ↓
 [フロントエンド (Next.js + Chart.js)]
     ↓ Convex Client
@@ -24,7 +24,7 @@ Convexリアルタイムデータベースを中核とした4層アーキテク�
   - Chart.js (レーダーチャート描画)
   - React Hook Form (フォーム管理)
   - Convex React Client (リアルタイム同期)
-- **バックエンド**: 
+- **バックエンド**:
   - Convex Functions (サーバーレス関数)
   - Next.js API Routes (外部API連携)
   - TypeScript
@@ -33,7 +33,7 @@ Convexリアルタイムデータベースを中核とした4層アーキテク�
 - **AI/LLM**: Google Gemini API (primary) / OpenAI API (fallback)
 - **Web検索**: Bing Search API / Google Custom Search API
 - **デプロイ**: Vercel (フロントエンド) + Convex (バックエンド)
-- **開発ツール**: 
+- **開発ツール**:
   - ESLint + Prettier
   - Git/GitHub
   - Convex CLI
@@ -43,7 +43,7 @@ Convexリアルタイムデータベースを中核とした4層アーキテク�
 ### ProductScenarioSelector
 
 - **責務**: 製品シナリオの選択UI提供
-- **インターフェース**: 
+- **インターフェース**:
   - Props: `onScenarioSelect: (scenario: Scenario) => void`
   - State: `selectedScenario: string`
 - **依存関係**: シナリオデータ定義
@@ -111,7 +111,7 @@ export default defineSchema({
     manufacturer: v.optional(v.string()),
     updatedAt: v.number(),
   }),
-  
+
   // 製品シナリオ
   scenarios: defineTable({
     name: v.string(),
@@ -124,25 +124,27 @@ export default defineSchema({
       sustainability: v.array(v.string()),
     }),
   }),
-  
+
   // 提案履歴
   proposals: defineTable({
     scenarioId: v.id("scenarios"),
-    materials: v.array(v.object({
-      materialId: v.optional(v.id("materials")),
-      name: v.string(),
-      composition: v.string(),
-      scores: v.object({
-        physical: v.number(),
-        environmental: v.number(),
-        cost: v.number(),
-        safety: v.number(),
-        supply: v.number(),
+    materials: v.array(
+      v.object({
+        materialId: v.optional(v.id("materials")),
+        name: v.string(),
+        composition: v.string(),
+        scores: v.object({
+          physical: v.number(),
+          environmental: v.number(),
+          cost: v.number(),
+          safety: v.number(),
+          supply: v.number(),
+        }),
+        totalScore: v.number(),
+        reasoning: v.string(),
+        source: v.string(), // "database" | "web" | "ai"
       }),
-      totalScore: v.number(),
-      reasoning: v.string(),
-      source: v.string(), // "database" | "web" | "ai"
-    })),
+    ),
     createdAt: v.number(),
   }),
 });
@@ -191,6 +193,7 @@ interface AIProposal {
 ### Convex Functions
 
 #### `materials.search` (素材検索)
+
 ```typescript
 // convex/materials.ts
 export const search = query({
@@ -208,8 +211,9 @@ export const search = query({
 ```
 
 #### `proposals.generate` (提案生成)
+
 ```typescript
-// convex/proposals.ts  
+// convex/proposals.ts
 export const generate = action({
   args: {
     scenarioId: v.id("scenarios"),
@@ -220,23 +224,23 @@ export const generate = action({
     const dbMaterials = await ctx.runQuery(api.materials.search, {
       requirements: args.requirements,
     });
-    
+
     // 2. Web検索実行（並列）
     const webResults = await searchWeb(args.requirements);
-    
+
     // 3. LLMにコンテキストを渡して提案生成
     const aiProposals = await generateWithLLM({
       dbMaterials,
       webResults,
       requirements: args.requirements,
     });
-    
+
     // 4. 結果をDBに保存
     await ctx.runMutation(api.proposals.save, {
       scenarioId: args.scenarioId,
       proposals: aiProposals,
     });
-    
+
     return aiProposals;
   },
 });
@@ -245,37 +249,39 @@ export const generate = action({
 ### Next.js API Routes
 
 #### POST /api/search-web
+
 ```typescript
 // Web検索APIのラッパー
 export async function POST(req: Request) {
   const { query } = await req.json();
-  
+
   // Bing Search APIまたはGoogle Custom Searchを呼び出し
   const results = await fetch(
     `https://api.bing.microsoft.com/v7.0/search?q=${query}`,
     {
       headers: {
-        'Ocp-Apim-Subscription-Key': process.env.BING_API_KEY,
+        "Ocp-Apim-Subscription-Key": process.env.BING_API_KEY,
       },
-    }
+    },
   );
-  
+
   return Response.json(results);
 }
 ```
 
-#### POST /api/generate-with-llm  
+#### POST /api/generate-with-llm
+
 ```typescript
 // LLM API呼び出し
 export async function POST(req: Request) {
   const { context, requirements } = await req.json();
-  
+
   const response = await generateProposals({
-    model: 'gemini-pro',
+    model: "gemini-pro",
     context,
     requirements,
   });
-  
+
   return Response.json(response);
 }
 ```
@@ -306,19 +312,28 @@ const generatePrompt = (context: {
 - 目標: モノマテリアル化、環境負荷削減
 
 ## データベースの候補素材
-${dbMaterials.map(m => `
+${dbMaterials
+  .map(
+    (m) => `
 - ${m.name}
   - 構成: ${m.composition}
   - 特性: ${m.properties.join(", ")}
   - 環境スコア: ${m.scores.environmental}/100
-`).join("")}
+`,
+  )
+  .join("")}
 
 ## Webからの最新情報
-${webResults.slice(0, 5).map(r => `
+${webResults
+  .slice(0, 5)
+  .map(
+    (r) => `
 - ${r.title}
   - ${r.snippet}
   - 出典: ${r.url}
-`).join("")}
+`,
+  )
+  .join("")}
 
 上記情報を総合的に判断し、最適な代替素材を3つ提案してください。
 各提案には、データベース情報とWeb情報をどのように活用したか明記してください。

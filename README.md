@@ -20,27 +20,32 @@ Next.js + Convex を使用したマッチングアプリケーション
 ### インストール
 
 1. リポジトリをクローン
+
 ```bash
 git clone <repository-url>
 cd claudehackathn
 ```
 
 2. 依存関係をインストール
+
 ```bash
 npm install
 ```
 
 3. 環境変数を設定
+
 ```bash
 # .env.local ファイルを作成し、Convexの設定を追加
 ```
 
 4. Convexをセットアップ
+
 ```bash
 npx convex dev
 ```
 
 5. 開発サーバーを起動
+
 ```bash
 npm run dev
 ```
@@ -85,11 +90,13 @@ npx convex dev
 ### デプロイ
 
 1. Convexにデプロイ
+
 ```bash
 npx convex deploy
 ```
 
 2. Vercelにデプロイ
+
 ```bash
 npm run build
 # Vercel CLIまたはWebインターフェースでデプロイ

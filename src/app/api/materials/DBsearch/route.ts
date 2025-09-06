@@ -1,44 +1,44 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import {
   MaterialsSearchRequest,
   SustainableMaterial,
   ExtractedRequirements,
   MaterialComposition,
   MaterialRequirement,
-} from '../types';
+} from "../types";
 
 // Materials Project APIのベースURL
-const MP_API_BASE = 'https://api.materialsproject.org';
+const MP_API_BASE = "https://api.materialsproject.org";
 
 // 型定義を再エクスポート（後方互換性のため）
 export type { MaterialsSearchRequest, SustainableMaterial };
 
 // 要件から材料特性を抽出
 export function extractMaterialRequirements(
-  requirements: MaterialRequirement[]
+  requirements: MaterialRequirement[],
 ): ExtractedRequirements {
   const extracted: ExtractedRequirements = {};
 
   requirements.forEach((req) => {
     const value = parseFloat(req.value);
 
-    if (req.name.includes('引張強度')) {
+    if (req.name.includes("引張強度")) {
       extracted.tensileStrength = value;
-    } else if (req.name.includes('伸び率')) {
+    } else if (req.name.includes("伸び率")) {
       extracted.elongation = value;
-    } else if (req.name.includes('衝撃強度')) {
+    } else if (req.name.includes("衝撃強度")) {
       extracted.impactStrength = value;
-    } else if (req.name.includes('ヒートシール強度')) {
+    } else if (req.name.includes("ヒートシール強度")) {
       extracted.heatSealStrength = value;
-    } else if (req.name.includes('酸素透過率')) {
+    } else if (req.name.includes("酸素透過率")) {
       extracted.oxygenPermeability = value;
-    } else if (req.name.includes('水蒸気透過率')) {
+    } else if (req.name.includes("水蒸気透過率")) {
       extracted.waterVaporPermeability = value;
-    } else if (req.name.includes('遮光性')) {
+    } else if (req.name.includes("遮光性")) {
       extracted.lightBlocking = value;
-    } else if (req.name.includes('耐熱温度')) {
+    } else if (req.name.includes("耐熱温度")) {
       extracted.heatResistance = value;
-    } else if (req.name.includes('耐寒温度')) {
+    } else if (req.name.includes("耐寒温度")) {
       extracted.coldResistance = value;
     }
   });
@@ -51,10 +51,10 @@ export function getOrganicPolymerDatabase() {
   return [
     // バイオプラスチック
     {
-      material_id: 'bio-001',
-      formula_pretty: 'PLA (C3H4O2)n',
-      name: 'ポリ乳酸',
-      type: 'bioplastic',
+      material_id: "bio-001",
+      formula_pretty: "PLA (C3H4O2)n",
+      name: "ポリ乳酸",
+      type: "bioplastic",
       properties: {
         tensileStrength: 65,
         elongation: 150,
@@ -71,10 +71,10 @@ export function getOrganicPolymerDatabase() {
       },
     },
     {
-      material_id: 'bio-002',
-      formula_pretty: 'PHA (C4H6O2)n',
-      name: 'ポリヒドロキシアルカノエート',
-      type: 'bioplastic',
+      material_id: "bio-002",
+      formula_pretty: "PHA (C4H6O2)n",
+      name: "ポリヒドロキシアルカノエート",
+      type: "bioplastic",
       properties: {
         tensileStrength: 40,
         elongation: 200,
@@ -91,10 +91,10 @@ export function getOrganicPolymerDatabase() {
       },
     },
     {
-      material_id: 'bio-003',
-      formula_pretty: 'PBS (C8H12O4)n',
-      name: 'ポリブチレンサクシネート',
-      type: 'bioplastic',
+      material_id: "bio-003",
+      formula_pretty: "PBS (C8H12O4)n",
+      name: "ポリブチレンサクシネート",
+      type: "bioplastic",
       properties: {
         tensileStrength: 55,
         elongation: 300,
@@ -112,10 +112,10 @@ export function getOrganicPolymerDatabase() {
     },
     // リサイクル可能ポリマー
     {
-      material_id: 'rec-001',
-      formula_pretty: 'rPET (C10H8O4)n',
-      name: 'リサイクルPET',
-      type: 'recycled',
+      material_id: "rec-001",
+      formula_pretty: "rPET (C10H8O4)n",
+      name: "リサイクルPET",
+      type: "recycled",
       properties: {
         tensileStrength: 85,
         elongation: 120,
@@ -132,10 +132,10 @@ export function getOrganicPolymerDatabase() {
       },
     },
     {
-      material_id: 'rec-002',
-      formula_pretty: 'rPE (C2H4)n',
-      name: 'リサイクルポリエチレン',
-      type: 'recycled',
+      material_id: "rec-002",
+      formula_pretty: "rPE (C2H4)n",
+      name: "リサイクルポリエチレン",
+      type: "recycled",
       properties: {
         tensileStrength: 45,
         elongation: 400,
@@ -153,10 +153,10 @@ export function getOrganicPolymerDatabase() {
     },
     // バイオベースポリマー
     {
-      material_id: 'bio-pe-001',
-      formula_pretty: 'Bio-PE (C2H4)n',
-      name: 'バイオポリエチレン',
-      type: 'bio-based',
+      material_id: "bio-pe-001",
+      formula_pretty: "Bio-PE (C2H4)n",
+      name: "バイオポリエチレン",
+      type: "bio-based",
       properties: {
         tensileStrength: 50,
         elongation: 450,
@@ -173,10 +173,10 @@ export function getOrganicPolymerDatabase() {
       },
     },
     {
-      material_id: 'bio-pet-001',
-      formula_pretty: 'Bio-PET (C10H8O4)n',
-      name: 'バイオPET',
-      type: 'bio-based',
+      material_id: "bio-pet-001",
+      formula_pretty: "Bio-PET (C10H8O4)n",
+      name: "バイオPET",
+      type: "bio-based",
       properties: {
         tensileStrength: 90,
         elongation: 130,
@@ -194,10 +194,10 @@ export function getOrganicPolymerDatabase() {
     },
     // セルロース系
     {
-      material_id: 'cel-001',
-      formula_pretty: 'CNF (C6H10O5)n',
-      name: 'セルロースナノファイバー',
-      type: 'cellulose',
+      material_id: "cel-001",
+      formula_pretty: "CNF (C6H10O5)n",
+      name: "セルロースナノファイバー",
+      type: "cellulose",
       properties: {
         tensileStrength: 150,
         elongation: 80,
@@ -219,16 +219,16 @@ export function getOrganicPolymerDatabase() {
 // 有機材料データベースから要件に基づいて検索
 export function searchOrganicMaterials(
   requirements: ExtractedRequirements,
-  currentMaterials: MaterialComposition
+  currentMaterials: MaterialComposition,
 ): SustainableMaterial[] {
-  console.log('🌱 Searching organic polymer database with requirements...');
+  console.log("🌱 Searching organic polymer database with requirements...");
 
   const organicDB = getOrganicPolymerDatabase();
   const results: SustainableMaterial[] = [];
 
   // 現在の素材構成を分析
   const needsHighBarrier = requirements.oxygenPermeability < 2;
-  const needsBiodegradable = currentMaterials.properties?.includes('生分解性');
+  const needsBiodegradable = currentMaterials.properties?.includes("生分解性");
 
   // 各有機材料をスコアリング
   organicDB.forEach((material) => {
@@ -242,7 +242,7 @@ export function searchOrganicMaterials(
     // 強度のマッチング
     if (
       Math.abs(
-        material.properties.tensileStrength - requirements.tensileStrength
+        material.properties.tensileStrength - requirements.tensileStrength,
       ) < 20
     ) {
       score += 25;
@@ -273,46 +273,46 @@ export function searchOrganicMaterials(
         waterVaporPermeability: material.properties.waterVaporPermeability,
         heatResistance: material.properties.meltingPoint,
         recyclability: material.sustainability.recyclable
-          ? '完全リサイクル可能'
+          ? "完全リサイクル可能"
           : material.sustainability.biodegradable
-            ? '生分解性'
-            : '要検討',
+            ? "生分解性"
+            : "要検討",
         biodegradability: material.sustainability.biodegradable
           ? material.sustainability.compostable
-            ? 'コンポスト可能'
-            : '生分解性'
-          : '非生分解性',
+            ? "コンポスト可能"
+            : "生分解性"
+          : "非生分解性",
         carbonFootprint: material.sustainability.carbonFootprint,
       },
       sustainabilityScore: Math.min(
         95,
-        70 + (material.sustainability.biomasContent || 0) * 0.25
+        70 + (material.sustainability.biomasContent || 0) * 0.25,
       ),
       matchScore: Math.min(95, score),
       advantages: [
         `材料タイプ: ${
-          material.type === 'bioplastic'
-            ? 'バイオプラスチック'
-            : material.type === 'recycled'
-              ? 'リサイクル材料'
-              : material.type === 'bio-based'
-                ? 'バイオベース材料'
-                : 'セルロース系材料'
+          material.type === "bioplastic"
+            ? "バイオプラスチック"
+            : material.type === "recycled"
+              ? "リサイクル材料"
+              : material.type === "bio-based"
+                ? "バイオベース材料"
+                : "セルロース系材料"
         }`,
         material.sustainability.biodegradable
-          ? '生分解性あり'
-          : 'リサイクル可能',
+          ? "生分解性あり"
+          : "リサイクル可能",
         `バイオマス含有率: ${material.sustainability.biomasContent || 0}%`,
         `CO2排出量: ${material.sustainability.carbonFootprint} kg-CO2/kg`,
         `密度: ${material.properties.density} g/cm³`,
       ],
       considerations: [
         material.properties.meltingPoint < 150
-          ? '耐熱性が低い（150℃未満）'
+          ? "耐熱性が低い（150℃未満）"
           : null,
-        material.properties.tensileStrength < 50 ? '強度が低い可能性' : null,
+        material.properties.tensileStrength < 50 ? "強度が低い可能性" : null,
         material.sustainability.biomasContent === 100
-          ? '完全バイオマス由来'
+          ? "完全バイオマス由来"
           : null,
       ].filter((c) => c !== null) as string[],
     };
@@ -324,17 +324,17 @@ export function searchOrganicMaterials(
   results.sort((a, b) => b.matchScore - a.matchScore);
 
   console.log(
-    `✅ Found ${results.length} organic materials, top match score: ${results[0]?.matchScore}`
+    `✅ Found ${results.length} organic materials, top match score: ${results[0]?.matchScore}`,
   );
 
   // トップ3の材料名をログ出力
   if (results.length > 0) {
     console.log(
-      '🏆 Top materials:',
+      "🏆 Top materials:",
       results
         .slice(0, 3)
         .map((m) => m.name)
-        .join(', ')
+        .join(", "),
     );
   }
 
@@ -345,36 +345,36 @@ export function searchOrganicMaterials(
 export async function searchMaterialsProjectAPI(
   apiKey: string,
   requirements: ExtractedRequirements,
-  currentMaterials: MaterialComposition
+  currentMaterials: MaterialComposition,
 ) {
   try {
-    console.log('🔍 Searching Materials Project API...');
+    console.log("🔍 Searching Materials Project API...");
 
     // シンプルなクエリで有機材料を検索
     const searchParams = new URLSearchParams({
-      _limit: '10',
-      elements: 'C,H,O,N', // 有機材料の基本元素
+      _limit: "10",
+      elements: "C,H,O,N", // 有機材料の基本元素
     });
 
     const url = `${MP_API_BASE}/materials/core/?${searchParams.toString()}`;
 
     const response = await fetch(url, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'X-API-KEY': apiKey,
-        Accept: 'application/json',
+        "X-API-KEY": apiKey,
+        Accept: "application/json",
       },
     });
 
     if (!response.ok) {
-      console.error('Materials Project API error:', response.status);
+      console.error("Materials Project API error:", response.status);
       return null;
     }
 
     const data = await response.json();
     return data.data || data || [];
   } catch (error) {
-    console.error('Materials Project API error:', error);
+    console.error("Materials Project API error:", error);
     return null;
   }
 }
@@ -385,34 +385,34 @@ export async function POST(req: NextRequest) {
     const body: MaterialsSearchRequest = await req.json();
     const { currentMaterials, requirements } = body;
 
-    console.log('📊 Database search started...');
-    console.log('📋 Current materials:', currentMaterials);
-    console.log('📋 Requirements:', requirements);
+    console.log("📊 Database search started...");
+    console.log("📋 Current materials:", currentMaterials);
+    console.log("📋 Requirements:", requirements);
 
     // 要件から材料特性を抽出
     const extractedRequirements = extractMaterialRequirements(requirements);
-    console.log('🔍 Extracted requirements:', extractedRequirements);
+    console.log("🔍 Extracted requirements:", extractedRequirements);
 
     // 有機ポリマーデータベースから検索
     const organicMaterials = searchOrganicMaterials(
       extractedRequirements,
-      currentMaterials
+      currentMaterials,
     );
 
     return NextResponse.json({
       success: true,
       materials: organicMaterials.slice(0, 5),
-      source: 'Organic Polymer Database',
+      source: "Organic Polymer Database",
       metadata: {
         totalResults: organicMaterials.length,
         timestamp: new Date().toISOString(),
       },
     });
   } catch (error) {
-    console.error('Database search error:', error);
+    console.error("Database search error:", error);
     return NextResponse.json(
-      { error: 'Database search failed' },
-      { status: 500 }
+      { error: "Database search failed" },
+      { status: 500 },
     );
   }
 }

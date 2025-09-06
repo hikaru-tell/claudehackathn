@@ -1,5 +1,5 @@
-import { Card } from '../components/Card';
-import { scoreToGrade } from '@/lib/grading-criteria';
+import { Card } from "../components/Card";
+import { scoreToGrade } from "@/lib/grading-criteria";
 
 interface ProposalCardProps {
   proposal: any;
@@ -11,13 +11,13 @@ export function ProposalCard({ proposal, rank, onClick }: ProposalCardProps) {
   const getRankColor = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'bg-yellow-500';
+        return "bg-yellow-500";
       case 2:
-        return 'bg-gray-400';
+        return "bg-gray-400";
       case 3:
-        return 'bg-orange-600';
+        return "bg-orange-600";
       default:
-        return 'bg-gray-600';
+        return "bg-gray-600";
     }
   };
 
@@ -50,7 +50,8 @@ export function ProposalCard({ proposal, rank, onClick }: ProposalCardProps) {
               {proposal.materialName}
             </h3>
             <p className="text-gray-600 mt-1">
-              Composition: <span className="font-mono">{proposal.composition}</span>
+              Composition:{" "}
+              <span className="font-mono">{proposal.composition}</span>
             </p>
           </div>
           <div className="text-center">
@@ -84,21 +85,23 @@ export function ProposalCard({ proposal, rank, onClick }: ProposalCardProps) {
                     </div>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    {key === 'physical' && 'Physical'}
-                    {key === 'environmental' && 'Environmental'}
-                    {key === 'cost' && 'Cost'}
-                    {key === 'safety' && 'Safety'}
-                    {key === 'supply' && 'Supply Chain'}
+                    {key === "physical" && "Physical"}
+                    {key === "environmental" && "Environmental"}
+                    {key === "cost" && "Cost"}
+                    {key === "safety" && "Safety"}
+                    {key === "supply" && "Supply Chain"}
                   </p>
                 </div>
               );
-            }
+            },
           )}
         </div>
 
         {/* Recommendation Reason */}
         <div className="bg-green-50 rounded-lg p-4 mb-4">
-          <h4 className="font-semibold text-green-800 mb-2">Recommendation Reason</h4>
+          <h4 className="font-semibold text-green-800 mb-2">
+            Recommendation Reason
+          </h4>
           <p className="text-gray-700">{proposal.reasoning}</p>
         </div>
 
@@ -117,7 +120,7 @@ export function ProposalCard({ proposal, rank, onClick }: ProposalCardProps) {
         {/* Data Sources */}
         <div className="mt-4 pt-4 border-t border-gray-200">
           <p className="text-xs text-gray-500">
-            Data Sources: {proposal.dataSources.join(', ')}
+            Data Sources: {proposal.dataSources.join(", ")}
           </p>
         </div>
       </div>

@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import {
   MaterialComposition,
   MaterialRequirement,
   SearchResponse,
   SustainableMaterial,
   DeepResearchResult,
-} from '../types';
-import { DETAILED_GRADING_CRITERIA } from '@/lib/grading-criteria';
+} from "../types";
+import { DETAILED_GRADING_CRITERIA } from "@/lib/grading-criteria";
 
 // Claude API設定
 const CLAUDE_API_KEY =
@@ -49,9 +49,9 @@ export interface TotalAIResponse {
 // DBsearchとGPTsearchを並行実行
 async function executeSearches(
   currentMaterials: MaterialComposition,
-  requirements: MaterialRequirement[]
+  requirements: MaterialRequirement[],
 ) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   const searchPayload = {
     currentMaterials,
@@ -61,13 +61,13 @@ async function executeSearches(
   // 並行実行
   const [dbSearchResponse, gptSearchResponse] = await Promise.allSettled([
     fetch(`${baseUrl}/api/materials/DBsearch`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(searchPayload),
     }),
     fetch(`${baseUrl}/api/materials/GPTsearch`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(searchPayload),
     }),
   ]);
@@ -76,12 +76,12 @@ async function executeSearches(
   let dbResults: SustainableMaterial[] = [];
   let gptResults: DeepResearchResult | null = null;
 
-  if (dbSearchResponse.status === 'fulfilled' && dbSearchResponse.value.ok) {
+  if (dbSearchResponse.status === "fulfilled" && dbSearchResponse.value.ok) {
     const dbData: SearchResponse = await dbSearchResponse.value.json();
     dbResults = dbData.materials || [];
   }
 
-  if (gptSearchResponse.status === 'fulfilled' && gptSearchResponse.value.ok) {
+  if (gptSearchResponse.status === "fulfilled" && gptSearchResponse.value.ok) {
     const gptData: SearchResponse = await gptSearchResponse.value.json();
     gptResults = gptData.result || null;
   }
@@ -94,10 +94,10 @@ async function analyzeWithClaude(
   dbResults: SustainableMaterial[],
   gptResults: DeepResearchResult | null,
   currentMaterials: MaterialComposition,
-  requirements: MaterialRequirement[]
+  requirements: MaterialRequirement[],
 ): Promise<RecommendedMaterial[]> {
   if (!CLAUDE_API_KEY) {
-    console.warn('Claude API key not configured, using fallback analysis');
+    console.warn("Claude API key not configured, using fallback analysis");
     return fallbackAnalysis(dbResults, gptResults);
   }
 
@@ -108,10 +108,10 @@ ${DETAILED_GRADING_CRITERIA}
 
 [Current Material Composition]
 ${currentMaterials.composition}
-Properties: ${currentMaterials.properties.join(', ')}
+Properties: ${currentMaterials.properties.join(", ")}
 
 [Performance Requirements]
-${requirements.map((r) => `- ${r.name}: ${r.value} ${r.unit || ''} (Importance: ${r.importance})`).join('\n')}
+${requirements.map((r) => `- ${r.name}: ${r.value} ${r.unit || ""} (Importance: ${r.importance})`).join("\n")}
 
 [Database Search Results]
 ${dbResults
@@ -120,21 +120,21 @@ ${dbResults
 ${i + 1}. ${m.name} (${m.composition})
 - Match Score: ${m.matchScore}
 - Sustainability Score: ${m.sustainabilityScore}
-- Advantages: ${m.advantages.join(', ')}
-- Considerations: ${m.considerations.join(', ')}
-`
+- Advantages: ${m.advantages.join(", ")}
+- Considerations: ${m.considerations.join(", ")}
+`,
   )
-  .join('\n')}
+  .join("\n")}
 
 [GPT In-Depth Research Results]
 ${
   gptResults
     ? `
-Discovered Materials: ${gptResults.materials.map((m) => m.name).join(', ')}
-Technology Trends: ${gptResults.trends.slice(0, 3).join(', ')}
-Considerations: ${gptResults.considerations.slice(0, 3).join(', ')}
+Discovered Materials: ${gptResults.materials.map((m) => m.name).join(", ")}
+Technology Trends: ${gptResults.trends.slice(0, 3).join(", ")}
+Considerations: ${gptResults.considerations.slice(0, 3).join(", ")}
 `
-    : 'No in-depth research results'
+    : "No in-depth research results"
 }
 
 [Instructions]
@@ -170,20 +170,20 @@ Only output the JSON. Do not include any other explanation.
 `;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_API_KEY,
-        'anthropic-version': '2023-06-01',
+        "Content-Type": "application/json",
+        "x-api-key": CLAUDE_API_KEY,
+        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-20250514',
+        model: "claude-opus-4-20250514",
         max_tokens: 3000,
         temperature: 0.7,
         messages: [
           {
-            role: 'user',
+            role: "user",
             content: prompt,
           },
         ],
@@ -191,12 +191,12 @@ Only output the JSON. Do not include any other explanation.
     });
 
     if (!response.ok) {
-      console.error('Claude API error:', response.status);
+      console.error("Claude API error:", response.status);
       return fallbackAnalysis(dbResults, gptResults);
     }
 
     const data = await response.json();
-    const content = data.content[0]?.text || '';
+    const content = data.content[0]?.text || "";
 
     // JSONを抽出してパース
     const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -205,7 +205,7 @@ Only output the JSON. Do not include any other explanation.
       return parsed.recommendations || [];
     }
   } catch (error) {
-    console.error('Claude analysis error:', error);
+    console.error("Claude analysis error:", error);
   }
 
   return fallbackAnalysis(dbResults, gptResults);
@@ -214,7 +214,7 @@ Only output the JSON. Do not include any other explanation.
 // フォールバック分析（Claude APIが使えない場合）
 function fallbackAnalysis(
   dbResults: SustainableMaterial[],
-  gptResults: DeepResearchResult | null
+  gptResults: DeepResearchResult | null,
 ): RecommendedMaterial[] {
   const recommendations: RecommendedMaterial[] = [];
 
@@ -226,13 +226,13 @@ function fallbackAnalysis(
     const relatedGptMaterial = gptResults?.materials.find(
       (gm) =>
         gm.name.toLowerCase().includes(material.name.toLowerCase()) ||
-        material.name.toLowerCase().includes(gm.name.toLowerCase())
+        material.name.toLowerCase().includes(gm.name.toLowerCase()),
     );
 
     // スコア計算
     const physicalScore = Math.min(
       95,
-      70 + (material.properties.tensileStrength || 0) * 0.3
+      70 + (material.properties.tensileStrength || 0) * 0.3,
     );
     const environmentalScore = material.sustainabilityScore;
     const costScore = 80 - index * 5; // 順位が下がるごとにコストスコアを下げる
@@ -245,33 +245,33 @@ function fallbackAnalysis(
         costScore +
         safetyScore +
         supplyScore) /
-        5
+        5,
     );
 
     // 特徴の生成
     const features: string[] = [];
-    if (material.properties.biodegradability?.includes('生分解')) {
-      features.push('生分解性');
+    if (material.properties.biodegradability?.includes("生分解")) {
+      features.push("生分解性");
     }
-    if (material.properties.recyclability?.includes('リサイクル')) {
-      features.push('リサイクル可能');
+    if (material.properties.recyclability?.includes("リサイクル")) {
+      features.push("リサイクル可能");
     }
     if (material.sustainabilityScore > 80) {
-      features.push('高サステナビリティ');
+      features.push("高サステナビリティ");
     }
     if (
       material.properties.carbonFootprint &&
       material.properties.carbonFootprint < 1
     ) {
-      features.push('低炭素');
+      features.push("低炭素");
     }
 
     // データソースの設定
-    const dataSources = ['Convexデータベース'];
+    const dataSources = ["Convexデータベース"];
     if (relatedGptMaterial) {
-      dataSources.push('最新Web情報');
-      if (relatedGptMaterial.confidence === 'high') {
-        dataSources.push('AI深層分析');
+      dataSources.push("最新Web情報");
+      if (relatedGptMaterial.confidence === "high") {
+        dataSources.push("AI深層分析");
       }
     }
 
@@ -287,9 +287,9 @@ function fallbackAnalysis(
       },
       totalScore,
       reasoning:
-        material.advantages.slice(0, 2).join('。') +
-        '。' +
-        (material.considerations[0] || ''),
+        material.advantages.slice(0, 2).join("。") +
+        "。" +
+        (material.considerations[0] || ""),
       features,
       dataSources,
     });
@@ -304,25 +304,25 @@ export async function POST(req: NextRequest) {
     const body: TotalAIRequest = await req.json();
     const { currentMaterials, requirements } = body;
 
-    console.log('🤖 Total AI analysis started...');
-    console.log('📋 Current materials:', currentMaterials);
-    console.log('📋 Requirements:', requirements);
+    console.log("🤖 Total AI analysis started...");
+    console.log("📋 Current materials:", currentMaterials);
+    console.log("📋 Requirements:", requirements);
 
     // 1. DBsearchとGPTsearchを並行実行
     const { dbResults, gptResults } = await executeSearches(
       currentMaterials,
-      requirements
+      requirements,
     );
 
     console.log(`✅ DB Search: ${dbResults.length} results`);
-    console.log(`✅ GPT Search: ${gptResults ? 'Complete' : 'Failed'}`);
+    console.log(`✅ GPT Search: ${gptResults ? "Complete" : "Failed"}`);
 
     // 2. Claude-3 Opusで統合分析
     const recommendations = await analyzeWithClaude(
       dbResults,
       gptResults,
       currentMaterials,
-      requirements
+      requirements,
     );
 
     console.log(`🎯 Generated ${recommendations.length} recommendations`);
@@ -334,14 +334,14 @@ export async function POST(req: NextRequest) {
       analysisDetails: {
         dbSearchResults: dbResults.length,
         gptSearchResults: gptResults?.materials.length || 0,
-        confidenceLevel: recommendations.length > 0 ? 'high' : 'low',
+        confidenceLevel: recommendations.length > 0 ? "high" : "low",
         timestamp: new Date().toISOString(),
       },
     };
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error('Total AI analysis error:', error);
+    console.error("Total AI analysis error:", error);
     return NextResponse.json(
       {
         success: false,
@@ -349,12 +349,12 @@ export async function POST(req: NextRequest) {
         analysisDetails: {
           dbSearchResults: 0,
           gptSearchResults: 0,
-          confidenceLevel: 'error',
+          confidenceLevel: "error",
           timestamp: new Date().toISOString(),
         },
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       } as TotalAIResponse,
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

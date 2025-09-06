@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 
 interface Requirement {
   name: string;
   value: string;
   unit?: string;
-  importance: 'high' | 'medium' | 'low';
+  importance: "high" | "medium" | "low";
 }
 
 interface Materials {
@@ -49,13 +49,13 @@ export default function TestPage() {
   >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dataSource, setDataSource] = useState<string>('Loading...');
+  const [dataSource, setDataSource] = useState<string>("Loading...");
   const [deepResearchResult, setDeepResearchResult] = useState<any>(null);
   const [deepResearchLoading, setDeepResearchLoading] = useState(false);
 
   useEffect(() => {
     // URLパラメータから分析データを取得
-    const analysisParam = searchParams.get('analysis');
+    const analysisParam = searchParams.get("analysis");
     if (analysisParam) {
       try {
         // まず直接JSONパースを試みる（既にデコードされている場合）
@@ -89,7 +89,7 @@ export default function TestPage() {
               }
             } catch (decodeError) {
               // デコードエラーが発生した場合は終了
-              console.warn('Decode attempt failed:', decodeError);
+              console.warn("Decode attempt failed:", decodeError);
               break;
             }
           }
@@ -97,145 +97,145 @@ export default function TestPage() {
           // 全ての試行が失敗した場合はエラーを投げる
           if (!parsed) {
             throw new Error(
-              'Failed to parse analysis parameter after multiple decode attempts'
+              "Failed to parse analysis parameter after multiple decode attempts",
             );
           }
         }
 
         setAnalysisData(parsed);
-        console.log('Parsed analysis data:', parsed);
+        console.log("Parsed analysis data:", parsed);
         setError(null); // エラーをクリア
       } catch (e) {
-        console.error('Failed to parse analysis data:', e);
-        console.log('Using default mock data instead');
+        console.error("Failed to parse analysis data:", e);
+        console.log("Using default mock data instead");
 
         // デフォルトのモックデータを設定
         const defaultAnalysis = [
           {
-            fileName: 'フィルム規格書 - 製品コード_ TK-FILM-2024-STD.pdf',
+            fileName: "フィルム規格書 - 製品コード_ TK-FILM-2024-STD.pdf",
             requirements: [
               {
-                name: '引張強度',
-                value: '100',
-                unit: 'N/15mm',
-                importance: 'high' as const,
+                name: "引張強度",
+                value: "100",
+                unit: "N/15mm",
+                importance: "high" as const,
               },
               {
-                name: '伸び率',
-                value: '150',
-                unit: '%',
-                importance: 'medium' as const,
+                name: "伸び率",
+                value: "150",
+                unit: "%",
+                importance: "medium" as const,
               },
               {
-                name: '衝撃強度',
-                value: '1.0',
-                unit: 'J',
-                importance: 'medium' as const,
+                name: "衝撃強度",
+                value: "1.0",
+                unit: "J",
+                importance: "medium" as const,
               },
               {
-                name: 'ヒートシール強度',
-                value: '20',
-                unit: 'N/15mm',
-                importance: 'high' as const,
+                name: "ヒートシール強度",
+                value: "20",
+                unit: "N/15mm",
+                importance: "high" as const,
               },
               {
-                name: '酸素透過率',
-                value: '1.0',
-                unit: 'cc/m²・day・atm',
-                importance: 'high' as const,
+                name: "酸素透過率",
+                value: "1.0",
+                unit: "cc/m²・day・atm",
+                importance: "high" as const,
               },
               {
-                name: '水蒸気透過率',
-                value: '2.0',
-                unit: 'g/m²・day',
-                importance: 'high' as const,
+                name: "水蒸気透過率",
+                value: "2.0",
+                unit: "g/m²・day",
+                importance: "high" as const,
               },
               {
-                name: '遮光性',
-                value: '99',
-                unit: '%',
-                importance: 'high' as const,
+                name: "遮光性",
+                value: "99",
+                unit: "%",
+                importance: "high" as const,
               },
               {
-                name: '耐熱温度',
-                value: '120',
-                unit: '℃',
-                importance: 'high' as const,
+                name: "耐熱温度",
+                value: "120",
+                unit: "℃",
+                importance: "high" as const,
               },
               {
-                name: '耐寒温度',
-                value: '-20',
-                unit: '℃',
-                importance: 'medium' as const,
+                name: "耐寒温度",
+                value: "-20",
+                unit: "℃",
+                importance: "medium" as const,
               },
             ],
             materials: {
-              composition: 'PET(12μm)/Al-PET(12μm)/CPP(30μm)',
+              composition: "PET(12μm)/Al-PET(12μm)/CPP(30μm)",
               properties: [
-                '印刷適性',
-                '機械的強度',
-                '高バリア性',
-                '遮光性',
-                'ヒートシール性',
-                '耐油性',
+                "印刷適性",
+                "機械的強度",
+                "高バリア性",
+                "遮光性",
+                "ヒートシール性",
+                "耐油性",
               ],
-              analysisConfidence: 'high',
+              analysisConfidence: "high",
             },
           },
         ];
 
         setAnalysisData(defaultAnalysis);
         setError(
-          'URLパラメータからのデータ読み込みに失敗したため、デフォルトデータを使用しています'
+          "URLパラメータからのデータ読み込みに失敗したため、デフォルトデータを使用しています",
         );
       }
     } else {
       // analysisパラメータがない場合もデフォルトデータを設定
       const defaultAnalysis = [
         {
-          fileName: 'フィルム規格書 - 製品コード_ TK-FILM-2024-STD.pdf',
+          fileName: "フィルム規格書 - 製品コード_ TK-FILM-2024-STD.pdf",
           requirements: [
             {
-              name: '引張強度',
-              value: '100',
-              unit: 'N/15mm',
-              importance: 'high' as const,
+              name: "引張強度",
+              value: "100",
+              unit: "N/15mm",
+              importance: "high" as const,
             },
             {
-              name: '伸び率',
-              value: '150',
-              unit: '%',
-              importance: 'medium' as const,
+              name: "伸び率",
+              value: "150",
+              unit: "%",
+              importance: "medium" as const,
             },
             {
-              name: '酸素透過率',
-              value: '1.0',
-              unit: 'cc/m²・day・atm',
-              importance: 'high' as const,
+              name: "酸素透過率",
+              value: "1.0",
+              unit: "cc/m²・day・atm",
+              importance: "high" as const,
             },
             {
-              name: '水蒸気透過率',
-              value: '2.0',
-              unit: 'g/m²・day',
-              importance: 'high' as const,
+              name: "水蒸気透過率",
+              value: "2.0",
+              unit: "g/m²・day",
+              importance: "high" as const,
             },
             {
-              name: '遮光性',
-              value: '99',
-              unit: '%',
-              importance: 'high' as const,
+              name: "遮光性",
+              value: "99",
+              unit: "%",
+              importance: "high" as const,
             },
             {
-              name: '耐熱温度',
-              value: '120',
-              unit: '℃',
-              importance: 'high' as const,
+              name: "耐熱温度",
+              value: "120",
+              unit: "℃",
+              importance: "high" as const,
             },
           ],
           materials: {
-            composition: 'PET(12μm)/Al-PET(12μm)/CPP(30μm)',
-            properties: ['高バリア性', '遮光性', 'ヒートシール性'],
-            analysisConfidence: 'high',
+            composition: "PET(12μm)/Al-PET(12μm)/CPP(30μm)",
+            properties: ["高バリア性", "遮光性", "ヒートシール性"],
+            analysisConfidence: "high",
           },
         },
       ];
@@ -252,7 +252,7 @@ export default function TestPage() {
   // Deep Research APIを実行
   const runDeepResearch = async () => {
     if (analysisData.length === 0) {
-      console.log('No analysis data available for Deep Research');
+      console.log("No analysis data available for Deep Research");
       return;
     }
 
@@ -260,12 +260,12 @@ export default function TestPage() {
     setDeepResearchResult(null);
 
     try {
-      console.log('🔬 Running Deep Research with PDF analysis data...');
+      console.log("🔬 Running Deep Research with PDF analysis data...");
 
-      const response = await fetch('/api/materials/GPTsearch', {
-        method: 'POST',
+      const response = await fetch("/api/materials/GPTsearch", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           currentMaterials: analysisData[0].materials,
@@ -279,10 +279,10 @@ export default function TestPage() {
       }
 
       const data = await response.json();
-      console.log('✅ Deep Research Response:', data);
+      console.log("✅ Deep Research Response:", data);
       setDeepResearchResult(data);
     } catch (error: any) {
-      console.error('Deep Research error:', error);
+      console.error("Deep Research error:", error);
       setError(`Deep Research エラー: ${error.message}`);
     } finally {
       setDeepResearchLoading(false);
@@ -295,14 +295,14 @@ export default function TestPage() {
       // タイムアウトを設定（10秒）
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        controller.abort('Request timeout - switching to mock data');
-        console.log('Request timeout, using mock data');
+        controller.abort("Request timeout - switching to mock data");
+        console.log("Request timeout, using mock data");
       }, 10000);
 
-      const response = await fetch('/api/materials/DBsearch', {
-        method: 'POST',
+      const response = await fetch("/api/materials/DBsearch", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           currentMaterials: analysisData[0]?.materials,
@@ -314,37 +314,37 @@ export default function TestPage() {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch sustainable materials');
+        throw new Error("Failed to fetch sustainable materials");
       }
 
       const data = await response.json();
-      console.log('API Response:', data);
+      console.log("API Response:", data);
 
       if (data.materials && data.materials.length > 0) {
         setSustainableMaterials(data.materials);
-        setDataSource(data.source || 'Organic Polymer Database');
+        setDataSource(data.source || "Organic Polymer Database");
         console.log(
-          '✅ Successfully loaded materials from database:',
+          "✅ Successfully loaded materials from database:",
           data.materials.length,
-          'items'
+          "items",
         );
       } else {
         // データが空の場合はモックデータを使用
         setSustainableMaterials(getMockSustainableMaterials());
-        setDataSource('Mock Data (Empty Response)');
-        console.log('⚠️ No materials found in database, using mock data');
+        setDataSource("Mock Data (Empty Response)");
+        console.log("⚠️ No materials found in database, using mock data");
       }
     } catch (error: any) {
       // AbortErrorの場合は特別な処理
-      if (error.name === 'AbortError') {
-        console.log('Request was aborted due to timeout, using mock data');
+      if (error.name === "AbortError") {
+        console.log("Request was aborted due to timeout, using mock data");
         setSustainableMaterials(getMockSustainableMaterials());
-        setDataSource('Mock Data (Request Timeout)');
+        setDataSource("Mock Data (Request Timeout)");
       } else {
-        console.error('Error fetching sustainable materials:', error);
+        console.error("Error fetching sustainable materials:", error);
         // その他のエラー時はモックデータを表示
         setSustainableMaterials(getMockSustainableMaterials());
-        setDataSource('Mock Data (Fallback)');
+        setDataSource("Mock Data (Fallback)");
       }
     } finally {
       setLoading(false);
@@ -354,92 +354,92 @@ export default function TestPage() {
   const getMockSustainableMaterials = (): SustainableMaterial[] => {
     return [
       {
-        name: 'バイオPET/紙/PLA複合材',
-        composition: 'Bio-PET(15μm)/紙層(20μm)/PLA(20μm)',
+        name: "バイオPET/紙/PLA複合材",
+        composition: "Bio-PET(15μm)/紙層(20μm)/PLA(20μm)",
         properties: {
           tensileStrength: 95,
           elongation: 140,
           oxygenPermeability: 1.2,
           waterVaporPermeability: 2.5,
           heatResistance: 110,
-          recyclability: '単一素材分離可能',
-          biodegradability: '部分的生分解性',
+          recyclability: "単一素材分離可能",
+          biodegradability: "部分的生分解性",
           carbonFootprint: 0.8,
         },
         sustainabilityScore: 85,
         matchScore: 88,
         advantages: [
-          'バイオマス由来原料を50%以上使用',
-          'リサイクル可能な構造',
-          'CO2排出量を30%削減',
-          '必要な物理的性能を維持',
+          "バイオマス由来原料を50%以上使用",
+          "リサイクル可能な構造",
+          "CO2排出量を30%削減",
+          "必要な物理的性能を維持",
         ],
         considerations: [
-          '耐熱性がやや低下（120℃→110℃）',
-          '材料コストが15%上昇',
+          "耐熱性がやや低下（120℃→110℃）",
+          "材料コストが15%上昇",
         ],
       },
       {
-        name: 'モノマテリアルPE多層構造',
-        composition: 'HDPE(20μm)/MDPE(15μm)/LLDPE(20μm)',
+        name: "モノマテリアルPE多層構造",
+        composition: "HDPE(20μm)/MDPE(15μm)/LLDPE(20μm)",
         properties: {
           tensileStrength: 90,
           elongation: 200,
           oxygenPermeability: 1.5,
           waterVaporPermeability: 1.8,
           heatResistance: 115,
-          recyclability: '完全リサイクル可能',
-          biodegradability: '非生分解性',
+          recyclability: "完全リサイクル可能",
+          biodegradability: "非生分解性",
           carbonFootprint: 0.9,
         },
         sustainabilityScore: 82,
         matchScore: 85,
         advantages: [
-          '単一素材でリサイクル性が高い',
-          '既存のリサイクルインフラに対応',
-          '優れた水蒸気バリア性',
-          'コスト競争力あり',
+          "単一素材でリサイクル性が高い",
+          "既存のリサイクルインフラに対応",
+          "優れた水蒸気バリア性",
+          "コスト競争力あり",
         ],
         considerations: [
-          '酸素バリア性がやや劣る',
-          '遮光性の確保に工夫が必要',
-          'バイオマス由来ではない',
+          "酸素バリア性がやや劣る",
+          "遮光性の確保に工夫が必要",
+          "バイオマス由来ではない",
         ],
       },
       {
-        name: 'セルロースナノファイバー強化バイオプラスチック',
-        composition: 'CNF-PBS(25μm)/EVOH(5μm)/CNF-PBS(25μm)',
+        name: "セルロースナノファイバー強化バイオプラスチック",
+        composition: "CNF-PBS(25μm)/EVOH(5μm)/CNF-PBS(25μm)",
         properties: {
           tensileStrength: 110,
           elongation: 130,
           oxygenPermeability: 0.8,
           waterVaporPermeability: 2.2,
           heatResistance: 105,
-          recyclability: '化学的リサイクル可能',
-          biodegradability: '生分解性',
+          recyclability: "化学的リサイクル可能",
+          biodegradability: "生分解性",
           carbonFootprint: 0.6,
         },
         sustainabilityScore: 90,
         matchScore: 83,
         advantages: [
-          '優れた生分解性',
-          '最も低いカーボンフットプリント',
-          '高強度・高バリア性',
-          '100%バイオマス由来可能',
+          "優れた生分解性",
+          "最も低いカーボンフットプリント",
+          "高強度・高バリア性",
+          "100%バイオマス由来可能",
         ],
         considerations: [
-          '新技術のため供給体制が限定的',
-          '材料コストが30%上昇',
-          '耐熱性が要求仕様を下回る可能性',
+          "新技術のため供給体制が限定的",
+          "材料コストが30%上昇",
+          "耐熱性が要求仕様を下回る可能性",
         ],
       },
     ];
   };
 
   const getPropertyColor = (score: number): string => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 80) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return "text-green-600";
+    if (score >= 80) return "text-yellow-600";
+    return "text-red-600";
   };
 
   // エラーがある場合でも、データがあれば表示を続ける
@@ -467,14 +467,14 @@ export default function TestPage() {
               </p>
               <p className="text-gray-700">
                 <span className="font-medium">特性：</span>
-                {analysisData[0].materials.properties.join('、')}
+                {analysisData[0].materials.properties.join("、")}
               </p>
             </div>
 
             <h3 className="text-lg font-semibold mt-6 mb-3">主要な性能要件</h3>
             <div className="grid grid-cols-2 gap-3">
               {analysisData[0].requirements
-                .filter((req) => req.importance === 'high')
+                .filter((req) => req.importance === "high")
                 .map((req, index) => (
                   <div key={index} className="text-sm">
                     <span className="font-medium">{req.name}：</span>
@@ -499,7 +499,7 @@ export default function TestPage() {
                     処理中...
                   </span>
                 ) : (
-                  '🔬 Deep Research で最新材料を調査'
+                  "🔬 Deep Research で最新材料を調査"
                 )}
               </button>
 
@@ -539,14 +539,14 @@ export default function TestPage() {
                               {material.name}
                             </div>
                             <div className="text-sm text-gray-600 mt-1">
-                              信頼度:{' '}
+                              信頼度:{" "}
                               <span
                                 className={`font-semibold ${
-                                  material.confidence === 'high'
-                                    ? 'text-green-600'
-                                    : material.confidence === 'medium'
-                                      ? 'text-yellow-600'
-                                      : 'text-gray-600'
+                                  material.confidence === "high"
+                                    ? "text-green-600"
+                                    : material.confidence === "medium"
+                                      ? "text-yellow-600"
+                                      : "text-gray-600"
                                 }`}
                               >
                                 {material.confidence}
@@ -573,12 +573,12 @@ export default function TestPage() {
                                           ` - ${citation.authors}`}
                                         {citation.year && ` (${citation.year})`}
                                       </div>
-                                    )
+                                    ),
                                   )}
                                 </div>
                               )}
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -666,15 +666,15 @@ export default function TestPage() {
                                     </span>
                                   )}
                                   <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
-                                    {citation.type === 'paper'
-                                      ? '論文'
-                                      : citation.type === 'patent'
-                                        ? '特許'
-                                        : citation.type === 'report'
-                                          ? 'レポート'
-                                          : citation.type === 'website'
-                                            ? 'ウェブ'
-                                            : 'その他'}
+                                    {citation.type === "paper"
+                                      ? "論文"
+                                      : citation.type === "patent"
+                                        ? "特許"
+                                        : citation.type === "report"
+                                          ? "レポート"
+                                          : citation.type === "website"
+                                            ? "ウェブ"
+                                            : "その他"}
                                   </span>
                                 </div>
                                 {citation.url && (
@@ -690,7 +690,7 @@ export default function TestPage() {
                               </div>
                             </div>
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -702,10 +702,10 @@ export default function TestPage() {
             {deepResearchResult.metadata && (
               <div className="mt-4 pt-4 border-t border-gray-300">
                 <p className="text-xs text-gray-600">
-                  モデル: {deepResearchResult.metadata.model} | 生成時刻:{' '}
+                  モデル: {deepResearchResult.metadata.model} | 生成時刻:{" "}
                   {new Date(
-                    deepResearchResult.metadata.timestamp
-                  ).toLocaleString('ja-JP')}
+                    deepResearchResult.metadata.timestamp,
+                  ).toLocaleString("ja-JP")}
                 </p>
               </div>
             )}
@@ -736,7 +736,7 @@ export default function TestPage() {
                   <div className="text-right">
                     <div
                       className={`text-2xl font-bold ${getPropertyColor(
-                        material.sustainabilityScore
+                        material.sustainabilityScore,
                       )}`}
                     >
                       {material.sustainabilityScore}%
@@ -861,22 +861,22 @@ export default function TestPage() {
               </span>
               <span
                 className={`text-sm px-2 py-1 rounded ${
-                  dataSource.includes('Real Data')
-                    ? 'bg-green-100 text-green-800'
-                    : dataSource.includes('Mock')
-                      ? 'bg-yellow-100 text-yellow-800'
-                      : 'bg-blue-100 text-blue-800'
+                  dataSource.includes("Real Data")
+                    ? "bg-green-100 text-green-800"
+                    : dataSource.includes("Mock")
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-blue-100 text-blue-800"
                 }`}
               >
                 {dataSource}
               </span>
             </div>
             <p className="text-sm text-gray-600">
-              {dataSource.includes('Real Data')
-                ? 'Materials Project APIから実際のデータを取得しました。'
-                : dataSource.includes('Mock')
-                  ? 'デモ用のサンプルデータを表示しています。'
-                  : 'AI分析により最適な素材を提案しています。'}
+              {dataSource.includes("Real Data")
+                ? "Materials Project APIから実際のデータを取得しました。"
+                : dataSource.includes("Mock")
+                  ? "デモ用のサンプルデータを表示しています。"
+                  : "AI分析により最適な素材を提案しています。"}
             </p>
             <p className="text-xs text-gray-500 mt-2">
               素材候補数: {sustainableMaterials.length}件

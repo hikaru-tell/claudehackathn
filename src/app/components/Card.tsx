@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 interface CardProps {
   title?: string;
@@ -7,7 +7,7 @@ interface CardProps {
   onClick?: () => void;
 }
 
-export function Card({ title, children, className = '', onClick }: CardProps) {
+export function Card({ title, children, className = "", onClick }: CardProps) {
   return (
     <div
       className={`bg-white rounded-xl shadow-lg p-6 ${className}`}

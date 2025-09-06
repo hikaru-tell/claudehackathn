@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card } from '../../components/Card';
-import { Button } from '../../components/Button';
-import { Scenario } from '../data';
+import { useState, useEffect } from "react";
+import { Card } from "../../components/Card";
+import { Button } from "../../components/Button";
+import { Scenario } from "../data";
 
 interface RequirementsData {
   scenarioId: string;
@@ -18,7 +18,7 @@ interface AnalysisResult {
     name: string;
     value: string;
     unit?: string;
-    importance: 'high' | 'medium' | 'low';
+    importance: "high" | "medium" | "low";
   }>;
 }
 
@@ -34,12 +34,12 @@ export function MaterialRequirementsForm({
   analysisResults = [],
 }: MaterialRequirementsFormProps) {
   const [performanceReqs, setPerformanceReqs] = useState(
-    scenario.requirements.performance
+    scenario.requirements.performance,
   );
   const [sustainabilityReqs, setSustainabilityReqs] = useState(
-    scenario.requirements.sustainability
+    scenario.requirements.sustainability,
   );
-  const [additionalNotes, setAdditionalNotes] = useState('');
+  const [additionalNotes, setAdditionalNotes] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 
@@ -48,15 +48,15 @@ export function MaterialRequirementsForm({
     if (analysisResults.length > 0) {
       const aiRequirements = analysisResults.flatMap((result) =>
         result.requirements.map(
-          (req) => `${req.name}: ${req.value}${req.unit || ''}`
-        )
+          (req) => `${req.name}: ${req.value}${req.unit || ""}`,
+        ),
       );
 
       // Add high importance requirements as performance requirements
       const highImportanceReqs = analysisResults.flatMap((result) =>
         result.requirements
-          .filter((req) => req.importance === 'high')
-          .map((req) => `${req.name}: ${req.value}${req.unit || ''}`)
+          .filter((req) => req.importance === "high")
+          .map((req) => `${req.name}: ${req.value}${req.unit || ""}`),
       );
 
       if (highImportanceReqs.length > 0) {
@@ -79,15 +79,15 @@ export function MaterialRequirementsForm({
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
-      const response = await fetch('/api/analyze-requirements', {
-        method: 'POST',
+      const response = await fetch("/api/analyze-requirements", {
+        method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Analysis failed');
+        throw new Error("Analysis failed");
       }
 
       const data = await response.json();
@@ -104,13 +104,13 @@ export function MaterialRequirementsForm({
 
           // Classify environment-related requirements as sustainability requirements
           if (
-            req.name.includes('environment') ||
-            req.name.includes('Environment') ||
-            req.name.includes('recycl') ||
-            req.name.includes('Recycl') ||
-            req.name.includes('CO2') ||
-            req.name.includes('energy') ||
-            req.name.includes('Energy')
+            req.name.includes("environment") ||
+            req.name.includes("Environment") ||
+            req.name.includes("recycl") ||
+            req.name.includes("Recycl") ||
+            req.name.includes("CO2") ||
+            req.name.includes("energy") ||
+            req.name.includes("Energy")
           ) {
             newSustainabilityReqs.push(reqText);
           } else {
@@ -127,8 +127,8 @@ export function MaterialRequirementsForm({
         ]);
       }
     } catch (error) {
-      console.error('File analysis error:', error);
-      alert('Failed to analyze file. Please try again.');
+      console.error("File analysis error:", error);
+      alert("Failed to analyze file. Please try again.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -176,7 +176,7 @@ export function MaterialRequirementsForm({
                   type="button"
                   onClick={() => {
                     const newReqs = performanceReqs.filter(
-                      (_, i) => i !== index
+                      (_, i) => i !== index,
                     );
                     setPerformanceReqs(newReqs);
                   }}
@@ -189,7 +189,7 @@ export function MaterialRequirementsForm({
             <button
               type="button"
               onClick={() => {
-                setPerformanceReqs([...performanceReqs, '']);
+                setPerformanceReqs([...performanceReqs, ""]);
               }}
               className="flex items-center space-x-2 px-4 py-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg border-2 border-dashed border-green-300 hover:border-green-400 transition-colors w-full"
             >
@@ -226,7 +226,7 @@ export function MaterialRequirementsForm({
                   type="button"
                   onClick={() => {
                     const newReqs = sustainabilityReqs.filter(
-                      (_, i) => i !== index
+                      (_, i) => i !== index,
                     );
                     setSustainabilityReqs(newReqs);
                   }}
@@ -239,7 +239,7 @@ export function MaterialRequirementsForm({
             <button
               type="button"
               onClick={() => {
-                setSustainabilityReqs([...sustainabilityReqs, '']);
+                setSustainabilityReqs([...sustainabilityReqs, ""]);
               }}
               className="flex items-center space-x-2 px-4 py-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg border-2 border-dashed border-green-300 hover:border-green-400 transition-colors w-full"
             >

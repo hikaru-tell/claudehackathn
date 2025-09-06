@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import {
   ExtractedRequirements,
   MaterialComposition,
@@ -6,7 +6,7 @@ import {
   DeepResearchResult,
   DeepResearchMaterial,
   MaterialCitation,
-} from '../types';
+} from "../types";
 
 // OpenAI API設定
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -21,7 +21,7 @@ export interface GPTSearchRequest {
 export function generateDeepResearchPrompt(
   requirements: ExtractedRequirements,
   currentMaterials: MaterialComposition,
-  customQuery?: string
+  customQuery?: string,
 ): string {
   const { composition, properties } = currentMaterials;
 
@@ -32,12 +32,12 @@ export function generateDeepResearchPrompt(
   }
   if (requirements.oxygenPermeability) {
     performanceReqs.push(
-      `酸素透過率: ${requirements.oxygenPermeability} cc/m²·day·atm以下`
+      `酸素透過率: ${requirements.oxygenPermeability} cc/m²·day·atm以下`,
     );
   }
   if (requirements.waterVaporPermeability) {
     performanceReqs.push(
-      `水蒸気透過率: ${requirements.waterVaporPermeability} g/m²·day以下`
+      `水蒸気透過率: ${requirements.waterVaporPermeability} g/m²·day以下`,
     );
   }
   if (requirements.heatResistance) {
@@ -53,11 +53,11 @@ export function generateDeepResearchPrompt(
 You are a specialized researcher in packaging materials. Please investigate the latest research papers and practical implementation cases under the following conditions:
 
 [Current Material]
-- Composition: ${composition || 'Unknown'}
-- Properties: ${properties?.join(', ') || 'Unknown'}
+- Composition: ${composition || "Unknown"}
+- Properties: ${properties?.join(", ") || "Unknown"}
 
 [Performance Requirements]
-${performanceReqs.join('\n')}
+${performanceReqs.join("\n")}
 
 [Research Items]
 1. Latest material research trends since 2020
@@ -105,15 +105,15 @@ Please provide concrete material names, manufacturers, physical property data, a
 `;
 
   console.log(
-    '🧠 Generated Deep Research Prompt (preview):',
-    prompt.substring(0, 200) + '...'
+    "🧠 Generated Deep Research Prompt (preview):",
+    prompt.substring(0, 200) + "...",
   );
   return prompt;
 }
 
 // Deep Research結果をパース
 export function parseDeepResearchResult(
-  researchText: string
+  researchText: string,
 ): DeepResearchResult {
   const materials: DeepResearchMaterial[] = [];
   const trends: string[] = [];
@@ -125,18 +125,18 @@ export function parseDeepResearchResult(
 
   sections.forEach((section) => {
     // 推奨素材の抽出（引用元情報付き）
-    if (section.includes('推奨素材') || section.includes('TOP')) {
+    if (section.includes("推奨素材") || section.includes("TOP")) {
       const materialBlocks = section.split(/素材名[:：]/);
 
       materialBlocks.forEach((block) => {
         if (block.trim()) {
-          const lines = block.split('\n');
+          const lines = block.split("\n");
           const materialName = lines[0]?.trim();
 
-          if (materialName && !materialName.includes('推奨素材')) {
+          if (materialName && !materialName.includes("推奨素材")) {
             // 引用元を探す
             const citationMatch = block.match(
-              /引用元[:：]?\s*\[?([^\]\n]+)\]?/
+              /引用元[:：]?\s*\[?([^\]\n]+)\]?/,
             );
             const materialCitations: MaterialCitation[] = [];
 
@@ -144,7 +144,7 @@ export function parseDeepResearchResult(
               const citationText = citationMatch[1];
               // 簡易的な引用解析
               const citationParts = citationText
-                .split(',')
+                .split(",")
                 .map((s) => s.trim());
 
               if (citationParts.length >= 2) {
@@ -152,15 +152,15 @@ export function parseDeepResearchResult(
                   title: citationParts[0],
                   authors: citationParts[1],
                   year: parseInt(citationParts[2]) || new Date().getFullYear(),
-                  type: 'paper',
+                  type: "paper",
                 });
               }
             }
 
             materials.push({
               name: materialName.split(/[,、]/)[0].trim(),
-              source: 'OpenAI Deep Research',
-              confidence: 'high',
+              source: "OpenAI Deep Research",
+              confidence: "high",
               citations:
                 materialCitations.length > 0 ? materialCitations : undefined,
             });
@@ -170,33 +170,33 @@ export function parseDeepResearchResult(
     }
 
     // 技術トレンドの抽出
-    if (section.includes('トレンド') || section.includes('動向')) {
+    if (section.includes("トレンド") || section.includes("動向")) {
       const trendLines = section
-        .split('\n')
-        .filter((line) => line.includes('-') || line.includes('・'));
+        .split("\n")
+        .filter((line) => line.includes("-") || line.includes("・"));
       trends.push(
-        ...trendLines.map((line) => line.replace(/^[-・]\s*/, '').trim())
+        ...trendLines.map((line) => line.replace(/^[-・]\s*/, "").trim()),
       );
     }
 
     // 考慮事項の抽出
-    if (section.includes('考慮') || section.includes('課題')) {
+    if (section.includes("考慮") || section.includes("課題")) {
       const considerationLines = section
-        .split('\n')
-        .filter((line) => line.includes('-') || line.includes('・'));
+        .split("\n")
+        .filter((line) => line.includes("-") || line.includes("・"));
       considerations.push(
         ...considerationLines.map((line) =>
-          line.replace(/^[-・]\s*/, '').trim()
-        )
+          line.replace(/^[-・]\s*/, "").trim(),
+        ),
       );
     }
 
     // 引用文献リストの抽出
-    if (section.includes('引用文献') || section.includes('文献リスト')) {
-      const citationLines = section.split('\n').slice(1);
+    if (section.includes("引用文献") || section.includes("文献リスト")) {
+      const citationLines = section.split("\n").slice(1);
 
       citationLines.forEach((line) => {
-        if (line.trim() && !line.startsWith('#')) {
+        if (line.trim() && !line.startsWith("#")) {
           // 各種パターンで引用を解析
           const patterns = [
             // パターン1: "タイトル" (著者, 年)
@@ -214,11 +214,11 @@ export function parseDeepResearchResult(
                 title: match[1].trim(),
                 authors: match[2].trim(),
                 year: parseInt(match[3]),
-                type: line.includes('特許')
-                  ? 'patent'
-                  : line.includes('レポート')
-                    ? 'report'
-                    : 'paper',
+                type: line.includes("特許")
+                  ? "patent"
+                  : line.includes("レポート")
+                    ? "report"
+                    : "paper",
               });
               break;
             }
@@ -243,8 +243,8 @@ export function parseDeepResearchResult(
         if (!materials.some((m) => m.name === match)) {
           materials.push({
             name: match,
-            source: 'OpenAI Deep Research (Pattern Match)',
-            confidence: 'medium',
+            source: "OpenAI Deep Research (Pattern Match)",
+            confidence: "medium",
           });
         }
       });
@@ -261,8 +261,8 @@ export function parseDeepResearchResult(
       const existingCitation = citations.find(
         (c) =>
           !c.url &&
-          (c.title?.toLowerCase().includes(urlDomain.split('.')[0]) ||
-            c.authors?.toLowerCase().includes(urlDomain.split('.')[0]))
+          (c.title?.toLowerCase().includes(urlDomain.split(".")[0]) ||
+            c.authors?.toLowerCase().includes(urlDomain.split(".")[0])),
       );
 
       if (existingCitation) {
@@ -272,7 +272,7 @@ export function parseDeepResearchResult(
         citations.push({
           title: `Online Resource: ${urlDomain}`,
           url: url,
-          type: 'website',
+          type: "website",
           year: new Date().getFullYear(),
         });
       }
@@ -293,37 +293,37 @@ export function parseDeepResearchResult(
 export async function executeDeepResearch(
   requirements: ExtractedRequirements,
   currentMaterials: MaterialComposition,
-  customQuery?: string
+  customQuery?: string,
 ): Promise<DeepResearchResult | null> {
   if (!OPENAI_API_KEY) {
-    console.log('⚠️ OpenAI API key not configured, skipping deep research');
+    console.log("⚠️ OpenAI API key not configured, skipping deep research");
     return null;
   }
 
   try {
-    console.log('🔬 Starting OpenAI Deep Research...');
+    console.log("🔬 Starting OpenAI Deep Research...");
     const prompt = generateDeepResearchPrompt(
       requirements,
       currentMaterials,
-      customQuery
+      customQuery,
     );
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4-turbo-preview',
+        model: "gpt-4-turbo-preview",
         messages: [
           {
-            role: 'system',
+            role: "system",
             content:
-              'You are a materials science expert specializing in sustainable packaging materials. Provide detailed, accurate, and up-to-date information based on recent research and industry developments. Always respond in Japanese.',
+              "You are a materials science expert specializing in sustainable packaging materials. Provide detailed, accurate, and up-to-date information based on recent research and industry developments. Always respond in Japanese.",
           },
           {
-            role: 'user',
+            role: "user",
             content: prompt,
           },
         ],
@@ -334,19 +334,19 @@ export async function executeDeepResearch(
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('OpenAI API error:', response.status, errorData);
+      console.error("OpenAI API error:", response.status, errorData);
       return null;
     }
 
     const data = await response.json();
     const researchResult = data.choices[0]?.message?.content;
 
-    console.log('✅ Deep Research completed');
+    console.log("✅ Deep Research completed");
 
     // 研究結果を構造化データに変換
     return parseDeepResearchResult(researchResult);
   } catch (error) {
-    console.error('Deep Research error:', error);
+    console.error("Deep Research error:", error);
     return null;
   }
 }
@@ -357,19 +357,19 @@ export async function POST(req: NextRequest) {
     const body: GPTSearchRequest = await req.json();
     const { currentMaterials, requirements, searchQuery } = body;
 
-    console.log('🤖 GPT search started...');
+    console.log("🤖 GPT search started...");
 
     // 要件を簡易的に抽出
     const extractedRequirements: ExtractedRequirements = {};
     requirements.forEach((req) => {
       const value = parseFloat(req.value);
-      if (req.name.includes('引張強度'))
+      if (req.name.includes("引張強度"))
         extractedRequirements.tensileStrength = value;
-      if (req.name.includes('酸素透過率'))
+      if (req.name.includes("酸素透過率"))
         extractedRequirements.oxygenPermeability = value;
-      if (req.name.includes('水蒸気透過率'))
+      if (req.name.includes("水蒸気透過率"))
         extractedRequirements.waterVaporPermeability = value;
-      if (req.name.includes('耐熱温度'))
+      if (req.name.includes("耐熱温度"))
         extractedRequirements.heatResistance = value;
     });
 
@@ -377,16 +377,16 @@ export async function POST(req: NextRequest) {
     const researchResult = await executeDeepResearch(
       extractedRequirements,
       currentMaterials,
-      searchQuery
+      searchQuery,
     );
 
     if (!researchResult) {
       return NextResponse.json(
         {
-          error: 'OpenAI API not available',
-          message: 'Please configure OPENAI_API_KEY in environment variables',
+          error: "OpenAI API not available",
+          message: "Please configure OPENAI_API_KEY in environment variables",
         },
-        { status: 503 }
+        { status: 503 },
       );
     }
 
@@ -398,20 +398,20 @@ export async function POST(req: NextRequest) {
           generateDeepResearchPrompt(
             extractedRequirements,
             currentMaterials,
-            searchQuery
-          ).substring(0, 500) + '...',
-        model: 'gpt-4-turbo-preview',
+            searchQuery,
+          ).substring(0, 500) + "...",
+        model: "gpt-4-turbo-preview",
         timestamp: new Date().toISOString(),
       },
     });
   } catch (error) {
-    console.error('GPT search error:', error);
+    console.error("GPT search error:", error);
     return NextResponse.json(
       {
-        error: 'GPT search failed',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        error: "GPT search failed",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

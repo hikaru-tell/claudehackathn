@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { Header } from '../components/Header';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
-import { ProposalCard } from './ProposalCard';
-import { ComparisonChart } from './ComparisonChart';
-import { SustainabilityChart } from './SustainabilityChart';
-import { Dialog } from './Dialog';
-import { ExperimentPlanReport } from './ExperimentPlanReport';
-import { scenarios } from '../scenarios/data';
-import { generateMockProposals } from './mockData';
-import type { ExperimentPlan } from '../api/experiment-plan/route';
+import { useState, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Header } from "../components/Header";
+import { Card } from "../components/Card";
+import { Button } from "../components/Button";
+import { ProposalCard } from "./ProposalCard";
+import { ComparisonChart } from "./ComparisonChart";
+import { SustainabilityChart } from "./SustainabilityChart";
+import { Dialog } from "./Dialog";
+import { ExperimentPlanReport } from "./ExperimentPlanReport";
+import { scenarios } from "../scenarios/data";
+import { generateMockProposals } from "./mockData";
+import type { ExperimentPlan } from "../api/experiment-plan/route";
 
 interface RecommendedMaterial {
   materialName: string;
@@ -33,7 +33,7 @@ interface RecommendedMaterial {
 export default function ProposalsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const scenarioId = searchParams.get('scenario');
+  const scenarioId = searchParams.get("scenario");
   const [isLoading, setIsLoading] = useState(true);
   const [proposals, setProposals] = useState<RecommendedMaterial[]>([]);
   const [showDialog, setShowDialog] = useState(false);
@@ -42,16 +42,16 @@ export default function ProposalsPage() {
   const [showReport, setShowReport] = useState(false);
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
   const [experimentPlan, setExperimentPlan] = useState<ExperimentPlan | null>(
-    null
+    null,
   );
 
   // State for progress management
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [currentStep, setCurrentStep] = useState<string>('');
+  const [currentStep, setCurrentStep] = useState<string>("");
 
   // Get URL parameters as strings (to prevent useEffect infinite loop)
-  const performanceReqsStr = searchParams.get('performanceReqs');
-  const currentMaterialsStr = searchParams.get('currentMaterials');
+  const performanceReqsStr = searchParams.get("performanceReqs");
+  const currentMaterialsStr = searchParams.get("currentMaterials");
 
   // Parse for display (only once outside useEffect)
   const performanceReqs = performanceReqsStr
@@ -64,7 +64,7 @@ export default function ProposalsPage() {
     const loadProposals = async () => {
       setIsLoading(true);
       setLoadingProgress(0);
-      setCurrentStep('Initializing...');
+      setCurrentStep("Initializing...");
 
       try {
         // Parse URL parameters inside useEffect
@@ -78,32 +78,32 @@ export default function ProposalsPage() {
         // Call actual totalAI API (if materials and requirements from URL parameters)
         if (currentMaterials && requirements.length > 0) {
           // Step 1: Generating filters (0-25%)
-          setCurrentStep('Generating filters...');
+          setCurrentStep("Generating filters...");
           setLoadingProgress(10);
           await new Promise((resolve) => setTimeout(resolve, 500));
           setLoadingProgress(25);
 
           // Step 2: Deep Research (25-50%)
-          setCurrentStep('Deep Research in progress...');
+          setCurrentStep("Deep Research in progress...");
           setLoadingProgress(30);
 
           // Step 3: Database search (50-75%)
           setTimeout(() => {
-            setCurrentStep('Searching database...');
+            setCurrentStep("Searching database...");
             setLoadingProgress(50);
           }, 1000);
 
           // Step 4: Total AI processing (75-100%)
           setTimeout(() => {
-            setCurrentStep('Total AI integration analysis...');
+            setCurrentStep("Total AI integration analysis...");
             setLoadingProgress(75);
           }, 2000);
 
           // Actual API call
-          const response = await fetch('/api/materials/totalAI', {
-            method: 'POST',
+          const response = await fetch("/api/materials/totalAI", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               currentMaterials,
@@ -118,36 +118,36 @@ export default function ProposalsPage() {
             setLoadingProgress(95);
 
             if (data.success && data.recommendations.length > 0) {
-              setCurrentStep('Complete!');
+              setCurrentStep("Complete!");
               setLoadingProgress(100);
               await new Promise((resolve) => setTimeout(resolve, 300));
               setProposals(data.recommendations);
             } else {
               // If API succeeded but no recommended materials, use mock data
-              const mockProposals = generateMockProposals(scenarioId || '');
+              const mockProposals = generateMockProposals(scenarioId || "");
               setProposals(mockProposals);
             }
           } else {
             // If API error, use mock data
-            console.error('Total AI API error:', response.status);
-            const mockProposals = generateMockProposals(scenarioId || '');
+            console.error("Total AI API error:", response.status);
+            const mockProposals = generateMockProposals(scenarioId || "");
             setProposals(mockProposals);
           }
         } else {
           // If URL parameters are incomplete, use mock data
-          setCurrentStep('Loading default data...');
+          setCurrentStep("Loading default data...");
           setLoadingProgress(50);
           await new Promise((resolve) => setTimeout(resolve, 1000));
-          const mockProposals = generateMockProposals(scenarioId || '');
+          const mockProposals = generateMockProposals(scenarioId || "");
           setLoadingProgress(100);
           await new Promise((resolve) => setTimeout(resolve, 300));
           setProposals(mockProposals);
         }
       } catch (error) {
-        console.error('Error loading proposals:', error);
+        console.error("Error loading proposals:", error);
         // If error, use mock data
-        setCurrentStep('Recovering from error...');
-        const mockProposals = generateMockProposals(scenarioId || '');
+        setCurrentStep("Recovering from error...");
+        const mockProposals = generateMockProposals(scenarioId || "");
         setProposals(mockProposals);
       } finally {
         setIsLoading(false);
@@ -172,8 +172,8 @@ export default function ProposalsPage() {
 
     try {
       // Get current material information
-      const currentMaterials = JSON.parse(currentMaterialsStr || '{}');
-      const performanceReqs = JSON.parse(performanceReqsStr || '[]');
+      const currentMaterials = JSON.parse(currentMaterialsStr || "{}");
+      const performanceReqs = JSON.parse(performanceReqsStr || "[]");
 
       const requestBody = {
         material: selectedProposal,
@@ -182,20 +182,20 @@ export default function ProposalsPage() {
       };
 
       console.log(
-        '🧪 Generating experiment plan for:',
-        selectedProposal.materialName
+        "🧪 Generating experiment plan for:",
+        selectedProposal.materialName,
       );
 
-      const response = await fetch('/api/experiment-plan', {
-        method: 'POST',
+      const response = await fetch("/api/experiment-plan", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate experiment plan');
+        throw new Error("Failed to generate experiment plan");
       }
 
       const data = await response.json();
@@ -204,11 +204,11 @@ export default function ProposalsPage() {
         setExperimentPlan(data.experimentPlan);
         setShowReport(true);
       } else {
-        throw new Error(data.error || 'Failed to generate experiment plan');
+        throw new Error(data.error || "Failed to generate experiment plan");
       }
     } catch (error) {
-      console.error('Error generating experiment plan:', error);
-      alert('Failed to generate experiment plan. Please try again.');
+      console.error("Error generating experiment plan:", error);
+      alert("Failed to generate experiment plan. Please try again.");
     } finally {
       setIsGeneratingReport(false);
     }
@@ -258,54 +258,54 @@ export default function ProposalsPage() {
                 {/* Progress Step Display */}
                 <div className="flex justify-between items-center mb-8">
                   <div
-                    className={`flex flex-col items-center ${loadingProgress >= 0 ? 'text-green-600' : 'text-gray-400'}`}
+                    className={`flex flex-col items-center ${loadingProgress >= 0 ? "text-green-600" : "text-gray-400"}`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${loadingProgress >= 25 ? 'bg-green-600 border-green-600 text-white' : loadingProgress >= 0 ? 'border-green-600' : 'border-gray-400'}`}
+                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${loadingProgress >= 25 ? "bg-green-600 border-green-600 text-white" : loadingProgress >= 0 ? "border-green-600" : "border-gray-400"}`}
                     >
-                      {loadingProgress >= 25 ? '✓' : '1'}
+                      {loadingProgress >= 25 ? "✓" : "1"}
                     </div>
                     <span className="text-xs mt-2">Filtering</span>
                   </div>
                   <div
-                    className={`flex-1 h-0.5 ${loadingProgress >= 25 ? 'bg-green-600' : 'bg-gray-300'}`}
+                    className={`flex-1 h-0.5 ${loadingProgress >= 25 ? "bg-green-600" : "bg-gray-300"}`}
                   />
 
                   <div
-                    className={`flex flex-col items-center ${loadingProgress >= 25 ? 'text-green-600' : 'text-gray-400'}`}
+                    className={`flex flex-col items-center ${loadingProgress >= 25 ? "text-green-600" : "text-gray-400"}`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${loadingProgress >= 50 ? 'bg-green-600 border-green-600 text-white' : loadingProgress >= 25 ? 'border-green-600' : 'border-gray-400'}`}
+                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${loadingProgress >= 50 ? "bg-green-600 border-green-600 text-white" : loadingProgress >= 25 ? "border-green-600" : "border-gray-400"}`}
                     >
-                      {loadingProgress >= 50 ? '✓' : '2'}
+                      {loadingProgress >= 50 ? "✓" : "2"}
                     </div>
                     <span className="text-xs mt-2">Deep Research</span>
                   </div>
                   <div
-                    className={`flex-1 h-0.5 ${loadingProgress >= 50 ? 'bg-green-600' : 'bg-gray-300'}`}
+                    className={`flex-1 h-0.5 ${loadingProgress >= 50 ? "bg-green-600" : "bg-gray-300"}`}
                   />
 
                   <div
-                    className={`flex flex-col items-center ${loadingProgress >= 50 ? 'text-green-600' : 'text-gray-400'}`}
+                    className={`flex flex-col items-center ${loadingProgress >= 50 ? "text-green-600" : "text-gray-400"}`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${loadingProgress >= 75 ? 'bg-green-600 border-green-600 text-white' : loadingProgress >= 50 ? 'border-green-600' : 'border-gray-400'}`}
+                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${loadingProgress >= 75 ? "bg-green-600 border-green-600 text-white" : loadingProgress >= 50 ? "border-green-600" : "border-gray-400"}`}
                     >
-                      {loadingProgress >= 75 ? '✓' : '3'}
+                      {loadingProgress >= 75 ? "✓" : "3"}
                     </div>
                     <span className="text-xs mt-2">DB Search</span>
                   </div>
                   <div
-                    className={`flex-1 h-0.5 ${loadingProgress >= 75 ? 'bg-green-600' : 'bg-gray-300'}`}
+                    className={`flex-1 h-0.5 ${loadingProgress >= 75 ? "bg-green-600" : "bg-gray-300"}`}
                   />
 
                   <div
-                    className={`flex flex-col items-center ${loadingProgress >= 75 ? 'text-green-600' : 'text-gray-400'}`}
+                    className={`flex flex-col items-center ${loadingProgress >= 75 ? "text-green-600" : "text-gray-400"}`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${loadingProgress >= 100 ? 'bg-green-600 border-green-600 text-white' : loadingProgress >= 75 ? 'border-green-600' : 'border-gray-400'}`}
+                      className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${loadingProgress >= 100 ? "bg-green-600 border-green-600 text-white" : loadingProgress >= 75 ? "border-green-600" : "border-gray-400"}`}
                     >
-                      {loadingProgress >= 100 ? '✓' : '4'}
+                      {loadingProgress >= 100 ? "✓" : "4"}
                     </div>
                     <span className="text-xs mt-2">Total AI</span>
                   </div>
@@ -356,17 +356,18 @@ export default function ProposalsPage() {
                 {/* Description text */}
                 <p className="text-gray-500 text-sm">
                   {loadingProgress < 25 &&
-                    'Analyzing requirements and generating filtering conditions...'}  
+                    "Analyzing requirements and generating filtering conditions..."}
                   {loadingProgress >= 25 &&
                     loadingProgress < 50 &&
-                    'Researching latest academic papers and practical applications...'}
+                    "Researching latest academic papers and practical applications..."}
                   {loadingProgress >= 50 &&
                     loadingProgress < 75 &&
-                    'Searching candidate materials from organic polymer database...'}
+                    "Searching candidate materials from organic polymer database..."}
                   {loadingProgress >= 75 &&
                     loadingProgress < 100 &&
-                    'AI is integrating all results and selecting optimal materials...'}
-                  {loadingProgress >= 100 && 'Analysis complete! Displaying results...'}
+                    "AI is integrating all results and selecting optimal materials..."}
+                  {loadingProgress >= 100 &&
+                    "Analysis complete! Displaying results..."}
                 </p>
               </div>
             </Card>
@@ -421,81 +422,81 @@ export default function ProposalsPage() {
                     const analysisData = [
                       {
                         fileName:
-                          'Film Specification - Product Code_ TK-FILM-2024-STD.pdf',
+                          "Film Specification - Product Code_ TK-FILM-2024-STD.pdf",
                         requirements: [
                           {
-                            name: 'Tensile Strength',
-                            value: '100',
-                            unit: 'N/15mm',
-                            importance: 'high',
+                            name: "Tensile Strength",
+                            value: "100",
+                            unit: "N/15mm",
+                            importance: "high",
                           },
                           {
-                            name: 'Elongation',
-                            value: '150',
-                            unit: '%',
-                            importance: 'medium',
+                            name: "Elongation",
+                            value: "150",
+                            unit: "%",
+                            importance: "medium",
                           },
                           {
-                            name: 'Impact Strength',
-                            value: '1.0',
-                            unit: 'J',
-                            importance: 'medium',
+                            name: "Impact Strength",
+                            value: "1.0",
+                            unit: "J",
+                            importance: "medium",
                           },
                           {
-                            name: 'Heat Seal Strength',
-                            value: '20',
-                            unit: 'N/15mm',
-                            importance: 'high',
+                            name: "Heat Seal Strength",
+                            value: "20",
+                            unit: "N/15mm",
+                            importance: "high",
                           },
                           {
-                            name: 'Oxygen Transmission Rate',
-                            value: '1.0',
-                            unit: 'cc/m²·day·atm',
-                            importance: 'high',
+                            name: "Oxygen Transmission Rate",
+                            value: "1.0",
+                            unit: "cc/m²·day·atm",
+                            importance: "high",
                           },
                           {
-                            name: 'Water Vapor Transmission Rate',
-                            value: '2.0',
-                            unit: 'g/m²·day',
-                            importance: 'high',
+                            name: "Water Vapor Transmission Rate",
+                            value: "2.0",
+                            unit: "g/m²·day",
+                            importance: "high",
                           },
                           {
-                            name: 'Light Blocking',
-                            value: '99',
-                            unit: '%',
-                            importance: 'high',
+                            name: "Light Blocking",
+                            value: "99",
+                            unit: "%",
+                            importance: "high",
                           },
                           {
-                            name: 'Heat Resistance Temperature',
-                            value: '120',
-                            unit: '℃',
-                            importance: 'high',
+                            name: "Heat Resistance Temperature",
+                            value: "120",
+                            unit: "℃",
+                            importance: "high",
                           },
                           {
-                            name: 'Cold Resistance Temperature',
-                            value: '-20',
-                            unit: '℃',
-                            importance: 'medium',
+                            name: "Cold Resistance Temperature",
+                            value: "-20",
+                            unit: "℃",
+                            importance: "medium",
                           },
                         ],
                         materials: {
-                          composition: 'PET(12μm)/Al-PET(12μm)/CPP(30μm)',
+                          composition: "PET(12μm)/Al-PET(12μm)/CPP(30μm)",
                           properties: [
-                            'Printability',
-                            'Mechanical Strength',
-                            'High Barrier Properties',
-                            'Light Blocking',
-                            'Heat Sealability',
-                            'Oil Resistance',
+                            "Printability",
+                            "Mechanical Strength",
+                            "High Barrier Properties",
+                            "Light Blocking",
+                            "Heat Sealability",
+                            "Oil Resistance",
                           ],
-                          analysisConfidence: 'high',
+                          analysisConfidence: "high",
                         },
                       },
                     ];
 
                     // Navigate to test page
                     const encodedAnalysis = encodeURIComponent(
-                      JSON.stringify(analysisData)
+                      JSON.stringify(analysisData),
                     );
                     router.push(`/test?analysis=${encodedAnalysis}`);
                   }}
