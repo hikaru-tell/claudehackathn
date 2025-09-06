@@ -191,7 +191,98 @@ export default function ProposalsPage() {
               要件を修正する
             </Button>
             {!isLoading && (
-              <Button onClick={() => window.print()}>レポートを印刷</Button>
+              <div className="flex gap-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    // PDF分析結果のモックデータを作成
+                    const analysisData = [
+                      {
+                        fileName:
+                          'フィルム規格書 - 製品コード_ TK-FILM-2024-STD.pdf',
+                        requirements: [
+                          {
+                            name: '引張強度',
+                            value: '100',
+                            unit: 'N/15mm',
+                            importance: 'high',
+                          },
+                          {
+                            name: '伸び率',
+                            value: '150',
+                            unit: '%',
+                            importance: 'medium',
+                          },
+                          {
+                            name: '衝撃強度',
+                            value: '1.0',
+                            unit: 'J',
+                            importance: 'medium',
+                          },
+                          {
+                            name: 'ヒートシール強度',
+                            value: '20',
+                            unit: 'N/15mm',
+                            importance: 'high',
+                          },
+                          {
+                            name: '酸素透過率',
+                            value: '1.0',
+                            unit: 'cc/m²・day・atm',
+                            importance: 'high',
+                          },
+                          {
+                            name: '水蒸気透過率',
+                            value: '2.0',
+                            unit: 'g/m²・day',
+                            importance: 'high',
+                          },
+                          {
+                            name: '遮光性',
+                            value: '99',
+                            unit: '%',
+                            importance: 'high',
+                          },
+                          {
+                            name: '耐熱温度',
+                            value: '120',
+                            unit: '℃',
+                            importance: 'high',
+                          },
+                          {
+                            name: '耐寒温度',
+                            value: '-20',
+                            unit: '℃',
+                            importance: 'medium',
+                          },
+                        ],
+                        materials: {
+                          composition: 'PET(12μm)/Al-PET(12μm)/CPP(30μm)',
+                          properties: [
+                            '印刷適性',
+                            '機械的強度',
+                            '高バリア性',
+                            '遮光性',
+                            'ヒートシール性',
+                            '耐油性',
+                          ],
+                          analysisConfidence: 'high',
+                        },
+                      },
+                    ];
+
+                    // testページへ遷移
+                    const encodedAnalysis = encodeURIComponent(
+                      JSON.stringify(analysisData)
+                    );
+                    router.push(`/test?analysis=${encodedAnalysis}`);
+                  }}
+                  className="bg-green-600 text-white hover:bg-green-700"
+                >
+                  Materials Projectで詳細分析
+                </Button>
+                <Button onClick={() => window.print()}>レポートを印刷</Button>
+              </div>
             )}
           </div>
         </div>
