@@ -50,6 +50,8 @@ export default function TestPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dataSource, setDataSource] = useState<string>('Loading...');
+  const [deepResearchResult, setDeepResearchResult] = useState<any>(null);
+  const [deepResearchLoading, setDeepResearchLoading] = useState(false);
 
   useEffect(() => {
     // URLパラメータから分析データを取得
@@ -61,16 +63,42 @@ export default function TestPage() {
         try {
           parsed = JSON.parse(analysisParam);
         } catch {
-          // パースできない場合はデコードしてから再度パース
-          try {
-            const decoded = decodeURIComponent(analysisParam);
-            parsed = JSON.parse(decoded);
-          } catch {
-            // それでもダメな場合は二重デコードを試みる
-            const decoded = decodeURIComponent(
-              decodeURIComponent(analysisParam)
+          // パースできない場合は段階的にデコードを試みる
+          let decodedParam = analysisParam;
+          let attempts = 0;
+          const maxAttempts = 3;
+
+          while (attempts < maxAttempts) {
+            try {
+              // 安全にデコードを試みる
+              const testDecode = decodeURIComponent(decodedParam);
+              if (testDecode === decodedParam) {
+                // これ以上デコードできない場合は終了
+                break;
+              }
+              decodedParam = testDecode;
+              attempts++;
+
+              // デコード後にJSONパースを試行
+              try {
+                parsed = JSON.parse(decodedParam);
+                break; // 成功したら終了
+              } catch {
+                // パースに失敗した場合は次のデコードを試行
+                continue;
+              }
+            } catch (decodeError) {
+              // デコードエラーが発生した場合は終了
+              console.warn('Decode attempt failed:', decodeError);
+              break;
+            }
+          }
+
+          // 全ての試行が失敗した場合はエラーを投げる
+          if (!parsed) {
+            throw new Error(
+              'Failed to parse analysis parameter after multiple decode attempts'
             );
-            parsed = JSON.parse(decoded);
           }
         }
 
@@ -221,17 +249,57 @@ export default function TestPage() {
     }
   }, [analysisData]);
 
+  // Deep Research APIを実行
+  const runDeepResearch = async () => {
+    if (analysisData.length === 0) {
+      console.log('No analysis data available for Deep Research');
+      return;
+    }
+
+    setDeepResearchLoading(true);
+    setDeepResearchResult(null);
+
+    try {
+      console.log('🔬 Running Deep Research with PDF analysis data...');
+
+      const response = await fetch('/api/materials/GPTsearch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentMaterials: analysisData[0].materials,
+          requirements: analysisData[0].requirements,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Deep Research Response:', data);
+      setDeepResearchResult(data);
+    } catch (error: any) {
+      console.error('Deep Research error:', error);
+      setError(`Deep Research エラー: ${error.message}`);
+    } finally {
+      setDeepResearchLoading(false);
+    }
+  };
+
   const fetchSustainableMaterials = async () => {
     setLoading(true);
     try {
-      // タイムアウトを設定（3秒）
+      // タイムアウトを設定（10秒）
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        controller.abort();
+        controller.abort('Request timeout - switching to mock data');
         console.log('Request timeout, using mock data');
-      }, 3000);
+      }, 10000);
 
-      const response = await fetch('/api/materials/search', {
+      const response = await fetch('/api/materials/DBsearch', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -254,17 +322,30 @@ export default function TestPage() {
 
       if (data.materials && data.materials.length > 0) {
         setSustainableMaterials(data.materials);
-        setDataSource(data.metadata?.dataSource || 'Materials Project API');
+        setDataSource(data.source || 'Organic Polymer Database');
+        console.log(
+          '✅ Successfully loaded materials from database:',
+          data.materials.length,
+          'items'
+        );
       } else {
         // データが空の場合はモックデータを使用
         setSustainableMaterials(getMockSustainableMaterials());
         setDataSource('Mock Data (Empty Response)');
+        console.log('⚠️ No materials found in database, using mock data');
       }
-    } catch (error) {
-      console.error('Error fetching sustainable materials:', error);
-      // エラー時はすぐにモックデータを表示
-      setSustainableMaterials(getMockSustainableMaterials());
-      setDataSource('Mock Data (Fallback)');
+    } catch (error: any) {
+      // AbortErrorの場合は特別な処理
+      if (error.name === 'AbortError') {
+        console.log('Request was aborted due to timeout, using mock data');
+        setSustainableMaterials(getMockSustainableMaterials());
+        setDataSource('Mock Data (Request Timeout)');
+      } else {
+        console.error('Error fetching sustainable materials:', error);
+        // その他のエラー時はモックデータを表示
+        setSustainableMaterials(getMockSustainableMaterials());
+        setDataSource('Mock Data (Fallback)');
+      }
     } finally {
       setLoading(false);
     }
@@ -404,6 +485,230 @@ export default function TestPage() {
                   </div>
                 ))}
             </div>
+
+            {/* Deep Research ボタン */}
+            <div className="mt-6 flex gap-4">
+              <button
+                onClick={runDeepResearch}
+                disabled={deepResearchLoading}
+                className="px-6 py-2 bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-lg hover:from-green-700 hover:to-blue-700 disabled:opacity-50 transition-all duration-200"
+              >
+                {deepResearchLoading ? (
+                  <span className="flex items-center">
+                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                    処理中...
+                  </span>
+                ) : (
+                  '🔬 Deep Research で最新材料を調査'
+                )}
+              </button>
+
+              <button
+                onClick={fetchSustainableMaterials}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200"
+              >
+                🔄 素材候補を再検索
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Deep Research結果 */}
+        {deepResearchResult && (
+          <div className="mb-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow">
+            <h2 className="text-xl font-semibold mb-4 text-green-800">
+              🤖 Deep Research 結果
+            </h2>
+
+            {deepResearchResult.result && (
+              <>
+                {/* 推奨材料 */}
+                {deepResearchResult.result.materials?.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-semibold mb-3 text-gray-700">
+                      📦 AIが推奨する最新材料
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      {deepResearchResult.result.materials.map(
+                        (material: any, idx: number) => (
+                          <div
+                            key={idx}
+                            className="bg-white p-3 rounded-lg shadow-sm"
+                          >
+                            <div className="font-medium text-green-700">
+                              {material.name}
+                            </div>
+                            <div className="text-sm text-gray-600 mt-1">
+                              信頼度:{' '}
+                              <span
+                                className={`font-semibold ${
+                                  material.confidence === 'high'
+                                    ? 'text-green-600'
+                                    : material.confidence === 'medium'
+                                      ? 'text-yellow-600'
+                                      : 'text-gray-600'
+                                }`}
+                              >
+                                {material.confidence}
+                              </span>
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                              {material.source}
+                            </div>
+                            {/* 引用元情報 */}
+                            {material.citations &&
+                              material.citations.length > 0 && (
+                                <div className="mt-2 pt-2 border-t border-gray-200">
+                                  <div className="text-xs text-gray-600">
+                                    📚 引用元:
+                                  </div>
+                                  {material.citations.map(
+                                    (citation: any, cidx: number) => (
+                                      <div
+                                        key={cidx}
+                                        className="text-xs text-gray-500 mt-1"
+                                      >
+                                        {citation.title}
+                                        {citation.authors &&
+                                          ` - ${citation.authors}`}
+                                        {citation.year && ` (${citation.year})`}
+                                      </div>
+                                    )
+                                  )}
+                                </div>
+                              )}
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* 技術トレンド */}
+                {deepResearchResult.result.trends?.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-semibold mb-3 text-gray-700">
+                      📈 最新の技術トレンド
+                    </h3>
+                    <ul className="space-y-2">
+                      {deepResearchResult.result.trends
+                        .slice(0, 5)
+                        .map((trend: string, idx: number) => (
+                          <li
+                            key={idx}
+                            className="text-sm bg-white p-2 rounded flex items-start"
+                          >
+                            <span className="text-blue-500 mr-2">•</span>
+                            <span>{trend}</span>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* 考慮事項 */}
+                {deepResearchResult.result.considerations?.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-semibold mb-3 text-gray-700">
+                      ⚠️ 実装上の考慮事項
+                    </h3>
+                    <ul className="space-y-2">
+                      {deepResearchResult.result.considerations
+                        .slice(0, 5)
+                        .map((consideration: string, idx: number) => (
+                          <li
+                            key={idx}
+                            className="text-sm bg-yellow-50 p-2 rounded flex items-start"
+                          >
+                            <span className="text-orange-500 mr-2">!</span>
+                            <span>{consideration}</span>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* 引用文献リスト */}
+                {deepResearchResult.result.citations?.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-semibold mb-3 text-gray-700">
+                      📚 引用文献・データソース
+                    </h3>
+                    <div className="bg-white rounded-lg p-4 max-h-60 overflow-y-auto">
+                      {deepResearchResult.result.citations.map(
+                        (citation: any, idx: number) => (
+                          <div
+                            key={idx}
+                            className="mb-3 pb-3 border-b border-gray-100 last:border-b-0"
+                          >
+                            <div className="flex items-start">
+                              <span className="text-xs bg-gray-200 px-2 py-1 rounded mr-2">
+                                {idx + 1}
+                              </span>
+                              <div className="flex-1">
+                                <div className="text-sm font-medium text-gray-800">
+                                  {citation.title}
+                                </div>
+                                {citation.authors && (
+                                  <div className="text-xs text-gray-600 mt-1">
+                                    著者: {citation.authors}
+                                  </div>
+                                )}
+                                {citation.organization && (
+                                  <div className="text-xs text-gray-600">
+                                    機関: {citation.organization}
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-3 mt-1">
+                                  {citation.year && (
+                                    <span className="text-xs text-gray-500">
+                                      {citation.year}年
+                                    </span>
+                                  )}
+                                  <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
+                                    {citation.type === 'paper'
+                                      ? '論文'
+                                      : citation.type === 'patent'
+                                        ? '特許'
+                                        : citation.type === 'report'
+                                          ? 'レポート'
+                                          : citation.type === 'website'
+                                            ? 'ウェブ'
+                                            : 'その他'}
+                                  </span>
+                                </div>
+                                {citation.url && (
+                                  <a
+                                    href={citation.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-blue-600 hover:underline mt-1 inline-block"
+                                  >
+                                    🔗 リンクを開く
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* メタデータ */}
+            {deepResearchResult.metadata && (
+              <div className="mt-4 pt-4 border-t border-gray-300">
+                <p className="text-xs text-gray-600">
+                  モデル: {deepResearchResult.metadata.model} | 生成時刻:{' '}
+                  {new Date(
+                    deepResearchResult.metadata.timestamp
+                  ).toLocaleString('ja-JP')}
+                </p>
+              </div>
+            )}
           </div>
         )}
 
