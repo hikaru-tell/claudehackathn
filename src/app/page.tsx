@@ -17,15 +17,15 @@ export default function Home() {
           {/* Hero Section */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-[var(--brand-base)] mb-4">
-              持続可能な包装材料への
-              <span className="text-[var(--brand-main)]">第一歩</span>
+              Your First Step to
+              <span className="text-[var(--brand-main)]">Sustainable Packaging</span>
             </h1>
             <p className="text-xl text-[var(--brand-base)]/70 mb-8">
-              AI がサステナブルな代替素材を提案し、
-              環境負荷を削減する最適な包装材料を見つけます
+              AI suggests sustainable alternative materials and finds
+              the optimal packaging to reduce environmental impact
             </p>
             <Button size="lg" onClick={() => router.push('/scenarios')}>
-              分析を開始する
+              Start Analysis
             </Button>
           </div>
 
@@ -34,50 +34,50 @@ export default function Home() {
             <Card className="text-center">
               <div className="text-4xl mb-4">🎯</div>
               <h3 className="text-lg font-bold text-[var(--brand-base)] mb-2">
-                簡単3ステップ
+                Easy 3 Steps
               </h3>
               <p className="text-[var(--brand-base)]/70">
-                製品を選んで、要件を入力し、AIの提案を確認するだけ
+                Simply select a product, input requirements, and review AI recommendations
               </p>
             </Card>
 
             <Card className="text-center">
               <div className="text-4xl mb-4">🌱</div>
               <h3 className="text-lg font-bold text-[var(--brand-base)] mb-2">
-                環境配慮
+                Environmental Care
               </h3>
               <p className="text-[var(--brand-base)]/70">
-                CO2削減、リサイクル性、生分解性を総合評価
+                Comprehensive evaluation of CO2 reduction, recyclability, and biodegradability
               </p>
             </Card>
 
             <Card className="text-center">
               <div className="text-4xl mb-4">📊</div>
               <h3 className="text-lg font-bold text-[var(--brand-base)] mb-2">
-                データ駆動
+                Data-Driven
               </h3>
               <p className="text-[var(--brand-base)]/70">
-                最新の素材データベースとWeb情報を統合分析
+                Integrated analysis of latest material databases and web information
               </p>
             </Card>
           </div>
 
           {/* Sample Scenarios */}
-          <Card title="対応製品カテゴリー">
+          <Card title="Supported Product Categories">
             <div className="grid md:grid-cols-2 gap-4">
               {[
                 {
                   icon: '🥔',
-                  name: 'ポテトチップス袋',
-                  desc: '内容物保護と長期保存',
+                  name: 'Potato Chip Bags',
+                  desc: 'Content protection and long-term storage',
                 },
-                { icon: '🧊', name: '冷凍食品パウチ', desc: '耐寒性と密封性' },
+                { icon: '🧊', name: 'Frozen Food Pouches', desc: 'Cold resistance and sealing' },
                 {
                   icon: '☕',
-                  name: 'コーヒー豆包装',
-                  desc: '酸素バリアと香り保持',
+                  name: 'Coffee Bean Packaging',
+                  desc: 'Oxygen barrier and aroma retention',
                 },
-                { icon: '🥤', name: '飲料ボトル', desc: '透明性と炭酸保持' },
+                { icon: '🥤', name: 'Beverage Bottles', desc: 'Transparency and carbonation retention' },
               ].map((item, index) => (
                 <div
                   key={index}

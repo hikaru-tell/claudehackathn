@@ -27,11 +27,11 @@ export default function ScenariosPage() {
 
   const analyzeFiles = async (files: File[]) => {
     const analysisResults = [];
-    console.log('AI分析開始: ファイル数', files.length);
+    console.log('AI analysis started: Number of files', files.length);
 
     for (const file of files) {
       try {
-        console.log(`分析中: ${file.name}`);
+        console.log(`Analyzing: ${file.name}`);
         const formData = new FormData();
         formData.append('file', file);
 
@@ -40,25 +40,25 @@ export default function ScenariosPage() {
           body: formData,
         });
 
-        console.log(`API応答ステータス: ${response.status}`);
+        console.log(`API response status: ${response.status}`);
 
         if (response.ok) {
           const result = await response.json();
-          console.log('AI分析結果:', result);
+          console.log('AI analysis result:', result);
           analysisResults.push({
             fileName: file.name,
             ...result,
           });
         } else {
           const errorText = await response.text();
-          console.error(`APIエラー: ${response.status}`, errorText);
+          console.error(`API error: ${response.status}`, errorText);
         }
       } catch (error) {
-        console.error(`ファイル ${file.name} の分析エラー:`, error);
+        console.error(`Error analyzing file ${file.name}:`, error);
       }
     }
 
-    console.log('全分析結果:', analysisResults);
+    console.log('All analysis results:', analysisResults);
     return analysisResults;
   };
 
@@ -73,7 +73,7 @@ export default function ScenariosPage() {
           analysisResults = await analyzeFiles(uploadedFiles);
         }
 
-        // 分析結果をクエリパラメータで渡す
+        // Pass analysis results as query parameters
         const queryParams = new URLSearchParams();
         if (analysisResults.length > 0) {
           queryParams.set('analysis', JSON.stringify(analysisResults));
@@ -82,8 +82,8 @@ export default function ScenariosPage() {
         const url = `/scenarios/${selectedScenario}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
         router.push(url);
       } catch (error) {
-        console.error('分析エラー:', error);
-        // エラーが発生しても次のページに進む
+        console.error('Analysis error:', error);
+        // Proceed to next page even if error occurs
         router.push(`/scenarios/${selectedScenario}`);
       } finally {
         setIsAnalyzing(false);
@@ -99,18 +99,18 @@ export default function ScenariosPage() {
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-2">
-              製品シナリオを選択
+              Select Product Scenario
             </h2>
             <p className="text-gray-600">
-              分析したい製品カテゴリーを選んで、製品情報をアップロードしてください
+              Choose a product category to analyze and upload product information
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* カテゴリ選択セクション */}
+            {/* Category selection section */}
             <div className="flex flex-col">
               <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                1. カテゴリを選択
+                1. Select Category
               </h3>
               <div className="overflow-y-auto max-h-[600px] pr-2 space-y-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                 {scenarios.map((scenario) => (
@@ -136,7 +136,7 @@ export default function ScenariosPage() {
                           <div className="space-y-1">
                             <div className="text-xs">
                               <span className="font-semibold text-gray-700">
-                                現在の素材:
+                                Current Material:
                               </span>
                               <span className="text-gray-600 ml-1">
                                 {scenario.currentMaterial.composition}
@@ -162,10 +162,10 @@ export default function ScenariosPage() {
               </div>
             </div>
 
-            {/* ファイルアップロードセクション */}
+            {/* File upload section */}
             <div>
               <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                2. 製品ファイルをアップロード（任意）
+                2. Upload Product Files (Optional)
               </h3>
               <Card>
                 <div className="space-y-4">
@@ -194,24 +194,24 @@ export default function ScenariosPage() {
                     </svg>
 
                     <p className="text-sm text-gray-600 mb-2">
-                      ファイルをドラッグ＆ドロップ
+                      Drag & Drop Files
                     </p>
                     <Button
                       onClick={() => fileInputRef.current?.click()}
                       variant="outline"
                       size="sm"
                     >
-                      ファイルを選択
+                      Select Files
                     </Button>
                     <p className="text-xs text-gray-500 mt-2">
-                      PDF, Word, Excel, CSV, テキスト, 画像
+                      PDF, Word, Excel, CSV, Text, Images
                     </p>
                   </div>
 
                   {uploadedFiles.length > 0 && (
                     <div>
                       <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                        アップロード済み ({uploadedFiles.length})
+                        Uploaded ({uploadedFiles.length})
                       </h4>
                       <div className="space-y-2 max-h-48 overflow-y-auto">
                         {uploadedFiles.map((file, index) => (
@@ -282,12 +282,12 @@ export default function ScenariosPage() {
                         />
                       </svg>
                       <div className="text-xs text-blue-800">
-                        <p className="font-semibold mb-1">アップロード可能:</p>
+                        <p className="font-semibold mb-1">Uploadable:</p>
                         <ul className="space-y-0.5 text-blue-700">
-                          <li>• 製品仕様書・技術データ</li>
-                          <li>• 現在の素材詳細</li>
-                          <li>• 性能要求・規格書</li>
-                          <li>• コスト・製造条件</li>
+                          <li>• Product specifications & technical data</li>
+                          <li>• Current material details</li>
+                          <li>• Performance requirements & standards</li>
+                          <li>• Cost & manufacturing conditions</li>
                         </ul>
                       </div>
                     </div>
@@ -299,13 +299,13 @@ export default function ScenariosPage() {
 
           <div className="flex justify-between mt-8">
             <Button variant="outline" onClick={() => router.push('/')}>
-              戻る
+              Back
             </Button>
             <Button
               onClick={handleNext}
               disabled={!selectedScenario || isAnalyzing}
             >
-              {isAnalyzing ? '分析中...' : '分析を開始'}
+              {isAnalyzing ? 'Analyzing...' : 'Start Analysis'}
             </Button>
           </div>
         </div>

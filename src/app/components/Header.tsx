@@ -15,7 +15,7 @@ export function Header() {
             />
           </div>
           <p className="text-white/80 text-sm hidden md:block">
-            サステナブル包装材料提案AI
+            Sustainable Packaging Material AI
           </p>
         </div>
       </div>

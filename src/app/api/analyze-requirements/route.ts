@@ -91,34 +91,34 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: 'user',
-          content: `以下の文書から製品の性能要件と素材情報を分析して、JSONフォーマットで抽出してください。
-以下の形式で出力してください：
+          content: `Analyze the product performance requirements and material information from the following document and extract them in JSON format.
+Please output in the following format:
 {
   "requirements": [
     {
-      "name": "要件名",
-      "value": "具体的な数値や基準",
-      "unit": "単位（あれば）",
+      "name": "Requirement name",
+      "value": "Specific value or standard",
+      "unit": "Unit (if applicable)",
       "importance": "high/medium/low"
     }
   ],
   "materials": {
-    "composition": "推定される素材構成（例：PET/Al/PE）",
-    "properties": ["特性1", "特性2", "特性3"],
+    "composition": "Estimated material composition (e.g., PET/Al/PE)",
+    "properties": ["Property 1", "Property 2", "Property 3"],
     "analysisConfidence": "high/medium/low"
   }
 }
 
-文書内容：
+Document content:
 ${text}
 
-以下の点を重点的に分析してください：
-1. 性能要件（強度、耐久性、温度耐性、バリア性、重量、サイズ、コストなど）
-2. 使用されている素材や材料の情報
-3. 包装形態や構造に関する情報
-4. 環境・リサイクル要件
+Please focus on analyzing the following points:
+1. Performance requirements (strength, durability, temperature resistance, barrier properties, weight, size, cost, etc.)
+2. Information about materials used
+3. Information about packaging form and structure
+4. Environmental and recycling requirements
 
-素材構成が明記されていない場合は、要件から推定して適切な多層構造を提案してください。`,
+If material composition is not specified, please estimate and suggest an appropriate multi-layer structure based on the requirements.`,
         },
       ],
     });
