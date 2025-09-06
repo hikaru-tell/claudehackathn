@@ -1,87 +1,87 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Card } from "@/app/components/Card";
+import { useState } from 'react';
+import { Card } from '@/app/components/Card';
 
 export default function TestDeepResearch() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
-  const [error, setError] = useState<string>("");
-  const [customQuery, setCustomQuery] = useState("");
-  const [testMode, setTestMode] = useState<"preset" | "custom">("preset");
+  const [error, setError] = useState<string>('');
+  const [customQuery, setCustomQuery] = useState('');
+  const [testMode, setTestMode] = useState<'preset' | 'custom'>('preset');
   const [progress, setProgress] = useState(0);
-  const [progressStep, setProgressStep] = useState("");
+  const [progressStep, setProgressStep] = useState('');
 
   // プリセットのテストデータ
   const presetTestData = {
     currentMaterials: {
-      composition: "PET(12μm)/Al-PET(12μm)/CPP(30μm)",
-      properties: ["高バリア性", "高遮光性", "優れたヒートシール性"],
+      composition: 'PET(12μm)/Al-PET(12μm)/CPP(30μm)',
+      properties: ['高バリア性', '高遮光性', '優れたヒートシール性'],
     },
     requirements: [
       {
-        name: "引張強度",
-        value: "100",
-        unit: "N/15mm",
-        importance: "high" as const,
+        name: '引張強度',
+        value: '100',
+        unit: 'N/15mm',
+        importance: 'high' as const,
       },
       {
-        name: "酸素透過率",
-        value: "1.0",
-        unit: "cc/m²·day·atm",
-        importance: "high" as const,
+        name: '酸素透過率',
+        value: '1.0',
+        unit: 'cc/m²·day·atm',
+        importance: 'high' as const,
       },
       {
-        name: "水蒸気透過率",
-        value: "2.0",
-        unit: "g/m²·day",
-        importance: "high" as const,
+        name: '水蒸気透過率',
+        value: '2.0',
+        unit: 'g/m²·day',
+        importance: 'high' as const,
       },
       {
-        name: "耐熱温度",
-        value: "120",
-        unit: "℃",
-        importance: "high" as const,
+        name: '耐熱温度',
+        value: '120',
+        unit: '℃',
+        importance: 'high' as const,
       },
     ],
   };
 
   const runDeepResearch = async () => {
     setLoading(true);
-    setError("");
+    setError('');
     setResult(null);
     setProgress(0);
 
     try {
       // ステップ1: リクエスト準備
-      setProgressStep("リクエストを準備中...");
+      setProgressStep('リクエストを準備中...');
       setProgress(10);
 
       const requestBody =
-        testMode === "custom"
+        testMode === 'custom'
           ? { ...presetTestData, searchQuery: customQuery }
           : presetTestData;
 
-      console.log("📤 Sending request:", requestBody);
+      console.log('📤 Sending request:', requestBody);
 
       // ステップ2: API送信
-      setProgressStep("AIに分析を依頼中...");
+      setProgressStep('AIに分析を依頼中...');
       setProgress(25);
 
       // 最小実行時間を確保するためのタイマー
       const minExecutionTime = 3000; // 3秒
       const startTime = Date.now();
 
-      const response = await fetch("/api/materials/GPTsearch", {
-        method: "POST",
+      const response = await fetch('/api/materials/GPTsearch', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestBody),
       });
 
       // ステップ3: AI分析中
-      setProgressStep("AIが最新研究を分析中...");
+      setProgressStep('AIが最新研究を分析中...');
       setProgress(60);
 
       const data = await response.json();
@@ -91,68 +91,68 @@ export default function TestDeepResearch() {
       }
 
       // ステップ4: 結果解析
-      setProgressStep("分析結果を整理中...");
+      setProgressStep('分析結果を整理中...');
       setProgress(85);
 
       // 最小実行時間の確保
       const elapsedTime = Date.now() - startTime;
       if (elapsedTime < minExecutionTime) {
         await new Promise((resolve) =>
-          setTimeout(resolve, minExecutionTime - elapsedTime),
+          setTimeout(resolve, minExecutionTime - elapsedTime)
         );
       }
 
-      console.log("📥 Received response:", data);
+      console.log('📥 Received response:', data);
 
       // ステップ5: 完了
-      setProgressStep("完了");
+      setProgressStep('完了');
       setProgress(100);
 
       setResult(data);
     } catch (err) {
-      console.error("Error:", err);
-      setError(err instanceof Error ? err.message : "Unknown error");
+      console.error('Error:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       // 完了後、少し待ってからローディング状態を解除
       setTimeout(() => {
         setLoading(false);
         setProgress(0);
-        setProgressStep("");
+        setProgressStep('');
       }, 500);
     }
   };
 
   const runIntegratedSearch = async () => {
     setLoading(true);
-    setError("");
+    setError('');
     setResult(null);
     setProgress(0);
 
     try {
       // ステップ1: 統合検索開始
-      setProgressStep("統合検索を開始中...");
+      setProgressStep('統合検索を開始中...');
       setProgress(15);
 
-      console.log("🔄 Running integrated search...");
+      console.log('🔄 Running integrated search...');
 
       // ステップ2: データベース検索
-      setProgressStep("データベースを検索中...");
+      setProgressStep('データベースを検索中...');
       setProgress(40);
 
       // 最小実行時間を確保
       const minExecutionTime = 2500; // 2.5秒
       const startTime = Date.now();
 
-      const response = await fetch("/api/materials/search", {
-        method: "POST",
+      const response = await fetch('/api/materials/search', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(presetTestData),
       });
 
       // ステップ3: 結果処理
-      setProgressStep("検索結果を処理中...");
+      setProgressStep('検索結果を処理中...');
       setProgress(75);
 
       const data = await response.json();
@@ -162,31 +162,31 @@ export default function TestDeepResearch() {
       }
 
       // ステップ4: 最終化
-      setProgressStep("結果をまとめています...");
+      setProgressStep('結果をまとめています...');
       setProgress(90);
 
       // 最小実行時間の確保
       const elapsedTime = Date.now() - startTime;
       if (elapsedTime < minExecutionTime) {
         await new Promise((resolve) =>
-          setTimeout(resolve, minExecutionTime - elapsedTime),
+          setTimeout(resolve, minExecutionTime - elapsedTime)
         );
       }
 
-      console.log("✅ Integrated search result:", data);
+      console.log('✅ Integrated search result:', data);
 
-      setProgressStep("完了");
+      setProgressStep('完了');
       setProgress(100);
       setResult(data);
     } catch (err) {
-      console.error("Error:", err);
-      setError(err instanceof Error ? err.message : "Unknown error");
+      console.error('Error:', err);
+      setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       // 完了後、少し待ってからローディング状態を解除
       setTimeout(() => {
         setLoading(false);
         setProgress(0);
-        setProgressStep("");
+        setProgressStep('');
       }, 500);
     }
   };
@@ -214,9 +214,9 @@ export default function TestDeepResearch() {
             <input
               type="radio"
               value="preset"
-              checked={testMode === "preset"}
+              checked={testMode === 'preset'}
               onChange={(e) =>
-                setTestMode(e.target.value as "preset" | "custom")
+                setTestMode(e.target.value as 'preset' | 'custom')
               }
               className="mr-2"
             />
@@ -226,9 +226,9 @@ export default function TestDeepResearch() {
             <input
               type="radio"
               value="custom"
-              checked={testMode === "custom"}
+              checked={testMode === 'custom'}
               onChange={(e) =>
-                setTestMode(e.target.value as "preset" | "custom")
+                setTestMode(e.target.value as 'preset' | 'custom')
               }
               className="mr-2"
             />
@@ -236,7 +236,7 @@ export default function TestDeepResearch() {
           </label>
         </div>
 
-        {testMode === "custom" && (
+        {testMode === 'custom' && (
           <div className="mt-4">
             <label className="block text-sm font-medium mb-2">
               カスタム検索クエリ:
@@ -259,7 +259,7 @@ export default function TestDeepResearch() {
             disabled={loading}
             className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
           >
-            {loading ? "🔄 処理中..." : "🔬 Deep Research実行"}
+            {loading ? '🔄 処理中...' : '🔬 Deep Research実行'}
           </button>
 
           <button
@@ -267,7 +267,7 @@ export default function TestDeepResearch() {
             disabled={loading}
             className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? "🔄 処理中..." : "🔍 統合検索実行"}
+            {loading ? '🔄 処理中...' : '🔍 統合検索実行'}
           </button>
         </div>
 
@@ -277,7 +277,7 @@ export default function TestDeepResearch() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-blue-800">
-                  {progressStep || "処理中..."}
+                  {progressStep || '処理中...'}
                 </span>
                 <span className="text-sm text-blue-600">{progress}%</span>
               </div>
@@ -300,7 +300,7 @@ export default function TestDeepResearch() {
         <Card className="mb-6 p-4 bg-red-50 border-red-200">
           <h3 className="text-red-700 font-semibold mb-2">❌ エラー</h3>
           <p className="text-red-600 text-sm">{error}</p>
-          {error.includes("API key") && (
+          {error.includes('API key') && (
             <p className="text-sm mt-2 text-gray-600">
               OpenAI
               APIキーが設定されていません。`.env.local`を確認してください。
@@ -330,7 +330,7 @@ export default function TestDeepResearch() {
                       <div key={idx} className="p-3 bg-gray-50 rounded">
                         <div className="font-medium">{material.name}</div>
                         <div className="text-sm text-gray-600">
-                          信頼度: {material.confidence} | ソース:{" "}
+                          信頼度: {material.confidence} | ソース:{' '}
                           {material.source}
                         </div>
                         {material.citations &&
@@ -342,7 +342,7 @@ export default function TestDeepResearch() {
                             </div>
                           )}
                       </div>
-                    ),
+                    )
                   )}
                 </div>
               </div>
@@ -404,7 +404,7 @@ export default function TestDeepResearch() {
                           key={idx}
                           className="text-sm mb-2 pb-2 border-b last:border-b-0"
                         >
-                          <span className="font-medium">[{idx + 1}]</span>{" "}
+                          <span className="font-medium">[{idx + 1}]</span>{' '}
                           {citation.title}
                           {citation.authors && ` - ${citation.authors}`}
                           {citation.year && ` (${citation.year})`}
@@ -419,7 +419,7 @@ export default function TestDeepResearch() {
                             </a>
                           )}
                         </div>
-                      ),
+                      )
                     )}
                   </div>
                 </div>
@@ -434,7 +434,7 @@ export default function TestDeepResearch() {
                 🎯 材料提案 ({result.materials.length}件)
               </h3>
               <div className="text-sm text-gray-600 mb-4">
-                データソース: {result.metadata?.dataSource || "Unknown"}
+                データソース: {result.metadata?.dataSource || 'Unknown'}
               </div>
 
               <div className="space-y-4">
@@ -460,7 +460,7 @@ export default function TestDeepResearch() {
 
                     <div className="text-sm">
                       <div className="text-green-700">
-                        ✅ {material.advantages?.slice(0, 2).join(" / ")}
+                        ✅ {material.advantages?.slice(0, 2).join(' / ')}
                       </div>
                       {material.considerations?.length > 0 && (
                         <div className="text-orange-600">
