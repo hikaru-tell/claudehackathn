@@ -1,21 +1,25 @@
 'use client';
 
 import { Card } from '../components/Card';
+import type { ExperimentPlan } from '../api/experiment-plan/route';
 
 interface ExperimentPlanReportProps {
   material: {
     materialName: string;
     composition: string[];
   };
+  experimentPlan: ExperimentPlan | null;
   onClose: () => void;
 }
 
 export function ExperimentPlanReport({
   material,
+  experimentPlan,
   onClose,
 }: ExperimentPlanReportProps) {
-  // モックの実験計画データ
-  const experimentPlan = {
+  // AI生成された実験計画データを使用
+  // フォールバック用のデフォルト値を設定
+  const defaultExperimentPlan = {
     overview: {
       title: `${material.materialName}の開発実験計画`,
       objective: `既存材料から${material.materialName}への移行を実現するための実験計画と評価方法`,
@@ -111,14 +115,41 @@ export function ExperimentPlanReport({
       },
     ],
     deliverables: [
-      '材料仕様書',
-      '物性評価レポート',
-      '加工条件ガイドライン',
-      'リサイクル性評価報告書',
-      'LCA分析レポート',
-      '量産移行計画書',
+      {
+        deliverable: '材料仕様書',
+        timeline: '2ヶ月後',
+        description: '最適化された材料の詳細仕様と品質基準',
+      },
+      {
+        deliverable: '物性評価レポート',
+        timeline: '3ヶ月後',
+        description: '全試験項目の結果と合否判定',
+      },
+      {
+        deliverable: '加工条件ガイドライン',
+        timeline: '3ヶ月後',
+        description: '印刷・ラミネート・製袋の最適条件',
+      },
+      {
+        deliverable: 'リサイクル性評価報告書',
+        timeline: '4ヶ月後',
+        description: '環境負荷とリサイクル性の評価結果',
+      },
+      {
+        deliverable: 'LCA分析レポート',
+        timeline: '5ヶ月後',
+        description: 'ライフサイクル全体の環境影響評価',
+      },
+      {
+        deliverable: '量産移行計画書',
+        timeline: '6ヶ月後',
+        description: '量産化に向けた技術・コスト・スケジュール提案',
+      },
     ],
   };
+
+  // AI生成データがある場合はそれを使用、なければデフォルト値を使用
+  const finalExperimentPlan = experimentPlan || defaultExperimentPlan;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -133,17 +164,18 @@ export function ExperimentPlanReport({
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h2 className="text-3xl font-bold text-gray-800">
-                  {experimentPlan.overview.title}
+                  {finalExperimentPlan.overview.title}
                 </h2>
                 <p className="text-gray-600 mt-2">
-                  {experimentPlan.overview.objective}
+                  {finalExperimentPlan.overview.objective}
                 </p>
                 <div className="flex gap-6 mt-4">
                   <span className="text-sm text-gray-500">
-                    <strong>期間:</strong> {experimentPlan.overview.duration}
+                    <strong>期間:</strong>{' '}
+                    {finalExperimentPlan.overview.duration}
                   </span>
                   <span className="text-sm text-gray-500">
-                    <strong>予算:</strong> {experimentPlan.overview.budget}
+                    <strong>予算:</strong> {finalExperimentPlan.overview.budget}
                   </span>
                 </div>
               </div>
@@ -173,7 +205,7 @@ export function ExperimentPlanReport({
                 実験フェーズ
               </h3>
               <div className="space-y-4">
-                {experimentPlan.phases.map((phase, index) => (
+                {finalExperimentPlan.phases.map((phase, index) => (
                   <div key={index} className="border-l-4 border-green-500 pl-4">
                     <h4 className="font-semibold text-gray-800">
                       {phase.phase}
@@ -213,7 +245,7 @@ export function ExperimentPlanReport({
                     </tr>
                   </thead>
                   <tbody>
-                    {experimentPlan.keyTests.map((test, index) => (
+                    {finalExperimentPlan.keyTests.map((test, index) => (
                       <tr key={index} className="border-b">
                         <td className="py-2 text-gray-600">{test.test}</td>
                         <td className="py-2 text-gray-600">{test.method}</td>
@@ -234,7 +266,7 @@ export function ExperimentPlanReport({
                 リスクと対策
               </h3>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {experimentPlan.risks.map((risk, index) => (
+                {finalExperimentPlan.risks.map((risk, index) => (
                   <div key={index} className="bg-gray-50 rounded-lg p-4">
                     <h4 className="font-semibold text-gray-800 mb-2">
                       {risk.risk}
@@ -281,14 +313,21 @@ export function ExperimentPlanReport({
             {/* 成果物 */}
             <div className="mb-8">
               <h3 className="text-xl font-bold text-gray-800 mb-4">成果物</h3>
-              <div className="flex flex-wrap gap-2">
-                {experimentPlan.deliverables.map((deliverable, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm"
-                  >
-                    {deliverable}
-                  </span>
+              <div className="space-y-4">
+                {finalExperimentPlan.deliverables.map((deliverable, index) => (
+                  <div key={index} className="bg-gray-50 rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-semibold text-gray-800">
+                        {deliverable.deliverable}
+                      </h4>
+                      <span className="text-sm text-blue-600 font-medium">
+                        {deliverable.timeline}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 text-sm">
+                      {deliverable.description}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
