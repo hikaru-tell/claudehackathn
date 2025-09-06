@@ -13,7 +13,10 @@ interface SustainabilityChartProps {
     composition: string[];
     scores: Record<string, number>;
   }[];
-  performanceReqs: string[];
+  performanceReqs: (
+    | string
+    | { name: string; value: string; unit?: string; importance: string }
+  )[]; // 文字列またはオブジェクトの配列に対応
 }
 
 export function SustainabilityChart({
@@ -44,7 +47,9 @@ export function SustainabilityChart({
     // レーダーチャートの軸（性能要件と同じ軸を使用）
     const axes =
       performanceReqs.length > 0
-        ? performanceReqs.slice(0, 8) // 最大8軸まで
+        ? performanceReqs
+            .slice(0, 8) // 最大8軸まで
+            .map((req) => (typeof req === 'object' ? req.name : req))
         : ['物性', '環境性', 'コスト', '安全性', '供給性'];
     const angleStep = (Math.PI * 2) / axes.length;
 

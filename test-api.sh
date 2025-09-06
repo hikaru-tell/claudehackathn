@@ -107,10 +107,11 @@ show_menu() {
     echo "2) 🌱 Database Search API (有機ポリマーDB)"
     echo "3) 🔍 Integrated Search API (統合検索)"
     echo "4) 🎯 Custom Query Deep Research"
-    echo "5) 📊 All APIs (全てテスト)"
+    echo "5) 🤖 Total AI API (統合AI分析)"
+    echo "6) 📊 All APIs (全てテスト)"
     echo "0) Exit"
     echo ""
-    read -p "選択してください (0-5): " choice
+    read -p "選択してください (0-6): " choice
 }
 
 # メイン処理
@@ -131,11 +132,15 @@ while true; do
             test_api "GPTsearch" "$CUSTOM_QUERY_DATA" "Custom Query Deep Research"
             ;;
         5)
+            test_api "totalAI" "$TEST_DATA" "Total AI API (統合AI分析)"
+            ;;
+        6)
             echo -e "${GREEN}🚀 Testing all APIs...${NC}"
             echo ""
             test_api "DBsearch" "$TEST_DATA" "Database Search API"
             test_api "GPTsearch" "$TEST_DATA" "Deep Research API"
             test_api "search" "$TEST_DATA" "Integrated Search API"
+            test_api "totalAI" "$TEST_DATA" "Total AI API"
             test_api "GPTsearch" "$CUSTOM_QUERY_DATA" "Custom Query Deep Research"
             ;;
         0)

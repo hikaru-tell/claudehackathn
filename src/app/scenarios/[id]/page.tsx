@@ -122,10 +122,32 @@ export default function ScenarioDetailPage({ params }: PageProps) {
     // 実際のアプリではここでデータを保存
     console.log('Requirements submitted:', data);
 
-    // 性能要件をURLパラメータに含めて提案画面に遷移
+    // 材料構成情報を準備
+    const currentMaterials = {
+      composition: enhancedMaterial
+        ? enhancedMaterial.composition
+        : scenario.currentMaterial.composition,
+      properties: enhancedMaterial
+        ? enhancedMaterial.properties
+        : scenario.currentMaterial.properties,
+    };
+
+    // 性能要件を適切な形式に変換
+    const formattedRequirements =
+      analysisResults.length > 0
+        ? analysisResults[0].requirements
+        : data.performanceReqs.map((req, index) => ({
+            name: req,
+            value: '100', // デフォルト値
+            unit: '',
+            importance: 'medium' as const,
+          }));
+
+    // URLパラメータに含めて提案画面に遷移
     const urlParams = new URLSearchParams({
       scenario: resolvedParams.id,
-      performanceReqs: JSON.stringify(data.performanceReqs),
+      currentMaterials: JSON.stringify(currentMaterials),
+      performanceReqs: JSON.stringify(formattedRequirements),
       sustainabilityReqs: JSON.stringify(data.sustainabilityReqs),
       additionalNotes: data.additionalNotes,
     });

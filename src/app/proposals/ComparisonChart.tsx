@@ -13,7 +13,10 @@ interface ComparisonChartProps {
     composition: string[];
     scores: Record<string, number>;
   }[];
-  performanceReqs: string[];
+  performanceReqs: (
+    | string
+    | { name: string; value: string; unit?: string; importance: string }
+  )[]; // 文字列またはオブジェクトの配列に対応
 }
 
 export function ComparisonChart({
@@ -43,7 +46,9 @@ export function ComparisonChart({
     // レーダーチャートの軸（性能要件が設定されている場合はそれを使用、なければデフォルト）
     const axes =
       performanceReqs.length > 0
-        ? performanceReqs.slice(0, 8) // 最大8軸まで
+        ? performanceReqs
+            .slice(0, 8) // 最大8軸まで
+            .map((req) => (typeof req === 'object' ? req.name : req))
         : ['物性', '環境性', 'コスト', '安全性', '供給性'];
     const angleStep = (Math.PI * 2) / axes.length;
 
