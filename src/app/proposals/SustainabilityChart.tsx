@@ -112,30 +112,42 @@ export function SustainabilityChart({
       drawPolygon(ctx, centerX, centerY, radius, scores, colors[index], 0.3);
     });
 
-    // 凡例
-    const legendY = height - 40;
-    ctx.font = '10px sans-serif';
+    // 凡例（改善されたレイアウト）
+    const legendY = height - 30;
+    const legendItemWidth = 100; // 各凡例項目の幅を固定
+    const totalWidth = 4 * legendItemWidth; // 4つの項目分の幅
+    const legendStartX = (width - totalWidth) / 2; // 中央揃え
 
-    // 現在の素材
-    ctx.fillStyle = '#dc2626';
-    ctx.fillRect(15, legendY, 12, 12);
-    ctx.fillStyle = '#374151';
-    ctx.fillText('現在', 30, legendY + 6);
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'left';
 
-    // 提案素材（compositionの最初の2要素を使用）
-    proposals.slice(0, 3).forEach((proposal, index) => {
-      const x = 70 + index * 80;
-      ctx.fillStyle = colors[index];
+    // 全ての素材を同じフォーマットで表示
+    const allItems = [
+      {
+        // 現在の素材のcompositionを"/"で分割して配列化し、最初の2要素を使用
+        label: currentMaterial.composition.split('/').slice(0, 2).join('/'),
+        color: '#dc2626',
+      },
+      ...proposals.slice(0, 3).map((proposal, index) => ({
+        label: proposal.composition.slice(0, 2).join('/'),
+        color: colors[index],
+      })),
+    ];
+
+    allItems.forEach((item, index) => {
+      const x = legendStartX + index * legendItemWidth;
+
+      // 色付きの四角
+      ctx.fillStyle = item.color;
       ctx.fillRect(x, legendY, 12, 12);
-      ctx.fillStyle = '#374151';
 
-      // compositionの最初の2要素を"/"で結合して表示
-      const compositionLabel = proposal.composition.slice(0, 2).join('/');
-      const shortName =
-        compositionLabel.length > 10
-          ? compositionLabel.substring(0, 8) + '...'
-          : compositionLabel;
-      ctx.fillText(shortName, x + 15, legendY + 6);
+      // ラベルテキスト
+      ctx.fillStyle = '#374151';
+      const label =
+        item.label.length > 12
+          ? item.label.substring(0, 10) + '...'
+          : item.label;
+      ctx.fillText(label, x + 16, legendY + 8);
     });
   }, [currentMaterial, proposals, performanceReqs]);
 
