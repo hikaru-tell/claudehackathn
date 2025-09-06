@@ -14,5 +14,13 @@
     ],
     "deny": []
   },
-  "enabledMcpjsonServers": ["devtools", "context7", "playwright", "convex", "gemini-cli"]
+  "model": "opus",
+  "env": { "ANTHROPIC_API_KEY": "YOURKEY" },
+  "enabledMcpjsonServers": [
+    "devtools",
+    "context7",
+    "playwright",
+    "convex",
+    "gemini-cli"
+  ]
 }
