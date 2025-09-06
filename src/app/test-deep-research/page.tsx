@@ -9,6 +9,8 @@ export default function TestDeepResearch() {
   const [error, setError] = useState<string>('');
   const [customQuery, setCustomQuery] = useState('');
   const [testMode, setTestMode] = useState<'preset' | 'custom'>('preset');
+  const [progress, setProgress] = useState(0);
+  const [progressStep, setProgressStep] = useState('');
 
   // プリセットのテストデータ
   const presetTestData = {
@@ -48,14 +50,27 @@ export default function TestDeepResearch() {
     setLoading(true);
     setError('');
     setResult(null);
+    setProgress(0);
 
     try {
+      // ステップ1: リクエスト準備
+      setProgressStep('リクエストを準備中...');
+      setProgress(10);
+
       const requestBody =
         testMode === 'custom'
           ? { ...presetTestData, searchQuery: customQuery }
           : presetTestData;
 
       console.log('📤 Sending request:', requestBody);
+
+      // ステップ2: API送信
+      setProgressStep('AIに分析を依頼中...');
+      setProgress(25);
+
+      // 最小実行時間を確保するためのタイマー
+      const minExecutionTime = 3000; // 3秒
+      const startTime = Date.now();
 
       const response = await fetch('/api/materials/GPTsearch', {
         method: 'POST',
@@ -65,19 +80,45 @@ export default function TestDeepResearch() {
         body: JSON.stringify(requestBody),
       });
 
+      // ステップ3: AI分析中
+      setProgressStep('AIが最新研究を分析中...');
+      setProgress(60);
+
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || `HTTP ${response.status}`);
       }
 
+      // ステップ4: 結果解析
+      setProgressStep('分析結果を整理中...');
+      setProgress(85);
+
+      // 最小実行時間の確保
+      const elapsedTime = Date.now() - startTime;
+      if (elapsedTime < minExecutionTime) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, minExecutionTime - elapsedTime)
+        );
+      }
+
       console.log('📥 Received response:', data);
+
+      // ステップ5: 完了
+      setProgressStep('完了');
+      setProgress(100);
+
       setResult(data);
     } catch (err) {
       console.error('Error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
-      setLoading(false);
+      // 完了後、少し待ってからローディング状態を解除
+      setTimeout(() => {
+        setLoading(false);
+        setProgress(0);
+        setProgressStep('');
+      }, 500);
     }
   };
 
@@ -85,9 +126,22 @@ export default function TestDeepResearch() {
     setLoading(true);
     setError('');
     setResult(null);
+    setProgress(0);
 
     try {
+      // ステップ1: 統合検索開始
+      setProgressStep('統合検索を開始中...');
+      setProgress(15);
+
       console.log('🔄 Running integrated search...');
+
+      // ステップ2: データベース検索
+      setProgressStep('データベースを検索中...');
+      setProgress(40);
+
+      // 最小実行時間を確保
+      const minExecutionTime = 2500; // 2.5秒
+      const startTime = Date.now();
 
       const response = await fetch('/api/materials/search', {
         method: 'POST',
@@ -97,19 +151,43 @@ export default function TestDeepResearch() {
         body: JSON.stringify(presetTestData),
       });
 
+      // ステップ3: 結果処理
+      setProgressStep('検索結果を処理中...');
+      setProgress(75);
+
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || `HTTP ${response.status}`);
       }
 
+      // ステップ4: 最終化
+      setProgressStep('結果をまとめています...');
+      setProgress(90);
+
+      // 最小実行時間の確保
+      const elapsedTime = Date.now() - startTime;
+      if (elapsedTime < minExecutionTime) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, minExecutionTime - elapsedTime)
+        );
+      }
+
       console.log('✅ Integrated search result:', data);
+
+      setProgressStep('完了');
+      setProgress(100);
       setResult(data);
     } catch (err) {
       console.error('Error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
-      setLoading(false);
+      // 完了後、少し待ってからローディング状態を解除
+      setTimeout(() => {
+        setLoading(false);
+        setProgress(0);
+        setProgressStep('');
+      }, 500);
     }
   };
 
@@ -174,22 +252,47 @@ export default function TestDeepResearch() {
       </Card>
 
       {/* テストボタン */}
-      <div className="flex gap-4 mb-6">
-        <button
-          onClick={runDeepResearch}
-          disabled={loading}
-          className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-        >
-          {loading ? '🔄 処理中...' : '🔬 Deep Research実行'}
-        </button>
+      <div className="space-y-4 mb-6">
+        <div className="flex gap-4">
+          <button
+            onClick={runDeepResearch}
+            disabled={loading}
+            className="px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+          >
+            {loading ? '🔄 処理中...' : '🔬 Deep Research実行'}
+          </button>
 
-        <button
-          onClick={runIntegratedSearch}
-          disabled={loading}
-          className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-        >
-          {loading ? '🔄 処理中...' : '🔍 統合検索実行'}
-        </button>
+          <button
+            onClick={runIntegratedSearch}
+            disabled={loading}
+            className="px-6 py-3 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            {loading ? '🔄 処理中...' : '🔍 統合検索実行'}
+          </button>
+        </div>
+
+        {/* プログレスバー */}
+        {loading && (
+          <Card className="p-4 bg-blue-50">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium text-blue-800">
+                  {progressStep || '処理中...'}
+                </span>
+                <span className="text-sm text-blue-600">{progress}%</span>
+              </div>
+              <div className="w-full bg-blue-200 rounded-full h-2">
+                <div
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+              <div className="text-xs text-blue-600 text-center">
+                AIが最新の研究データを分析しています...
+              </div>
+            </div>
+          </Card>
+        )}
       </div>
 
       {/* エラー表示 */}

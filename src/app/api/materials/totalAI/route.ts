@@ -6,6 +6,7 @@ import {
   SustainableMaterial,
   DeepResearchResult,
 } from '../types';
+import { DETAILED_GRADING_CRITERIA } from '@/lib/grading-criteria';
 
 // Claude API設定
 const CLAUDE_API_KEY =
@@ -103,6 +104,8 @@ async function analyzeWithClaude(
   const prompt = `
 あなたは包装材料の専門家です。以下の検索結果を統合・分析して、最適な推奨素材TOP3を選定してください。
 
+${DETAILED_GRADING_CRITERIA}
+
 【現在の素材構成】
 ${currentMaterials.composition}
 特性: ${currentMaterials.properties.join(', ')}
@@ -135,8 +138,8 @@ ${
 }
 
 【指示】
-上記の情報を総合的に分析し、推奨素材TOP3を以下のJSON形式で出力してください。
-各素材について、データベース検索とGPT研究の両方の観点から評価し、実用性と革新性のバランスを考慮してください。
+上記の評価基準に従って、検索結果を総合的に分析し、推奨素材TOP3を以下のJSON形式で出力してください。
+各素材について、データベース検索とGPT研究の両方の観点から評価し、A-D評価基準に基づいて適切なスコアを付与してください。
 
 {
   "recommendations": [
@@ -144,19 +147,24 @@ ${
       "materialName": "素材名",
       "composition": ["構成要素1", "構成要素2"],
       "scores": {
-        "physical": 85,  // 物理的性能 (0-100)
-        "environmental": 90,  // 環境性能 (0-100)
-        "cost": 75,  // コスト効率 (0-100)
-        "safety": 95,  // 安全性 (0-100)
-        "supply": 80  // 供給安定性 (0-100)
+        "physical": 85,  // 物理的性能 (0-100, A=85-100, B=70-84, C=55-69, D=0-54)
+        "environmental": 90,  // 環境性能 (0-100, 同上)
+        "cost": 75,  // コスト効率 (0-100, 同上)
+        "safety": 95,  // 安全性 (0-100, 同上)
+        "supply": 80  // 供給安定性 (0-100, 同上)
       },
-      "totalScore": 85,  // 総合スコア (0-100)
+      "totalScore": 85,  // 総合スコア (0-100, A-D評価基準に従って算出)
       "reasoning": "選定理由の詳細説明",
       "features": ["特徴1", "特徴2", "特徴3", "特徴4"],
       "dataSources": ["Convexデータベース", "最新Web情報", "AI分析"]
     }
   ]
 }
+
+【重要】
+- 各項目のスコアは必ずA-D評価基準（A:85-100, B:70-84, C:55-69, D:0-54）に従って算出してください
+- 総合スコアは各項目の重み付け平均で計算し、同じ評価基準を適用してください
+- 評価の根拠を推奨理由に明記してください
 
 JSONのみを出力し、他の説明は含めないでください。
 `;
