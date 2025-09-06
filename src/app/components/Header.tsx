@@ -6,15 +6,13 @@ export function Header() {
       <div className="container mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden">
-              <Image
-                src="/logo.jpeg"
-                alt="RiNeco Logo"
-                width={48}
-                height={48}
-                className="w-full h-full object-contain"
-              />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="RiNeco Logo"
+              width={140}
+              height={140}
+              className="w-36 h-36 object-contain"
+            />
           </div>
           <p className="text-white/80 text-sm hidden md:block">
             サステナブル包装材料提案AI

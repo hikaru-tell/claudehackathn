@@ -170,7 +170,7 @@ JSONのみを出力し、他の説明は含めないでください。
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-3-opus-20240229',
+        model: 'claude-opus-4-20250514',
         max_tokens: 3000,
         temperature: 0.7,
         messages: [
