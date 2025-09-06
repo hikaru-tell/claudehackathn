@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { Card } from '../components/Card';
 
-interface ComparisonChartProps {
+interface SustainabilityChartProps {
   currentMaterial: {
     composition: string;
     properties: string[];
@@ -16,11 +16,11 @@ interface ComparisonChartProps {
   performanceReqs: string[];
 }
 
-export function ComparisonChart({
+export function SustainabilityChart({
   currentMaterial,
   proposals,
   performanceReqs,
-}: ComparisonChartProps) {
+}: SustainabilityChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function ComparisonChart({
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // レーダーチャートの軸（性能要件が設定されている場合はそれを使用、なければデフォルト）
+    // レーダーチャートの軸（性能要件と同じ軸を使用）
     const axes =
       performanceReqs.length > 0
         ? performanceReqs.slice(0, 8) // 最大8軸まで
@@ -96,26 +96,27 @@ export function ComparisonChart({
       ctx.fillText(label, x, y);
     }
 
-    // 現在の素材の各成分を個別に描画
-    const currentComponents = currentMaterial.composition.split('/');
-    const componentColors = ['#dc2626', '#ea580c', '#f97316', '#fb923c']; // 赤系のグラデーション
+    // 最初の提案素材の各成分を個別に描画（サステナビリティ素材）
+    if (proposals.length > 0) {
+      const sustainableComponents = proposals[0].composition; // 最初の提案素材を使用
+      const componentColors = ['#16a34a', '#22c55e', '#4ade80', '#86efac']; // 緑系のグラデーション
 
-    currentComponents.forEach((component, index) => {
-      if (index >= 4) return; // 最大4つまで表示
-      // 各成分ごとにランダムなスコアを生成（実際のアプリでは適切なデータを使用）
-      const scores = Array(axes.length)
-        .fill(0)
-        .map(() => Math.floor(Math.random() * 30) + 40 + index * 10); // 成分ごとに異なるスコア範囲
-      drawPolygon(
-        ctx,
-        centerX,
-        centerY,
-        radius,
-        scores,
-        componentColors[index] || '#dc2626',
-        0.2
-      );
-    });
+      sustainableComponents.slice(0, 4).forEach((component, index) => {
+        // 各成分ごとにランダムなスコアを生成（サステナビリティは高めのスコア）
+        const scores = Array(axes.length)
+          .fill(0)
+          .map(() => Math.floor(Math.random() * 20) + 70 + index * 5); // 70-95の範囲
+        drawPolygon(
+          ctx,
+          centerX,
+          centerY,
+          radius,
+          scores,
+          componentColors[index] || '#16a34a',
+          0.3
+        );
+      });
+    }
 
     // 凡例（改善されたレイアウト）
     const legendY = height - 30;
@@ -126,21 +127,26 @@ export function ComparisonChart({
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'left';
 
-    // 凡例に現在の素材の個別成分を表示（既に定義済みの変数を使用）
-    currentComponents.forEach((component, index) => {
-      if (index >= 4) return; // 最大4つまで表示
-      const x = legendStartX + index * legendItemWidth;
+    // サステナビリティ素材（最初の提案）の個別成分を表示
+    if (proposals.length > 0) {
+      const sustainableComponents = proposals[0].composition;
+      const componentColors = ['#16a34a', '#22c55e', '#4ade80', '#86efac']; // 緑系のグラデーション
 
-      // 色付きの四角
-      ctx.fillStyle = componentColors[index] || '#dc2626';
-      ctx.fillRect(x, legendY, 12, 12);
+      // 各成分を個別に表示
+      sustainableComponents.slice(0, 4).forEach((component, index) => {
+        const x = legendStartX + index * legendItemWidth;
 
-      // ラベルテキスト（成分名）
-      ctx.fillStyle = '#374151';
-      const label =
-        component.length > 10 ? component.substring(0, 8) + '...' : component;
-      ctx.fillText(label, x + 16, legendY + 8);
-    });
+        // 色付きの四角
+        ctx.fillStyle = componentColors[index] || '#16a34a';
+        ctx.fillRect(x, legendY, 12, 12);
+
+        // ラベルテキスト（成分名）
+        ctx.fillStyle = '#374151';
+        const label =
+          component.length > 10 ? component.substring(0, 8) + '...' : component;
+        ctx.fillText(label, x + 16, legendY + 8);
+      });
+    }
   }, [currentMaterial, proposals, performanceReqs]);
 
   function drawPolygon(
@@ -181,7 +187,7 @@ export function ComparisonChart({
   }
 
   return (
-    <Card title="現在の素材構成">
+    <Card title="サステナビリティ素材構成">
       <div className="flex justify-center">
         <canvas
           ref={canvasRef}

@@ -1,22 +1,33 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Header } from "../components/Header";
-import { Card } from "../components/Card";
-import { Button } from "../components/Button";
-import { ProposalCard } from "./ProposalCard";
-import { ComparisonChart } from "./ComparisonChart";
-import { scenarios } from "../scenarios/data";
-import { generateMockProposals } from "./mockData";
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Header } from '../components/Header';
+import { Card } from '../components/Card';
+import { Button } from '../components/Button';
+import { ProposalCard } from './ProposalCard';
+import { ComparisonChart } from './ComparisonChart';
+import { SustainabilityChart } from './SustainabilityChart';
+import { scenarios } from '../scenarios/data';
+import { generateMockProposals } from './mockData';
 
 export default function ProposalsPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const scenarioId = searchParams.get("scenario");
+  const scenarioId = searchParams.get('scenario');
   const [isLoading, setIsLoading] = useState(true);
-  const [proposals, setProposals] = useState<any[]>([]);
-  
+  const [proposals, setProposals] = useState<
+    {
+      materialName: string;
+      scores: Record<string, number>;
+    }[]
+  >([]);
+
+  // URLパラメータから性能要件を取得
+  const performanceReqs = searchParams.get('performanceReqs')
+    ? JSON.parse(searchParams.get('performanceReqs')!)
+    : [];
+
   const scenario = scenarios.find((s) => s.id === scenarioId);
 
   useEffect(() => {
@@ -25,7 +36,7 @@ export default function ProposalsPage() {
       setIsLoading(true);
       // 擬似的な遅延
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      const mockProposals = generateMockProposals(scenarioId || "");
+      const mockProposals = generateMockProposals(scenarioId || '');
       setProposals(mockProposals);
       setIsLoading(false);
     };
@@ -49,7 +60,7 @@ export default function ProposalsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* ヘッダー情報 */}
@@ -70,9 +81,25 @@ export default function ProposalsPage() {
           {isLoading ? (
             <Card className="text-center py-12">
               <div className="inline-flex items-center space-x-3">
-                <svg className="animate-spin h-8 w-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin h-8 w-8 text-green-600"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 <span className="text-xl text-gray-700">
                   AI が最適な素材を分析中...
@@ -86,10 +113,18 @@ export default function ProposalsPage() {
             <>
               {/* 比較チャート */}
               <div className="mb-8">
-                <ComparisonChart
-                  currentMaterial={scenario.currentMaterial}
-                  proposals={proposals}
-                />
+                <div className="grid lg:grid-cols-2 gap-6">
+                  <ComparisonChart
+                    currentMaterial={scenario.currentMaterial}
+                    proposals={proposals}
+                    performanceReqs={performanceReqs}
+                  />
+                  <SustainabilityChart
+                    currentMaterial={scenario.currentMaterial}
+                    proposals={proposals}
+                    performanceReqs={performanceReqs}
+                  />
+                </div>
               </div>
 
               {/* 提案リスト */}
@@ -116,11 +151,7 @@ export default function ProposalsPage() {
               要件を修正する
             </Button>
             {!isLoading && (
-              <Button
-                onClick={() => window.print()}
-              >
-                レポートを印刷
-              </Button>
+              <Button onClick={() => window.print()}>レポートを印刷</Button>
             )}
           </div>
         </div>
