@@ -1,9 +1,9 @@
 export function generateMockProposals(scenarioId: string) {
   const proposalTemplates = {
-    "potato-chips": [
+    'potato-chips': [
       {
-        materialName: "Bio-PP Monolayer Film",
-        composition: ["Bio-PP", "EVOH", "Coating"],
+        materialName: 'Bio-PP Monolayer Film',
+        composition: ['Bio-PP', 'EVOH', 'Coating'],
         scores: {
           physical: 85,
           environmental: 92,
@@ -13,18 +13,18 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 83,
         reasoning:
-          "By applying EVOH coating to plant-based polypropylene, we achieve mono-material design while maintaining excellent barrier properties. Recyclability is greatly improved with 40% CO2 emission reduction.",
+          'By applying EVOH coating to plant-based polypropylene, we achieve mono-material design while maintaining excellent barrier properties. Recyclability is greatly improved with 40% CO2 emission reduction.',
         features: [
-          "Mono-material",
-          "Biomass-based",
-          "Recyclable",
-          "High barrier",
+          'Mono-material',
+          'Biomass-based',
+          'Recyclable',
+          'High barrier',
         ],
-        dataSources: ["Convex Database", "Latest Web Info", "AI Analysis"],
+        dataSources: ['Convex Database', 'Latest Web Info', 'AI Analysis'],
       },
       {
-        materialName: "Paper/Bio-PE Laminate",
-        composition: ["Paper", "Bio-PE"],
+        materialName: 'Paper/Bio-PE Laminate',
+        composition: ['Paper', 'Bio-PE'],
         scores: {
           physical: 75,
           environmental: 88,
@@ -34,18 +34,18 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 84,
         reasoning:
-          "FSC-certified paper laminated with biomass-based PE. By keeping paper content above 70%, it can be processed through paper recycling routes. Appeals to environmentally conscious consumers.",
+          'FSC-certified paper laminated with biomass-based PE. By keeping paper content above 70%, it can be processed through paper recycling routes. Appeals to environmentally conscious consumers.',
         features: [
-          "Paper-based",
-          "FSC Certified",
-          "Bio-PE",
-          "Compatible with existing equipment",
+          'Paper-based',
+          'FSC Certified',
+          'Bio-PE',
+          'Compatible with existing equipment',
         ],
-        dataSources: ["Convex Database", "Industry Trend Analysis"],
+        dataSources: ['Convex Database', 'Industry Trend Analysis'],
       },
       {
-        materialName: "High Barrier PET Mono-material",
-        composition: ["PET", "SiOx", "Coating"],
+        materialName: 'High Barrier PET Mono-material',
+        composition: ['PET', 'SiOx', 'Coating'],
         scores: {
           physical: 90,
           environmental: 75,
@@ -55,20 +55,20 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 83,
         reasoning:
-          "Single material design with silicon oxide vapor deposition on PET. Can utilize existing PET recycling infrastructure while maintaining transparency for product visibility.",
+          'Single material design with silicon oxide vapor deposition on PET. Can utilize existing PET recycling infrastructure while maintaining transparency for product visibility.',
         features: [
-          "Single material",
-          "Transparency maintained",
-          "High barrier",
-          "Existing infrastructure",
+          'Single material',
+          'Transparency maintained',
+          'High barrier',
+          'Existing infrastructure',
         ],
-        dataSources: ["Technical Database", "Patent Analysis"],
+        dataSources: ['Technical Database', 'Patent Analysis'],
       },
     ],
-    "frozen-food": [
+    'frozen-food': [
       {
-        materialName: "Bio-PE Monolayer Film",
-        composition: ["Bio-PE", "EVOH", "Bio-PE"],
+        materialName: 'Bio-PE Monolayer Film',
+        composition: ['Bio-PE', 'EVOH', 'Bio-PE'],
         scores: {
           physical: 88,
           environmental: 85,
@@ -78,18 +78,18 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 83,
         reasoning:
-          "Using sugarcane-derived PE with EVOH middle layer. Maintains flexibility at -18°C while enabling microwave compatibility. Contributes to carbon neutrality.",
+          'Using sugarcane-derived PE with EVOH middle layer. Maintains flexibility at -18°C while enabling microwave compatibility. Contributes to carbon neutrality.',
         features: [
-          "Biomass-based",
-          "Freezer compatible",
-          "Microwave safe",
-          "Low-temp flexibility",
+          'Biomass-based',
+          'Freezer compatible',
+          'Microwave safe',
+          'Low-temp flexibility',
         ],
-        dataSources: ["Convex Database", "Latest Research Papers"],
+        dataSources: ['Convex Database', 'Latest Research Papers'],
       },
       {
-        materialName: "Recycled PP Composite",
-        composition: ["Recycled PP", "EVOH", "Recycled PP"],
+        materialName: 'Recycled PP Composite',
+        composition: ['Recycled PP', 'EVOH', 'Recycled PP'],
         scores: {
           physical: 82,
           environmental: 80,
@@ -99,18 +99,18 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 84,
         reasoning:
-          "Three-layer structure using chemically recycled PP. Properties equivalent to virgin material with cost advantages. Contributes to circular economy.",
+          'Three-layer structure using chemically recycled PP. Properties equivalent to virgin material with cost advantages. Contributes to circular economy.',
         features: [
-          "Recycled material",
-          "Cost advantage",
-          "Circular economy",
-          "Proven track record",
+          'Recycled material',
+          'Cost advantage',
+          'Circular economy',
+          'Proven track record',
         ],
-        dataSources: ["Market Data", "Supplier Information"],
+        dataSources: ['Market Data', 'Supplier Information'],
       },
       {
-        materialName: "Plant-based PA/PE",
-        composition: ["Bio-PA", "Bio-PE"],
+        materialName: 'Plant-based PA/PE',
+        composition: ['Bio-PA', 'Bio-PE'],
         scores: {
           physical: 85,
           environmental: 82,
@@ -120,20 +120,20 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 80,
         reasoning:
-          "Combination of castor oil-derived polyamide and bio-PE. Excellent pinhole resistance and drop strength. Cost reduction expected with future mass production.",
+          'Combination of castor oil-derived polyamide and bio-PE. Excellent pinhole resistance and drop strength. Cost reduction expected with future mass production.',
         features: [
-          "Plant-derived",
-          "High strength",
-          "Pinhole resistant",
-          "Future potential",
+          'Plant-derived',
+          'High strength',
+          'Pinhole resistant',
+          'Future potential',
         ],
-        dataSources: ["Technology Trends", "Developer Interviews"],
+        dataSources: ['Technology Trends', 'Developer Interviews'],
       },
     ],
-    "coffee-beans": [
+    'coffee-beans': [
       {
-        materialName: "Barrier Coated Paper",
-        composition: ["Paper", "Bio-barrier", "Coating"],
+        materialName: 'Barrier Coated Paper',
+        composition: ['Paper', 'Bio-barrier', 'Coating'],
         scores: {
           physical: 78,
           environmental: 95,
@@ -143,18 +143,18 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 85,
         reasoning:
-          "Paper material with special barrier coating. Compostable with 6-month shelf life capability. Degassing valve can also be unified with paper material.",
+          'Paper material with special barrier coating. Compostable with 6-month shelf life capability. Degassing valve can also be unified with paper material.',
         features: [
-          "Compostable",
-          "Paper-based",
-          "Barrier properties",
-          "Eco-friendly",
+          'Compostable',
+          'Paper-based',
+          'Barrier properties',
+          'Eco-friendly',
         ],
-        dataSources: ["Convex Database", "Environmental Certification Data"],
+        dataSources: ['Convex Database', 'Environmental Certification Data'],
       },
       {
-        materialName: "Bio-PBS/PBAT",
-        composition: ["Bio-PBS", "PBAT", "Blend"],
+        materialName: 'Bio-PBS/PBAT',
+        composition: ['Bio-PBS', 'PBAT', 'Blend'],
         scores: {
           physical: 82,
           environmental: 90,
@@ -164,21 +164,21 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 82,
         reasoning:
-          "Biodegradable plastic blend material. Completely degrades in soil with excellent gas barrier properties. Aroma retention performance equal to conventional materials.",
+          'Biodegradable plastic blend material. Completely degrades in soil with excellent gas barrier properties. Aroma retention performance equal to conventional materials.',
         features: [
-          "Biodegradable",
-          "Soil degradable",
-          "Aroma retention",
-          "Barrier properties",
+          'Biodegradable',
+          'Soil degradable',
+          'Aroma retention',
+          'Barrier properties',
         ],
         dataSources: [
-          "Environmental Performance Data",
-          "Third-party Certification",
+          'Environmental Performance Data',
+          'Third-party Certification',
         ],
       },
       {
-        materialName: "Recycled PET/PE",
-        composition: ["Recycled PET", "PE"],
+        materialName: 'Recycled PET/PE',
+        composition: ['Recycled PET', 'PE'],
         scores: {
           physical: 80,
           environmental: 78,
@@ -188,20 +188,20 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 83,
         reasoning:
-          "Two-layer structure of mechanically recycled PET and PE. Leverages existing recycling chains while maintaining necessary barrier properties.",
+          'Two-layer structure of mechanically recycled PET and PE. Leverages existing recycling chains while maintaining necessary barrier properties.',
         features: [
-          "Recycled material",
-          "Practical",
-          "Cost efficient",
-          "Stable supply",
+          'Recycled material',
+          'Practical',
+          'Cost efficient',
+          'Stable supply',
         ],
-        dataSources: ["Market Price Data", "Recycling Statistics"],
+        dataSources: ['Market Price Data', 'Recycling Statistics'],
       },
     ],
     cosmetics: [
       {
-        materialName: "Glass Container",
-        composition: ["Glass"],
+        materialName: 'Glass Container',
+        composition: ['Glass'],
         scores: {
           physical: 95,
           environmental: 85,
@@ -211,18 +211,18 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 86,
         reasoning:
-          "Infinitely recyclable glass container. Premium feel with no interaction with contents. Weight increase addressed through thin-wall technology.",
+          'Infinitely recyclable glass container. Premium feel with no interaction with contents. Weight increase addressed through thin-wall technology.',
         features: [
-          "Infinitely recyclable",
-          "Premium feel",
-          "Chemically stable",
-          "Transparency",
+          'Infinitely recyclable',
+          'Premium feel',
+          'Chemically stable',
+          'Transparency',
         ],
-        dataSources: ["Convex Database", "Container Manufacturer Catalog"],
+        dataSources: ['Convex Database', 'Container Manufacturer Catalog'],
       },
       {
-        materialName: "PCR-PP Container",
-        composition: ["PCR-PP"],
+        materialName: 'PCR-PP Container',
+        composition: ['PCR-PP'],
         scores: {
           physical: 82,
           environmental: 88,
@@ -232,18 +232,18 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 84,
         reasoning:
-          "Uses over 80% post-consumer recycled PP. Meets cosmetic-grade quality standards and compatible with existing filling lines.",
+          'Uses over 80% post-consumer recycled PP. Meets cosmetic-grade quality standards and compatible with existing filling lines.',
         features: [
-          "High PCR content",
-          "Lightweight",
-          "Compatible with existing equipment",
-          "Cost efficient",
+          'High PCR content',
+          'Lightweight',
+          'Compatible with existing equipment',
+          'Cost efficient',
         ],
-        dataSources: ["Recycled Material Database", "Quality Test Results"],
+        dataSources: ['Recycled Material Database', 'Quality Test Results'],
       },
       {
-        materialName: "Bio-PET Container",
-        composition: ["Bio-PET"],
+        materialName: 'Bio-PET Container',
+        composition: ['Bio-PET'],
         scores: {
           physical: 88,
           environmental: 83,
@@ -253,18 +253,18 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 82,
         reasoning:
-          "Sugarcane-derived bio-PET. Can be processed in same recycling stream as conventional PET. Combines transparency with strength.",
-        features: ["Biomass-based", "Transparent", "Recyclable", "Lightweight"],
-        dataSources: ["Bio-material Data", "LCA Analysis Results"],
+          'Sugarcane-derived bio-PET. Can be processed in same recycling stream as conventional PET. Combines transparency with strength.',
+        features: ['Biomass-based', 'Transparent', 'Recyclable', 'Lightweight'],
+        dataSources: ['Bio-material Data', 'LCA Analysis Results'],
       },
     ],
   };
 
-  // デフォルトのテンプレート（シナリオが見つからない場合）
+  // Default template (when scenario is not found)
   const defaultProposals = [
     {
-      materialName: "General Eco Material A",
-      composition: ["Recycled material", "Bio-material"],
+      materialName: 'General Eco Material A',
+      composition: ['Recycled material', 'Bio-material'],
       scores: {
         physical: 75,
         environmental: 85,
@@ -274,13 +274,13 @@ export function generateMockProposals(scenarioId: string) {
       },
       totalScore: 81,
       reasoning:
-        "General-purpose alternative material that maintains necessary performance while reducing environmental impact.",
-      features: ["Eco-friendly", "Cost efficient", "Stable supply"],
-      dataSources: ["Database Search", "AI Analysis"],
+        'General-purpose alternative material that maintains necessary performance while reducing environmental impact.',
+      features: ['Eco-friendly', 'Cost efficient', 'Stable supply'],
+      dataSources: ['Database Search', 'AI Analysis'],
     },
     {
-      materialName: "General Eco Material B",
-      composition: ["Regenerated material", "Natural material"],
+      materialName: 'General Eco Material B',
+      composition: ['Regenerated material', 'Natural material'],
       scores: {
         physical: 70,
         environmental: 90,
@@ -290,13 +290,13 @@ export function generateMockProposals(scenarioId: string) {
       },
       totalScore: 81,
       reasoning:
-        "Environmentally conscious material based on natural materials.",
-      features: ["Natural origin", "Low environmental impact", "Safety"],
-      dataSources: ["Web Search", "Technical Literature"],
+        'Environmentally conscious material based on natural materials.',
+      features: ['Natural origin', 'Low environmental impact', 'Safety'],
+      dataSources: ['Web Search', 'Technical Literature'],
     },
     {
-      materialName: "General Eco Material C",
-      composition: ["Composite", "Bioplastic"],
+      materialName: 'General Eco Material C',
+      composition: ['Composite', 'Bioplastic'],
       scores: {
         physical: 80,
         environmental: 80,
@@ -305,9 +305,9 @@ export function generateMockProposals(scenarioId: string) {
         supply: 80,
       },
       totalScore: 80,
-      reasoning: "Standard alternative material with balanced performance.",
-      features: ["Balanced", "Versatile", "Proven track record"],
-      dataSources: ["Market Data", "User Reviews"],
+      reasoning: 'Standard alternative material with balanced performance.',
+      features: ['Balanced', 'Versatile', 'Proven track record'],
+      dataSources: ['Market Data', 'User Reviews'],
     },
   ];
 

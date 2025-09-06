@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { DETAILED_GRADING_CRITERIA } from "@/lib/grading-criteria";
+import { NextRequest, NextResponse } from 'next/server';
+import { DETAILED_GRADING_CRITERIA } from '@/lib/grading-criteria';
 
-// Claude API設定
+// Claude API configuration
 const CLAUDE_API_KEY =
   process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
 
@@ -28,7 +28,7 @@ export interface ExperimentPlanRequest {
     name: string;
     value: string;
     unit?: string;
-    importance: "high" | "medium" | "low";
+    importance: 'high' | 'medium' | 'low';
   }>;
 }
 
@@ -75,14 +75,14 @@ export interface ExperimentPlanResponse {
   };
 }
 
-// Claude-3で実験計画を生成
+// Generate experiment plan with Claude-3
 async function generateExperimentPlan(
-  material: ExperimentPlanRequest["material"],
-  currentMaterial: ExperimentPlanRequest["currentMaterial"],
-  requirements: ExperimentPlanRequest["requirements"],
+  material: ExperimentPlanRequest['material'],
+  currentMaterial: ExperimentPlanRequest['currentMaterial'],
+  requirements: ExperimentPlanRequest['requirements']
 ): Promise<ExperimentPlan | null> {
   if (!CLAUDE_API_KEY) {
-    console.warn("Claude API key not configured");
+    console.warn('Claude API key not configured');
     return null;
   }
 
@@ -93,17 +93,17 @@ ${DETAILED_GRADING_CRITERIA}
 
 [Recommended Material]
 - Material Name: ${material.materialName}
-- Composition: ${material.composition.join("/")}
+- Composition: ${material.composition.join('/')}
 - Total Score: ${material.totalScore} points
 - Reason for Recommendation: ${material.reasoning}
-- Features: ${material.features.join(", ")}
+- Features: ${material.features.join(', ')}
 
 [Current Material]
 - Composition: ${currentMaterial.composition}
-- Properties: ${currentMaterial.properties.join(", ")}
+- Properties: ${currentMaterial.properties.join(', ')}
 
 [Performance Requirements]
-${requirements.map((r) => `- ${r.name}: ${r.value} ${r.unit || ""} (Importance: ${r.importance})`).join("\n")}
+${requirements.map((r) => `- ${r.name}: ${r.value} ${r.unit || ''} (Importance: ${r.importance})`).join('\n')}
 
 [Detailed Evaluation Scores]
 - Physical Performance: ${material.scores.physical} points
@@ -175,20 +175,20 @@ Only output the JSON. Do not include any other explanation.
 `;
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "x-api-key": CLAUDE_API_KEY,
-        "anthropic-version": "2023-06-01",
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_API_KEY,
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 4000,
         temperature: 0.7,
         messages: [
           {
-            role: "user",
+            role: 'user',
             content: prompt,
           },
         ],
@@ -196,7 +196,7 @@ Only output the JSON. Do not include any other explanation.
     });
 
     if (!response.ok) {
-      console.error("Claude API error:", response.status);
+      console.error('Claude API error:', response.status);
       return null;
     }
 
@@ -204,120 +204,124 @@ Only output the JSON. Do not include any other explanation.
     const content = data.content[0]?.text;
 
     if (!content) {
-      console.error("No content in Claude response");
+      console.error('No content in Claude response');
       return null;
     }
 
-    // JSONを抽出
+    // Extract JSON
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      console.error("No JSON found in Claude response");
+      console.error('No JSON found in Claude response');
       return null;
     }
 
     const experimentPlan = JSON.parse(jsonMatch[0]);
     return experimentPlan;
   } catch (error) {
-    console.error("Error generating experiment plan:", error);
+    console.error('Error generating experiment plan:', error);
     return null;
   }
 }
 
-// フォールバック実験計画（API使用不可時）
+// Fallback experiment plan (when API is unavailable)
 function getFallbackExperimentPlan(
-  material: ExperimentPlanRequest["material"],
-  currentMaterial: ExperimentPlanRequest["currentMaterial"],
+  material: ExperimentPlanRequest['material'],
+  currentMaterial: ExperimentPlanRequest['currentMaterial']
 ): ExperimentPlan {
   return {
     overview: {
-      title: `${material.materialName}の開発実験計画`,
-      objective: `既存材料（${currentMaterial.composition}）から${material.materialName}への移行を実現するための実験計画と評価方法`,
-      duration: "3-6ヶ月",
-      budget: "500-800万円",
+      title: `${material.materialName} Development Experiment Plan`,
+      objective: `Experiment plan and evaluation methods to achieve transition from existing materials (${currentMaterial.composition}) to ${material.materialName}`,
+      duration: '3-6 months',
+      budget: '$50,000-80,000',
     },
     phases: [
       {
-        phase: "Phase 1: 材料調達と基礎評価",
-        duration: "1ヶ月",
+        phase: 'Phase 1: Material Procurement and Basic Evaluation',
+        duration: '1 month',
         tasks: [
-          "原材料サプライヤーの選定と調達",
-          "基礎物性の測定（引張強度、伸び、厚み等）",
-          "化学組成分析とFT-IR測定",
-          "DSC/TGA熱分析",
+          'Selection and procurement of raw material suppliers',
+          'Measurement of basic physical properties (tensile strength, elongation, thickness, etc.)',
+          'Chemical composition analysis and FT-IR measurement',
+          'DSC/TGA thermal analysis',
         ],
       },
       {
-        phase: "Phase 2: 複合材料の配合最適化",
-        duration: "2ヶ月",
+        phase: 'Phase 2: Composite Material Formulation Optimization',
+        duration: '2 months',
         tasks: [
-          `${material.composition.join("/")}の配合比率最適化`,
-          "ラミネート条件の検討（温度、圧力、時間）",
-          "層間接着強度の評価",
-          "バリア性能の測定（酸素透過率、水蒸気透過率）",
+          `Optimization of ${material.composition.join('/')} blend ratio`,
+          'Investigation of lamination conditions (temperature, pressure, time)',
+          'Evaluation of interlayer adhesive strength',
+          'Measurement of barrier performance (oxygen transmission rate, water vapor transmission rate)',
         ],
       },
       {
-        phase: "Phase 3: 実用化評価",
-        duration: "2-3ヶ月",
+        phase: 'Phase 3: Practical Application Evaluation',
+        duration: '2-3 months',
         tasks: [
-          "実際の包装条件での性能評価",
-          "食品安全性試験",
-          "コスト分析と量産化検討",
-          "最終レポート作成",
+          'Performance evaluation under actual packaging conditions',
+          'Food safety testing',
+          'Cost analysis and mass production consideration',
+          'Final report preparation',
         ],
       },
     ],
     keyTests: [
       {
-        category: "物理的性能",
+        category: 'Physical Performance',
         tests: [
           {
-            name: "引張強度",
-            method: "JIS K7127",
-            target: "要件仕様値以上",
-            frequency: "各フェーズ",
+            name: 'Tensile Strength',
+            method: 'JIS K7127',
+            target: 'Above requirement specification value',
+            frequency: 'Each phase',
           },
           {
-            name: "バリア性能",
-            method: "JIS K7126",
-            target: "現行材料同等以上",
-            frequency: "週次",
+            name: 'Barrier Performance',
+            method: 'JIS K7126',
+            target: 'Equal to or better than current materials',
+            frequency: 'Weekly',
           },
         ],
       },
     ],
     risks: [
       {
-        risk: "原材料供給の不安定性",
-        impact: "スケジュール遅延",
-        mitigation: "複数サプライヤーの確保",
+        risk: 'Instability of raw material supply',
+        impact: 'Schedule delay',
+        mitigation: 'Securing multiple suppliers',
       },
     ],
     deliverables: [
       {
-        deliverable: "材料仕様書",
-        timeline: "2ヶ月後",
-        description: "最適化された材料の詳細仕様と品質基準",
+        deliverable: 'Material Specification',
+        timeline: 'After 2 months',
+        description:
+          'Detailed specifications and quality standards for optimized materials',
       },
       {
-        deliverable: "物性評価レポート",
-        timeline: "3ヶ月後",
-        description: "全試験項目の結果と合否判定",
+        deliverable: 'Physical Properties Evaluation Report',
+        timeline: 'After 3 months',
+        description: 'Results of all test items and pass/fail judgment',
       },
       {
-        deliverable: "加工条件ガイドライン",
-        timeline: "4ヶ月後",
-        description: "印刷・ラミネート・製袋の最適条件",
+        deliverable: 'Processing Conditions Guidelines',
+        timeline: 'After 4 months',
+        description:
+          'Optimal conditions for printing, laminating, and bag making',
       },
       {
-        deliverable: "実用化提案書",
-        timeline: "5ヶ月後",
-        description: "量産化に向けた技術・コスト・スケジュール提案",
+        deliverable: 'Practical Application Proposal',
+        timeline: 'After 5 months',
+        description:
+          'Technical, cost, and schedule proposals for mass production',
       },
       {
-        deliverable: "最終評価レポート",
-        timeline: "6ヶ月後",
-        description: "全実験結果と実用化可能性の総合評価",
+        deliverable: 'Final Evaluation Report',
+        timeline: 'After 6 months',
+        description:
+          'Comprehensive evaluation of all experimental results and practical applicability',
       },
     ],
   };
@@ -328,24 +332,24 @@ export async function POST(req: NextRequest) {
     const body: ExperimentPlanRequest = await req.json();
     const { material, currentMaterial, requirements } = body;
 
-    console.log("🧪 Generating experiment plan for:", material.materialName);
+    console.log('🧪 Generating experiment plan for:', material.materialName);
 
-    // Claude APIで実験計画を生成
+    // Generate experiment plan with Claude API
     const experimentPlan = await generateExperimentPlan(
       material,
       currentMaterial,
-      requirements,
+      requirements
     );
 
     if (!experimentPlan) {
-      // フォールバック実験計画を使用
+      // Use fallback experiment plan
       const fallbackPlan = getFallbackExperimentPlan(material, currentMaterial);
       return NextResponse.json({
         success: true,
         experimentPlan: fallbackPlan,
         metadata: {
           generatedAt: new Date().toISOString(),
-          confidence: "fallback",
+          confidence: 'fallback',
         },
       });
     }
@@ -355,18 +359,18 @@ export async function POST(req: NextRequest) {
       experimentPlan,
       metadata: {
         generatedAt: new Date().toISOString(),
-        confidence: "high",
+        confidence: 'high',
       },
     });
   } catch (error) {
-    console.error("Experiment plan generation error:", error);
+    console.error('Experiment plan generation error:', error);
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to generate experiment plan",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to generate experiment plan',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

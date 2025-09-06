@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import { Card } from "../components/Card";
+import { useEffect, useRef } from 'react';
+import { Card } from '../components/Card';
 
 interface ComparisonChartProps {
   currentMaterial: {
@@ -16,7 +16,7 @@ interface ComparisonChartProps {
   performanceReqs: (
     | string
     | { name: string; value: string; unit?: string; importance: string }
-  )[]; // 文字列またはオブジェクトの配列に対応
+  )[]; // Support for array of strings or objects
 }
 
 export function ComparisonChart({
@@ -30,7 +30,7 @@ export function ComparisonChart({
     if (!canvasRef.current || proposals.length === 0) return;
 
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     // Canvas setup
@@ -48,12 +48,12 @@ export function ComparisonChart({
       performanceReqs.length > 0
         ? performanceReqs
             .slice(0, 8) // Maximum 8 axes
-            .map((req) => (typeof req === "object" ? req.name : req))
-        : ["Physical", "Environmental", "Cost", "Safety", "Supply Chain"];
+            .map((req) => (typeof req === 'object' ? req.name : req))
+        : ['Physical', 'Environmental', 'Cost', 'Safety', 'Supply Chain'];
     const angleStep = (Math.PI * 2) / axes.length;
 
     // Draw grid
-    ctx.strokeStyle = "#e5e7eb";
+    ctx.strokeStyle = '#e5e7eb';
     ctx.lineWidth = 1;
     for (let i = 1; i <= 5; i++) {
       ctx.beginPath();
@@ -71,39 +71,39 @@ export function ComparisonChart({
       ctx.stroke();
     }
 
-    // 軸線描画
+    // Draw axis lines
     for (let i = 0; i < axes.length; i++) {
       const angle = i * angleStep - Math.PI / 2;
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(
         centerX + Math.cos(angle) * radius,
-        centerY + Math.sin(angle) * radius,
+        centerY + Math.sin(angle) * radius
       );
       ctx.stroke();
     }
 
-    // 軸ラベル描画
-    ctx.fillStyle = "#374151";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    // Draw axis labels
+    ctx.fillStyle = '#374151';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     for (let i = 0; i < axes.length; i++) {
       const angle = i * angleStep - Math.PI / 2;
       const x = centerX + Math.cos(angle) * (radius + 35);
       const y = centerY + Math.sin(angle) * (radius + 35);
 
-      // 長いテキストを短縮
+      // Shorten long text
       let label = axes[i];
       if (label.length > 8) {
-        label = label.substring(0, 6) + "...";
+        label = label.substring(0, 6) + '...';
       }
       ctx.fillText(label, x, y);
     }
 
     // Draw each component of current material individually
-    const currentComponents = currentMaterial.composition.split("/");
-    const componentColors = ["#dc2626", "#ea580c", "#f97316", "#fb923c"]; // Red gradient
+    const currentComponents = currentMaterial.composition.split('/');
+    const componentColors = ['#dc2626', '#ea580c', '#f97316', '#fb923c']; // Red gradient
 
     currentComponents.forEach((component, index) => {
       if (index >= 4) return; // Show up to 4 items
@@ -117,8 +117,8 @@ export function ComparisonChart({
         centerY,
         radius,
         scores,
-        componentColors[index] || "#dc2626",
-        0.2,
+        componentColors[index] || '#dc2626',
+        0.2
       );
     });
 
@@ -128,8 +128,8 @@ export function ComparisonChart({
     const totalWidth = 4 * legendItemWidth; // Width for 4 items
     const legendStartX = (width - totalWidth) / 2; // Center alignment
 
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "left";
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'left';
 
     // Display individual components of current material in legend (using already defined variables)
     currentComponents.forEach((component, index) => {
@@ -137,13 +137,13 @@ export function ComparisonChart({
       const x = legendStartX + index * legendItemWidth;
 
       // Colored square
-      ctx.fillStyle = componentColors[index] || "#dc2626";
+      ctx.fillStyle = componentColors[index] || '#dc2626';
       ctx.fillRect(x, legendY, 12, 12);
 
       // Label text (component name)
-      ctx.fillStyle = "#374151";
+      ctx.fillStyle = '#374151';
       const label =
-        component.length > 10 ? component.substring(0, 8) + "..." : component;
+        component.length > 10 ? component.substring(0, 8) + '...' : component;
       ctx.fillText(label, x + 16, legendY + 8);
     });
   }, [currentMaterial, proposals, performanceReqs]);
@@ -155,7 +155,7 @@ export function ComparisonChart({
     radius: number,
     scores: number[],
     color: string,
-    alpha: number,
+    alpha: number
   ) {
     const angleStep = (Math.PI * 2) / scores.length;
 
@@ -177,7 +177,7 @@ export function ComparisonChart({
       color +
       Math.round(alpha * 255)
         .toString(16)
-        .padStart(2, "0");
+        .padStart(2, '0');
     ctx.fill();
 
     ctx.strokeStyle = color;
