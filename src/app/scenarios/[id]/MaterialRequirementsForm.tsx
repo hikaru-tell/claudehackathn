@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { Scenario } from '../data';
@@ -12,14 +12,26 @@ interface RequirementsData {
   additionalNotes: string;
 }
 
+interface AnalysisResult {
+  fileName: string;
+  requirements: Array<{
+    name: string;
+    value: string;
+    unit?: string;
+    importance: 'high' | 'medium' | 'low';
+  }>;
+}
+
 interface MaterialRequirementsFormProps {
   scenario: Scenario;
   onSubmit: (data: RequirementsData) => void;
+  analysisResults?: AnalysisResult[];
 }
 
 export function MaterialRequirementsForm({
   scenario,
   onSubmit,
+  analysisResults = [],
 }: MaterialRequirementsFormProps) {
   const [performanceReqs, setPerformanceReqs] = useState(
     scenario.requirements.performance
@@ -30,6 +42,33 @@ export function MaterialRequirementsForm({
   const [additionalNotes, setAdditionalNotes] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+
+  // AI分析結果を反映
+  useEffect(() => {
+    if (analysisResults.length > 0) {
+      const aiRequirements = analysisResults.flatMap((result) =>
+        result.requirements.map(
+          (req) => `${req.name}: ${req.value}${req.unit || ''}`
+        )
+      );
+
+      // 性能要件として高重要度のものを追加
+      const highImportanceReqs = analysisResults.flatMap((result) =>
+        result.requirements
+          .filter((req) => req.importance === 'high')
+          .map((req) => `${req.name}: ${req.value}${req.unit || ''}`)
+      );
+
+      if (highImportanceReqs.length > 0) {
+        setPerformanceReqs((prev) => [...prev, ...highImportanceReqs]);
+      }
+
+      // ファイル名を記録
+      if (analysisResults[0]) {
+        setUploadedFileName(analysisResults[0].fileName);
+      }
+    }
+  }, [analysisResults]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -52,20 +91,24 @@ export function MaterialRequirementsForm({
       }
 
       const data = await response.json();
-      
+
       // AIが抽出した要件をフォームに反映
       if (data.requirements && Array.isArray(data.requirements)) {
         const newPerformanceReqs: string[] = [];
         const newSustainabilityReqs: string[] = [];
-        
+
         data.requirements.forEach((req: any) => {
-          const reqText = req.unit 
+          const reqText = req.unit
             ? `${req.name}: ${req.value} ${req.unit}`
             : `${req.name}: ${req.value}`;
-          
+
           // 環境関連の要件はサステナビリティ要件に分類
-          if (req.name.includes('環境') || req.name.includes('リサイクル') || 
-              req.name.includes('CO2') || req.name.includes('エネルギー')) {
+          if (
+            req.name.includes('環境') ||
+            req.name.includes('リサイクル') ||
+            req.name.includes('CO2') ||
+            req.name.includes('エネルギー')
+          ) {
             newSustainabilityReqs.push(reqText);
           } else {
             newPerformanceReqs.push(reqText);
@@ -73,8 +116,12 @@ export function MaterialRequirementsForm({
         });
 
         // 既存の要件に追加（重複を避ける）
-        setPerformanceReqs([...new Set([...performanceReqs, ...newPerformanceReqs])]);
-        setSustainabilityReqs([...new Set([...sustainabilityReqs, ...newSustainabilityReqs])]);
+        setPerformanceReqs([
+          ...new Set([...performanceReqs, ...newPerformanceReqs]),
+        ]);
+        setSustainabilityReqs([
+          ...new Set([...sustainabilityReqs, ...newSustainabilityReqs]),
+        ]);
       }
     } catch (error) {
       console.error('ファイル分析エラー:', error);

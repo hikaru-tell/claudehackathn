@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Card } from '../components/Card';
 
 interface SustainabilityChartProps {
@@ -13,7 +13,10 @@ interface SustainabilityChartProps {
     composition: string[];
     scores: Record<string, number>;
   }[];
-  performanceReqs: string[];
+  performanceReqs: (
+    | string
+    | { name: string; value: string; unit?: string; importance: string }
+  )[]; // 文字列またはオブジェクトの配列に対応
 }
 
 export function SustainabilityChart({
@@ -22,6 +25,7 @@ export function SustainabilityChart({
   performanceReqs,
 }: SustainabilityChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [selectedProposalIndex, setSelectedProposalIndex] = useState(0);
 
   useEffect(() => {
     if (!canvasRef.current || proposals.length === 0) return;
@@ -43,7 +47,9 @@ export function SustainabilityChart({
     // レーダーチャートの軸（性能要件と同じ軸を使用）
     const axes =
       performanceReqs.length > 0
-        ? performanceReqs.slice(0, 8) // 最大8軸まで
+        ? performanceReqs
+            .slice(0, 8) // 最大8軸まで
+            .map((req) => (typeof req === 'object' ? req.name : req))
         : ['物性', '環境性', 'コスト', '安全性', '供給性'];
     const angleStep = (Math.PI * 2) / axes.length;
 
@@ -96,9 +102,10 @@ export function SustainabilityChart({
       ctx.fillText(label, x, y);
     }
 
-    // 最初の提案素材の各成分を個別に描画（サステナビリティ素材）
-    if (proposals.length > 0) {
-      const sustainableComponents = proposals[0].composition; // 最初の提案素材を使用
+    // 選択された提案素材の各成分を個別に描画（サステナビリティ素材）
+    if (proposals.length > 0 && selectedProposalIndex < proposals.length) {
+      const sustainableComponents =
+        proposals[selectedProposalIndex].composition; // 選択された提案素材を使用
       const componentColors = ['#16a34a', '#22c55e', '#4ade80', '#86efac']; // 緑系のグラデーション
 
       sustainableComponents.slice(0, 4).forEach((component, index) => {
@@ -127,9 +134,10 @@ export function SustainabilityChart({
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'left';
 
-    // サステナビリティ素材（最初の提案）の個別成分を表示
-    if (proposals.length > 0) {
-      const sustainableComponents = proposals[0].composition;
+    // サステナビリティ素材（選択された提案）の個別成分を表示
+    if (proposals.length > 0 && selectedProposalIndex < proposals.length) {
+      const sustainableComponents =
+        proposals[selectedProposalIndex].composition;
       const componentColors = ['#16a34a', '#22c55e', '#4ade80', '#86efac']; // 緑系のグラデーション
 
       // 各成分を個別に表示
@@ -147,7 +155,7 @@ export function SustainabilityChart({
         ctx.fillText(label, x + 16, legendY + 8);
       });
     }
-  }, [currentMaterial, proposals, performanceReqs]);
+  }, [currentMaterial, proposals, performanceReqs, selectedProposalIndex]);
 
   function drawPolygon(
     ctx: CanvasRenderingContext2D,
@@ -188,6 +196,25 @@ export function SustainabilityChart({
 
   return (
     <Card title="サステナビリティ素材構成">
+      {/* 提案素材選択プルダウン */}
+      {proposals.length > 0 && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            提案素材を選択:
+          </label>
+          <select
+            value={selectedProposalIndex}
+            onChange={(e) => setSelectedProposalIndex(Number(e.target.value))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 text-sm"
+          >
+            {proposals.slice(0, 3).map((proposal, index) => (
+              <option key={index} value={index}>
+                TOP{index + 1}: {proposal.materialName}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <div className="flex justify-center">
         <canvas
           ref={canvasRef}

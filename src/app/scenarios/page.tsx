@@ -1,16 +1,17 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { Header } from "../components/Header";
-import { Card } from "../components/Card";
-import { Button } from "../components/Button";
-import { scenarios } from "./data";
+import { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { Header } from '../components/Header';
+import { Card } from '../components/Card';
+import { Button } from '../components/Button';
+import { scenarios } from './data';
 
 export default function ScenariosPage() {
   const router = useRouter();
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,20 +22,79 @@ export default function ScenariosPage() {
   };
 
   const handleRemoveFile = (index: number) => {
-    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleNext = () => {
+  const analyzeFiles = async (files: File[]) => {
+    const analysisResults = [];
+    console.log('AI分析開始: ファイル数', files.length);
+
+    for (const file of files) {
+      try {
+        console.log(`分析中: ${file.name}`);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/analyze-requirements', {
+          method: 'POST',
+          body: formData,
+        });
+
+        console.log(`API応答ステータス: ${response.status}`);
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('AI分析結果:', result);
+          analysisResults.push({
+            fileName: file.name,
+            ...result,
+          });
+        } else {
+          const errorText = await response.text();
+          console.error(`APIエラー: ${response.status}`, errorText);
+        }
+      } catch (error) {
+        console.error(`ファイル ${file.name} の分析エラー:`, error);
+      }
+    }
+
+    console.log('全分析結果:', analysisResults);
+    return analysisResults;
+  };
+
+  const handleNext = async () => {
     if (selectedScenario) {
-      // TODO: Store files in context or send to API
-      router.push(`/scenarios/${selectedScenario}`);
+      setIsAnalyzing(true);
+
+      try {
+        let analysisResults = [];
+
+        if (uploadedFiles.length > 0) {
+          analysisResults = await analyzeFiles(uploadedFiles);
+        }
+
+        // 分析結果をクエリパラメータで渡す
+        const queryParams = new URLSearchParams();
+        if (analysisResults.length > 0) {
+          queryParams.set('analysis', JSON.stringify(analysisResults));
+        }
+
+        const url = `/scenarios/${selectedScenario}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+        router.push(url);
+      } catch (error) {
+        console.error('分析エラー:', error);
+        // エラーが発生しても次のページに進む
+        router.push(`/scenarios/${selectedScenario}`);
+      } finally {
+        setIsAnalyzing(false);
+      }
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
@@ -58,8 +118,8 @@ export default function ScenariosPage() {
                     key={scenario.id}
                     className={`cursor-pointer transition-all ${
                       selectedScenario === scenario.id
-                        ? "ring-2 ring-green-600 shadow-xl"
-                        : "hover:shadow-lg"
+                        ? 'ring-2 ring-green-600 shadow-xl'
+                        : 'hover:shadow-lg'
                     }`}
                   >
                     <div onClick={() => setSelectedScenario(scenario.id)}>
@@ -72,7 +132,7 @@ export default function ScenariosPage() {
                           <p className="text-sm text-gray-600 mb-2">
                             {scenario.description}
                           </p>
-                          
+
                           <div className="space-y-1">
                             <div className="text-xs">
                               <span className="font-semibold text-gray-700">
@@ -82,7 +142,7 @@ export default function ScenariosPage() {
                                 {scenario.currentMaterial.composition}
                               </span>
                             </div>
-                            
+
                             <div className="flex flex-wrap gap-1 mt-1">
                               {scenario.challenges.map((challenge, index) => (
                                 <span
@@ -118,7 +178,7 @@ export default function ScenariosPage() {
                       onChange={handleFileUpload}
                       className="hidden"
                     />
-                    
+
                     <svg
                       className="mx-auto h-10 w-10 text-gray-400 mb-3"
                       fill="none"
@@ -132,7 +192,7 @@ export default function ScenariosPage() {
                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                       />
                     </svg>
-                    
+
                     <p className="text-sm text-gray-600 mb-2">
                       ファイルをドラッグ＆ドロップ
                     </p>
@@ -238,17 +298,14 @@ export default function ScenariosPage() {
           </div>
 
           <div className="flex justify-between mt-8">
-            <Button
-              variant="outline"
-              onClick={() => router.push("/")}
-            >
+            <Button variant="outline" onClick={() => router.push('/')}>
               戻る
             </Button>
             <Button
               onClick={handleNext}
-              disabled={!selectedScenario}
+              disabled={!selectedScenario || isAnalyzing}
             >
-              分析を開始
+              {isAnalyzing ? '分析中...' : '分析を開始'}
             </Button>
           </div>
         </div>
