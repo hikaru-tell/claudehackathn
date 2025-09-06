@@ -208,7 +208,7 @@ export default function ProposalsPage() {
 
       {/* レポート生成中のローディング */}
       {isGeneratingReport && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
           <Card className="p-8 max-w-md">
             <div className="text-center">
               <svg

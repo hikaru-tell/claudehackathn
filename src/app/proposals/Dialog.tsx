@@ -26,13 +26,10 @@ export function Dialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* オーバーレイ */}
-      <div
-        className="absolute inset-0 bg-black bg-opacity-50"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/70" onClick={onClose} />
 
       {/* ダイアログ本体 */}
-      <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+      <div className="relative z-10 bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
         <h3 className="text-xl font-bold text-gray-800 mb-4">{title}</h3>
         <p className="text-gray-600 mb-6">{message}</p>
 
