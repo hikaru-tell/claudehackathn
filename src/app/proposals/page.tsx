@@ -12,6 +12,7 @@ import { Dialog } from './Dialog';
 import { ExperimentPlanReport } from './ExperimentPlanReport';
 import { scenarios } from '../scenarios/data';
 import { generateMockProposals } from './mockData';
+import type { ExperimentPlan } from '../api/experiment-plan/route';
 
 interface RecommendedMaterial {
   materialName: string;
@@ -36,12 +37,13 @@ export default function ProposalsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [proposals, setProposals] = useState<RecommendedMaterial[]>([]);
   const [showDialog, setShowDialog] = useState(false);
-  const [selectedProposal, setSelectedProposal] = useState<{
-    materialName: string;
-    composition: string[];
-  } | null>(null);
+  const [selectedProposal, setSelectedProposal] =
+    useState<RecommendedMaterial | null>(null);
   const [showReport, setShowReport] = useState(false);
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [experimentPlan, setExperimentPlan] = useState<ExperimentPlan | null>(
+    null
+  );
 
   // 進捗管理用のstate
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -157,28 +159,65 @@ export default function ProposalsPage() {
     }
   }, [scenarioId, currentMaterialsStr, performanceReqsStr]); // 文字列を依存配列に使用
 
-  const handleProposalClick = (proposal: {
-    materialName: string;
-    composition: string[];
-  }) => {
+  const handleProposalClick = (proposal: RecommendedMaterial) => {
     setSelectedProposal(proposal);
     setShowDialog(true);
   };
 
   const handleDialogConfirm = async () => {
+    if (!selectedProposal) return;
+
     setShowDialog(false);
     setIsGeneratingReport(true);
 
-    // AI分析のモック（2秒の遅延）
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // 現在の素材情報を取得
+      const currentMaterials = JSON.parse(currentMaterialsStr || '{}');
+      const performanceReqs = JSON.parse(performanceReqsStr || '[]');
 
-    setIsGeneratingReport(false);
-    setShowReport(true);
+      const requestBody = {
+        material: selectedProposal,
+        currentMaterial: currentMaterials,
+        requirements: performanceReqs,
+      };
+
+      console.log(
+        '🧪 Generating experiment plan for:',
+        selectedProposal.materialName
+      );
+
+      const response = await fetch('/api/experiment-plan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error('実験計画の生成に失敗しました');
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.experimentPlan) {
+        setExperimentPlan(data.experimentPlan);
+        setShowReport(true);
+      } else {
+        throw new Error(data.error || '実験計画の生成に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error generating experiment plan:', error);
+      alert('実験計画の生成に失敗しました。もう一度お試しください。');
+    } finally {
+      setIsGeneratingReport(false);
+    }
   };
 
   const handleCloseReport = () => {
     setShowReport(false);
     setSelectedProposal(null);
+    setExperimentPlan(null);
   };
 
   if (!scenario) {
@@ -359,12 +398,7 @@ export default function ProposalsPage() {
                     key={index}
                     proposal={proposal}
                     rank={index + 1}
-                    onClick={() =>
-                      handleProposalClick({
-                        materialName: proposal.materialName,
-                        composition: proposal.composition,
-                      })
-                    }
+                    onClick={() => handleProposalClick(proposal)}
                   />
                 ))}
               </div>
@@ -522,9 +556,10 @@ export default function ProposalsPage() {
       )}
 
       {/* 実験計画レポート */}
-      {showReport && selectedProposal && (
+      {showReport && selectedProposal && experimentPlan && (
         <ExperimentPlanReport
           material={selectedProposal}
+          experimentPlan={experimentPlan}
           onClose={handleCloseReport}
         />
       )}

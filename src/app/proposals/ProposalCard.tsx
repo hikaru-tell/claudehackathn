@@ -1,4 +1,5 @@
 import { Card } from '../components/Card';
+import { scoreToGrade } from '@/lib/grading-criteria';
 
 interface ProposalCardProps {
   proposal: any;
@@ -20,10 +21,13 @@ export function ProposalCard({ proposal, rank, onClick }: ProposalCardProps) {
     }
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+  const getGradeDisplay = (score: number) => {
+    const gradeInfo = scoreToGrade(score);
+    return {
+      grade: gradeInfo.grade,
+      label: gradeInfo.label,
+      colorClasses: `${gradeInfo.color.bg} ${gradeInfo.color.text} ${gradeInfo.color.border}`,
+    };
   };
 
   return (
@@ -50,32 +54,45 @@ export function ProposalCard({ proposal, rank, onClick }: ProposalCardProps) {
             </p>
           </div>
           <div className="text-center">
-            <div
-              className={`text-4xl font-bold ${getScoreColor(proposal.totalScore)}`}
-            >
-              {proposal.totalScore}
-            </div>
-            <p className="text-sm text-gray-500">総合スコア</p>
+            {(() => {
+              const gradeDisplay = getGradeDisplay(proposal.totalScore);
+              return (
+                <div
+                  className={`inline-block px-4 py-2 rounded-lg border-2 ${gradeDisplay.colorClasses}`}
+                >
+                  <div className="text-3xl font-bold">{gradeDisplay.grade}</div>
+                  <p className="text-xs font-medium">{gradeDisplay.label}</p>
+                </div>
+              );
+            })()}
+            <p className="text-sm text-gray-500 mt-2">総合評価</p>
           </div>
         </div>
 
         {/* スコア詳細 */}
         <div className="grid grid-cols-5 gap-3 mb-4">
           {Object.entries(proposal.scores).map(
-            ([key, value]: [string, any]) => (
-              <div key={key} className="text-center">
-                <div className="text-2xl font-semibold text-gray-700">
-                  {value}
+            ([key, value]: [string, any]) => {
+              const gradeDisplay = getGradeDisplay(value);
+              return (
+                <div key={key} className="text-center">
+                  <div
+                    className={`inline-block px-2 py-1 rounded border ${gradeDisplay.colorClasses}`}
+                  >
+                    <div className="text-lg font-bold">
+                      {gradeDisplay.grade}
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {key === 'physical' && '物性'}
+                    {key === 'environmental' && '環境性'}
+                    {key === 'cost' && 'コスト'}
+                    {key === 'safety' && '安全性'}
+                    {key === 'supply' && '供給性'}
+                  </p>
                 </div>
-                <p className="text-xs text-gray-500">
-                  {key === 'physical' && '物性'}
-                  {key === 'environmental' && '環境性'}
-                  {key === 'cost' && 'コスト'}
-                  {key === 'safety' && '安全性'}
-                  {key === 'supply' && '供給性'}
-                </p>
-              </div>
-            )
+              );
+            }
           )}
         </div>
 
