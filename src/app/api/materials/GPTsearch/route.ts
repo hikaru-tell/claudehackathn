@@ -50,58 +50,58 @@ export function generateDeepResearchPrompt(
   }
 
   const prompt = `
-あなたは包装材料の専門研究者です。以下の条件で最新の研究論文と実用化事例を調査してください。
+You are a specialized researcher in packaging materials. Please investigate the latest research papers and practical implementation cases under the following conditions:
 
-【現在の素材】
-- 構成: ${composition || '不明'}
-- 特性: ${properties?.join(', ') || '不明'}
+[Current Material]
+- Composition: ${composition || 'Unknown'}
+- Properties: ${properties?.join(', ') || 'Unknown'}
 
-【性能要件】
+[Performance Requirements]
 ${performanceReqs.join('\n')}
 
-【調査項目】
-1. 2020年以降の最新素材研究トレンド
-2. サステナブル包装材料の実用化事例
-3. バイオプラスチック・生分解性材料の最新開発状況
-4. リサイクル可能な単一素材化技術
-5. 代替素材の性能比較データ
+[Research Items]
+1. Latest material research trends since 2020
+2. Practical cases of sustainable packaging materials
+3. Latest developments in bioplastics and biodegradable materials
+4. Technologies for recyclable mono-material packaging
+5. Performance comparison data of alternative materials
 
-【特に重視する点】
-- カーボンニュートラル達成への貢献
-- 食品包装としての安全性認証
-- 大量生産可能性とコスト競争力
-- 既存設備での加工適合性
+[Key Focus Points]
+- Contribution to achieving carbon neutrality
+- Safety certifications for food packaging
+- Mass production feasibility and cost competitiveness
+- Compatibility with existing processing equipment
 
-【回答形式】
-以下の形式で整理して回答してください：
+[Response Format]
+Please organize your answer in the following format:
 
-1. 推奨素材TOP3
-   - 素材名:
-   - 製造メーカー:
-   - 主要物性値:
-   - 価格帯:
-   - 導入事例:
-   - 引用元: [論文名/報告書名, 著者/機関, 年]
+1. Top 3 Recommended Materials
+   - Material Name:
+   - Manufacturer:
+   - Key Physical Properties:
+   - Price Range:
+   - Implementation Cases:
+   - References: [Paper/Report Title, Author/Institution, Year]
 
-2. 技術トレンド
-   - 最新の研究開発動向
-   - 今後の展望
-   - 引用元情報
+2. Technology Trends
+   - Latest research and development directions
+   - Future outlook
+   - Reference information
 
-3. 実装上の考慮事項
-   - 技術的課題
-   - コスト面の課題
-   - 規制・認証要件
+3. Implementation Considerations
+   - Technical challenges
+   - Cost-related challenges
+   - Regulatory and certification requirements
 
-4. 引用文献リスト
-   各材料について必ず以下の情報を含めてください：
-   - 文献タイトル
-   - 著者/研究機関
-   - 発表年
-   - URL（あれば）
-   - 文献タイプ（論文/特許/企業レポート/ウェブサイト）
+4. Reference List
+   For each material, be sure to include:
+   - Title of the document
+   - Author/Research Institution
+   - Publication Year
+   - URL (if available)
+   - Document type (Paper/Patent/Corporate Report/Website)
 
-具体的な材料名、製造メーカー、物性データ、そして必ず情報源を含めて回答してください。
+Please provide concrete material names, manufacturers, physical property data, and always include sources of information.
 `;
 
   console.log(

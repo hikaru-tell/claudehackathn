@@ -6,8 +6,8 @@ import { ConvexClientProvider } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RiNeco - サステナブル包装材料提案AI",
-  description: "環境に優しい包装材料への置換を支援するAIプラットフォーム",
+  title: "RiNeco - Sustainable Packaging Material AI",
+  description: "AI platform to support replacement with eco-friendly packaging materials",
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
+    <html lang="en">
       <body className={inter.className}>
         <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>

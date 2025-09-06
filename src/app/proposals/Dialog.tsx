@@ -18,17 +18,17 @@ export function Dialog({
   onConfirm,
   title,
   message,
-  confirmText = 'はい',
-  cancelText = 'キャンセル',
+  confirmText = 'Yes',
+  cancelText = 'Cancel',
 }: DialogProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* オーバーレイ */}
+      {/* Overlay */}
       <div className="absolute inset-0 bg-black/70" onClick={onClose} />
 
-      {/* ダイアログ本体 */}
+      {/* Dialog body */}
       <div className="relative z-10 bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
         <h3 className="text-xl font-bold text-gray-800 mb-4">{title}</h3>
         <p className="text-gray-600 mb-6">{message}</p>

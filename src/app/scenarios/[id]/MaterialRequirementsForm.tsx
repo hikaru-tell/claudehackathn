@@ -43,7 +43,7 @@ export function MaterialRequirementsForm({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 
-  // AI分析結果を反映
+  // Reflect AI analysis results
   useEffect(() => {
     if (analysisResults.length > 0) {
       const aiRequirements = analysisResults.flatMap((result) =>
@@ -52,7 +52,7 @@ export function MaterialRequirementsForm({
         )
       );
 
-      // 性能要件として高重要度のものを追加
+      // Add high importance requirements as performance requirements
       const highImportanceReqs = analysisResults.flatMap((result) =>
         result.requirements
           .filter((req) => req.importance === 'high')
@@ -63,7 +63,7 @@ export function MaterialRequirementsForm({
         setPerformanceReqs((prev) => [...prev, ...highImportanceReqs]);
       }
 
-      // ファイル名を記録
+      // Record file name
       if (analysisResults[0]) {
         setUploadedFileName(analysisResults[0].fileName);
       }
@@ -87,12 +87,12 @@ export function MaterialRequirementsForm({
       });
 
       if (!response.ok) {
-        throw new Error('分析に失敗しました');
+        throw new Error('Analysis failed');
       }
 
       const data = await response.json();
 
-      // AIが抽出した要件をフォームに反映
+      // Reflect AI-extracted requirements in the form
       if (data.requirements && Array.isArray(data.requirements)) {
         const newPerformanceReqs: string[] = [];
         const newSustainabilityReqs: string[] = [];
@@ -102,12 +102,15 @@ export function MaterialRequirementsForm({
             ? `${req.name}: ${req.value} ${req.unit}`
             : `${req.name}: ${req.value}`;
 
-          // 環境関連の要件はサステナビリティ要件に分類
+          // Classify environment-related requirements as sustainability requirements
           if (
-            req.name.includes('環境') ||
-            req.name.includes('リサイクル') ||
+            req.name.includes('environment') ||
+            req.name.includes('Environment') ||
+            req.name.includes('recycl') ||
+            req.name.includes('Recycl') ||
             req.name.includes('CO2') ||
-            req.name.includes('エネルギー')
+            req.name.includes('energy') ||
+            req.name.includes('Energy')
           ) {
             newSustainabilityReqs.push(reqText);
           } else {
@@ -115,7 +118,7 @@ export function MaterialRequirementsForm({
           }
         });
 
-        // 既存の要件に追加（重複を避ける）
+        // Add to existing requirements (avoid duplicates)
         setPerformanceReqs([
           ...new Set([...performanceReqs, ...newPerformanceReqs]),
         ]);
@@ -124,8 +127,8 @@ export function MaterialRequirementsForm({
         ]);
       }
     } catch (error) {
-      console.error('ファイル分析エラー:', error);
-      alert('ファイルの分析に失敗しました。もう一度お試しください。');
+      console.error('File analysis error:', error);
+      alert('Failed to analyze file. Please try again.');
     } finally {
       setIsAnalyzing(false);
     }
@@ -144,12 +147,12 @@ export function MaterialRequirementsForm({
   };
 
   return (
-    <Card title="要件設定">
+    <Card title="Requirements Setup">
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* 性能要件 */}
+        {/* Performance Requirements */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-3">
-            性能要件
+            Performance Requirements
           </label>
           <div className="space-y-2">
             {performanceReqs.map((req, index) => (
@@ -179,7 +182,7 @@ export function MaterialRequirementsForm({
                   }}
                   className="px-3 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
                 >
-                  削除
+                  Delete
                 </button>
               </div>
             ))}
@@ -191,15 +194,15 @@ export function MaterialRequirementsForm({
               className="flex items-center space-x-2 px-4 py-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg border-2 border-dashed border-green-300 hover:border-green-400 transition-colors w-full"
             >
               <span className="text-lg">+</span>
-              <span>性能要件を追加</span>
+              <span>Add Performance Requirement</span>
             </button>
           </div>
         </div>
 
-        {/* サステナビリティ要件 */}
+        {/* Sustainability Requirements */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-3">
-            サステナビリティ要件
+            Sustainability Requirements
           </label>
           <div className="space-y-2">
             {sustainabilityReqs.map((req, index) => (
@@ -229,7 +232,7 @@ export function MaterialRequirementsForm({
                   }}
                   className="px-3 py-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
                 >
-                  削除
+                  Delete
                 </button>
               </div>
             ))}
@@ -241,27 +244,27 @@ export function MaterialRequirementsForm({
               className="flex items-center space-x-2 px-4 py-2 text-green-600 hover:text-green-800 hover:bg-green-50 rounded-lg border-2 border-dashed border-green-300 hover:border-green-400 transition-colors w-full"
             >
               <span className="text-lg">+</span>
-              <span>サステナビリティ要件を追加</span>
+              <span>Add Sustainability Requirement</span>
             </button>
           </div>
         </div>
 
-        {/* 追加要件 */}
+        {/* Additional Requirements */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-3">
-            追加要件・備考
+            Additional Requirements & Notes
           </label>
           <textarea
             value={additionalNotes}
             onChange={(e) => setAdditionalNotes(e.target.value)}
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            placeholder="その他の要件や制約事項があれば入力してください..."
+            placeholder="Enter any other requirements or constraints..."
           />
         </div>
 
         <Button type="submit" className="w-full">
-          AI提案を生成する
+          Generate AI Proposals
         </Button>
       </form>
     </Card>

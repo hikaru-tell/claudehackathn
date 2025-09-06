@@ -2,8 +2,8 @@ export function generateMockProposals(scenarioId: string) {
   const proposalTemplates = {
     'potato-chips': [
       {
-        materialName: 'バイオPP単層フィルム',
-        composition: ['バイオPP', 'EVOH', 'コーティング'],
+        materialName: 'Bio-PP Monolayer Film',
+        composition: ['Bio-PP', 'EVOH', 'Coating'],
         scores: {
           physical: 85,
           environmental: 92,
@@ -13,18 +13,18 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 83,
         reasoning:
-          '植物由来のポリプロピレンにEVOHコーティングを施すことで、優れたバリア性を維持しながらモノマテリアル化を実現。リサイクル性が大幅に向上し、CO2排出量を40%削減可能。',
+          'By applying EVOH coating to plant-based polypropylene, we achieve mono-material design while maintaining excellent barrier properties. Recyclability is greatly improved with 40% CO2 emission reduction.',
         features: [
-          'モノマテリアル',
-          'バイオマス由来',
-          'リサイクル可能',
-          '高バリア性',
+          'Mono-material',
+          'Biomass-based',
+          'Recyclable',
+          'High barrier',
         ],
-        dataSources: ['Convexデータベース', '最新Web情報', 'AI分析'],
+        dataSources: ['Convex Database', 'Latest Web Info', 'AI Analysis'],
       },
       {
-        materialName: '紙/バイオPEラミネート',
-        composition: ['紙', 'バイオPE'],
+        materialName: 'Paper/Bio-PE Laminate',
+        composition: ['Paper', 'Bio-PE'],
         scores: {
           physical: 75,
           environmental: 88,
@@ -34,13 +34,13 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 84,
         reasoning:
-          'FSC認証紙にバイオマス由来PEをラミネート。紙の割合を70%以上にすることで紙リサイクルルートで処理可能。消費者の環境意識にも訴求しやすい。',
-        features: ['紙ベース', 'FSC認証', 'バイオPE使用', '既存設備対応'],
-        dataSources: ['Convexデータベース', '業界トレンド分析'],
+          'FSC-certified paper laminated with biomass-based PE. By keeping paper content above 70%, it can be processed through paper recycling routes. Appeals to environmentally conscious consumers.',
+        features: ['Paper-based', 'FSC Certified', 'Bio-PE', 'Compatible with existing equipment'],
+        dataSources: ['Convex Database', 'Industry Trend Analysis'],
       },
       {
-        materialName: '高バリアPETモノマテリアル',
-        composition: ['PET', 'SiOx', 'コーティング'],
+        materialName: 'High Barrier PET Mono-material',
+        composition: ['PET', 'SiOx', 'Coating'],
         scores: {
           physical: 90,
           environmental: 75,
@@ -50,15 +50,15 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 83,
         reasoning:
-          'PETに酸化ケイ素蒸着処理を施した単一素材構成。既存のPETリサイクルインフラを活用可能で、透明性も維持できるため商品の視認性も確保。',
-        features: ['単一素材', '透明性維持', '高バリア', '既存インフラ活用'],
-        dataSources: ['技術データベース', '特許情報分析'],
+          'Single material design with silicon oxide vapor deposition on PET. Can utilize existing PET recycling infrastructure while maintaining transparency for product visibility.',
+        features: ['Single material', 'Transparency maintained', 'High barrier', 'Existing infrastructure'],
+        dataSources: ['Technical Database', 'Patent Analysis'],
       },
     ],
     'frozen-food': [
       {
-        materialName: 'バイオPE単層フィルム',
-        composition: ['バイオPE', 'EVOH', 'バイオPE'],
+        materialName: 'Bio-PE Monolayer Film',
+        composition: ['Bio-PE', 'EVOH', 'Bio-PE'],
         scores: {
           physical: 88,
           environmental: 85,
@@ -68,13 +68,13 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 83,
         reasoning:
-          'サトウキビ由来のPEを使用し、中間層にEVOHを配置。-18℃での柔軟性を維持しながら、電子レンジ対応も可能。カーボンニュートラルに貢献。',
-        features: ['バイオマス', '冷凍対応', '電子レンジ可', '低温柔軟性'],
-        dataSources: ['Convexデータベース', '最新研究論文'],
+          'Using sugarcane-derived PE with EVOH middle layer. Maintains flexibility at -18°C while enabling microwave compatibility. Contributes to carbon neutrality.',
+        features: ['Biomass-based', 'Freezer compatible', 'Microwave safe', 'Low-temp flexibility'],
+        dataSources: ['Convex Database', 'Latest Research Papers'],
       },
       {
-        materialName: 'リサイクルPP複合材',
-        composition: ['リサイクルPP', 'EVOH', 'リサイクルPP'],
+        materialName: 'Recycled PP Composite',
+        composition: ['Recycled PP', 'EVOH', 'Recycled PP'],
         scores: {
           physical: 82,
           environmental: 80,
@@ -84,13 +84,13 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 84,
         reasoning:
-          'ケミカルリサイクルPPを使用した3層構造。バージン材と同等の物性を持ち、コスト面でも優位性あり。循環型経済に貢献。',
-        features: ['リサイクル材', 'コスト優位', '循環型', '実績豊富'],
-        dataSources: ['市場データ', 'サプライヤー情報'],
+          'Three-layer structure using chemically recycled PP. Properties equivalent to virgin material with cost advantages. Contributes to circular economy.',
+        features: ['Recycled material', 'Cost advantage', 'Circular economy', 'Proven track record'],
+        dataSources: ['Market Data', 'Supplier Information'],
       },
       {
-        materialName: '植物由来PA/PE',
-        composition: ['バイオPA', 'バイオPE'],
+        materialName: 'Plant-based PA/PE',
+        composition: ['Bio-PA', 'Bio-PE'],
         scores: {
           physical: 85,
           environmental: 82,
@@ -100,15 +100,15 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 80,
         reasoning:
-          'ヒマシ油由来のポリアミドとバイオPEの組み合わせ。優れた耐ピンホール性と落下強度を実現。将来的な量産化でコスト削減見込み。',
-        features: ['植物由来', '高強度', '耐ピンホール', '将来性'],
-        dataSources: ['技術トレンド', '開発者インタビュー'],
+          'Combination of castor oil-derived polyamide and bio-PE. Excellent pinhole resistance and drop strength. Cost reduction expected with future mass production.',
+        features: ['Plant-derived', 'High strength', 'Pinhole resistant', 'Future potential'],
+        dataSources: ['Technology Trends', 'Developer Interviews'],
       },
     ],
     'coffee-beans': [
       {
-        materialName: 'バリアコート紙',
-        composition: ['紙', 'バイオバリア', 'コーティング'],
+        materialName: 'Barrier Coated Paper',
+        composition: ['Paper', 'Bio-barrier', 'Coating'],
         scores: {
           physical: 78,
           environmental: 95,
@@ -118,13 +118,13 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 85,
         reasoning:
-          '特殊バリアコーティングを施した紙素材。コンポスト可能で、6ヶ月の賞味期限を確保。脱気バルブも紙製で統一可能。',
-        features: ['コンポスト可能', '紙製', 'バリア性', '環境配慮'],
-        dataSources: ['Convexデータベース', '環境認証データ'],
+          'Paper material with special barrier coating. Compostable with 6-month shelf life capability. Degassing valve can also be unified with paper material.',
+        features: ['Compostable', 'Paper-based', 'Barrier properties', 'Eco-friendly'],
+        dataSources: ['Convex Database', 'Environmental Certification Data'],
       },
       {
-        materialName: 'バイオPBS/PBAT',
-        composition: ['バイオPBS', 'PBAT', 'ブレンド'],
+        materialName: 'Bio-PBS/PBAT',
+        composition: ['Bio-PBS', 'PBAT', 'Blend'],
         scores: {
           physical: 82,
           environmental: 90,
@@ -134,13 +134,13 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 82,
         reasoning:
-          '生分解性プラスチックのブレンド材。土壌中で完全分解し、優れたガスバリア性を実現。香り保持性能も従来材と同等。',
-        features: ['生分解性', '土壌分解', '香り保持', 'バリア性'],
-        dataSources: ['環境性能データ', '第三者認証'],
+          'Biodegradable plastic blend material. Completely degrades in soil with excellent gas barrier properties. Aroma retention performance equal to conventional materials.',
+        features: ['Biodegradable', 'Soil degradable', 'Aroma retention', 'Barrier properties'],
+        dataSources: ['Environmental Performance Data', 'Third-party Certification'],
       },
       {
-        materialName: 'リサイクルPET/PE',
-        composition: ['リサイクルPET', 'PE'],
+        materialName: 'Recycled PET/PE',
+        composition: ['Recycled PET', 'PE'],
         scores: {
           physical: 80,
           environmental: 78,
@@ -150,15 +150,15 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 83,
         reasoning:
-          'メカニカルリサイクルPETとPEの2層構造。既存のリサイクルチェーンを活用しながら、必要なバリア性を確保。',
-        features: ['リサイクル材', '実用的', 'コスト効率', '供給安定'],
-        dataSources: ['市場価格データ', 'リサイクル統計'],
+          'Two-layer structure of mechanically recycled PET and PE. Leverages existing recycling chains while maintaining necessary barrier properties.',
+        features: ['Recycled material', 'Practical', 'Cost efficient', 'Stable supply'],
+        dataSources: ['Market Price Data', 'Recycling Statistics'],
       },
     ],
     cosmetics: [
       {
-        materialName: 'ガラス容器',
-        composition: ['ガラス'],
+        materialName: 'Glass Container',
+        composition: ['Glass'],
         scores: {
           physical: 95,
           environmental: 85,
@@ -168,12 +168,12 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 86,
         reasoning:
-          '無限にリサイクル可能なガラス容器。高級感があり、内容物との相互作用がない。重量増加分は薄肉化技術でカバー。',
-        features: ['無限リサイクル', '高級感', '化学的安定', '透明性'],
-        dataSources: ['Convexデータベース', '容器メーカーカタログ'],
+          'Infinitely recyclable glass container. Premium feel with no interaction with contents. Weight increase addressed through thin-wall technology.',
+        features: ['Infinitely recyclable', 'Premium feel', 'Chemically stable', 'Transparency'],
+        dataSources: ['Convex Database', 'Container Manufacturer Catalog'],
       },
       {
-        materialName: 'PCR-PP容器',
+        materialName: 'PCR-PP Container',
         composition: ['PCR-PP'],
         scores: {
           physical: 82,
@@ -184,13 +184,13 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 84,
         reasoning:
-          'ポストコンシューマーリサイクルPPを80%以上使用。化粧品グレードの品質基準をクリアし、既存の充填ラインで使用可能。',
-        features: ['高PCR含有率', '軽量', '既存設備対応', 'コスト効率'],
-        dataSources: ['リサイクル材データベース', '品質試験結果'],
+          'Uses over 80% post-consumer recycled PP. Meets cosmetic-grade quality standards and compatible with existing filling lines.',
+        features: ['High PCR content', 'Lightweight', 'Compatible with existing equipment', 'Cost efficient'],
+        dataSources: ['Recycled Material Database', 'Quality Test Results'],
       },
       {
-        materialName: 'バイオPET容器',
-        composition: ['バイオPET'],
+        materialName: 'Bio-PET Container',
+        composition: ['Bio-PET'],
         scores: {
           physical: 88,
           environmental: 83,
@@ -200,9 +200,9 @@ export function generateMockProposals(scenarioId: string) {
         },
         totalScore: 82,
         reasoning:
-          'サトウキビ由来のバイオPET。従来のPETと同じリサイクルストリームで処理可能。透明性と強度を両立。',
-        features: ['バイオマス', '透明', 'リサイクル可能', '軽量'],
-        dataSources: ['バイオ材料データ', 'LCA分析結果'],
+          'Sugarcane-derived bio-PET. Can be processed in same recycling stream as conventional PET. Combines transparency with strength.',
+        features: ['Biomass-based', 'Transparent', 'Recyclable', 'Lightweight'],
+        dataSources: ['Bio-material Data', 'LCA Analysis Results'],
       },
     ],
   };
@@ -210,8 +210,8 @@ export function generateMockProposals(scenarioId: string) {
   // デフォルトのテンプレート（シナリオが見つからない場合）
   const defaultProposals = [
     {
-      materialName: '汎用エコ素材A',
-      composition: ['リサイクル材', 'バイオ材'],
+      materialName: 'General Eco Material A',
+      composition: ['Recycled material', 'Bio-material'],
       scores: {
         physical: 75,
         environmental: 85,
@@ -221,13 +221,13 @@ export function generateMockProposals(scenarioId: string) {
       },
       totalScore: 81,
       reasoning:
-        '環境負荷を低減しながら、必要な性能を維持する汎用的な代替素材。',
-      features: ['環境配慮', 'コスト効率', '供給安定'],
-      dataSources: ['データベース検索', 'AI分析'],
+        'General-purpose alternative material that maintains necessary performance while reducing environmental impact.',
+      features: ['Eco-friendly', 'Cost efficient', 'Stable supply'],
+      dataSources: ['Database Search', 'AI Analysis'],
     },
     {
-      materialName: '汎用エコ素材B',
-      composition: ['再生材', '天然素材'],
+      materialName: 'General Eco Material B',
+      composition: ['Regenerated material', 'Natural material'],
       scores: {
         physical: 70,
         environmental: 90,
@@ -236,13 +236,13 @@ export function generateMockProposals(scenarioId: string) {
         supply: 70,
       },
       totalScore: 81,
-      reasoning: '天然素材をベースにした環境配慮型素材。',
-      features: ['天然由来', '低環境負荷', '安全性'],
-      dataSources: ['Web検索', '技術文献'],
+      reasoning: 'Environmentally conscious material based on natural materials.',
+      features: ['Natural origin', 'Low environmental impact', 'Safety'],
+      dataSources: ['Web Search', 'Technical Literature'],
     },
     {
-      materialName: '汎用エコ素材C',
-      composition: ['複合材', 'バイオプラスチック'],
+      materialName: 'General Eco Material C',
+      composition: ['Composite', 'Bioplastic'],
       scores: {
         physical: 80,
         environmental: 80,
@@ -251,9 +251,9 @@ export function generateMockProposals(scenarioId: string) {
         supply: 80,
       },
       totalScore: 80,
-      reasoning: 'バランスの取れた性能を持つ標準的な代替素材。',
-      features: ['バランス型', '汎用性', '実績あり'],
-      dataSources: ['市場データ', 'ユーザーレビュー'],
+      reasoning: 'Standard alternative material with balanced performance.',
+      features: ['Balanced', 'Versatile', 'Proven track record'],
+      dataSources: ['Market Data', 'User Reviews'],
     },
   ];
 

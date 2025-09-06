@@ -49,22 +49,22 @@ export default function ScenarioDetailPage({ params }: PageProps) {
   const [enhancedMaterial, setEnhancedMaterial] =
     useState<MaterialComposition | null>(null);
 
-  // Next.js 15でparamsはPromiseなのでuseでアンラップ
+  // In Next.js 15, params is a Promise, so unwrap with use
   const resolvedParams = use(params);
   const scenario = scenarios.find((s) => s.id === resolvedParams.id);
 
-  // AI分析結果を処理
+  // Process AI analysis results
   useEffect(() => {
     const analysisParam = searchParams.get('analysis');
-    console.log('分析パラメータ受信:', analysisParam ? '有り' : '無し');
+    console.log('Analysis parameter received:', analysisParam ? 'Yes' : 'No');
 
     if (analysisParam) {
       try {
         const results = JSON.parse(analysisParam) as AnalysisResult[];
-        console.log('パース済み分析結果:', results);
+        console.log('Parsed analysis results:', results);
         setAnalysisResults(results);
 
-        // AI分析結果から素材構成を生成
+        // Generate material composition from AI analysis results
         if (results.length > 0) {
           const firstResult = results[0];
           const aiMaterial: MaterialComposition = {
@@ -79,7 +79,7 @@ export default function ScenarioDetailPage({ params }: PageProps) {
           setEnhancedMaterial(aiMaterial);
         }
       } catch (error) {
-        console.error('分析結果の解析エラー:', error);
+        console.error('Error parsing analysis results:', error);
       }
     }
   }, [searchParams]);
@@ -87,42 +87,42 @@ export default function ScenarioDetailPage({ params }: PageProps) {
   const extractComposition = (
     requirements: AnalysisResult['requirements']
   ): string => {
-    // 素材や組成に関する要件から素材構成を推定
+    // Estimate material composition from material/composition requirements
     const materialReqs = requirements.filter(
       (req) =>
-        req.name.includes('材') ||
-        req.name.includes('素材') ||
-        req.name.includes('組成') ||
-        req.name.includes('構造')
+        req.name.includes('material') ||
+        req.name.includes('Material') ||
+        req.name.includes('composition') ||
+        req.name.includes('structure')
     );
 
     if (materialReqs.length > 0) {
       return materialReqs.map((req) => req.value).join('/');
     }
 
-    // デフォルトの推定値を返す
-    return 'AI分析素材/バリア層/シーラント層';
+    // Return default estimated value
+    return 'AI Analysis Material/Barrier Layer/Sealant Layer';
   };
 
   const extractProperties = (
     requirements: AnalysisResult['requirements']
   ): string[] => {
-    // 要件から特性を抽出
+    // Extract properties from requirements
     return requirements
       .filter((req) => req.importance === 'high')
       .map((req) => `${req.name}: ${req.value}${req.unit || ''}`)
-      .slice(0, 6); // 最大6つの特性
+      .slice(0, 6); // Maximum 6 properties
   };
 
   if (!scenario) {
-    return <div>シナリオが見つかりません</div>;
+    return <div>Scenario not found</div>;
   }
 
   const handleSubmit = (data: RequirementsData) => {
-    // 実際のアプリではここでデータを保存
+    // In actual app, save data here
     console.log('Requirements submitted:', data);
 
-    // 材料構成情報を準備
+    // Prepare material composition information
     const currentMaterials = {
       composition: enhancedMaterial
         ? enhancedMaterial.composition
@@ -132,18 +132,18 @@ export default function ScenarioDetailPage({ params }: PageProps) {
         : scenario.currentMaterial.properties,
     };
 
-    // 性能要件を適切な形式に変換
+    // Convert performance requirements to proper format
     const formattedRequirements =
       analysisResults.length > 0
         ? analysisResults[0].requirements
         : data.performanceReqs.map((req, index) => ({
             name: req,
-            value: '100', // デフォルト値
+            value: '100', // Default value
             unit: '',
             importance: 'medium' as const,
           }));
 
-    // URLパラメータに含めて提案画面に遷移
+    // Navigate to proposal screen with URL parameters
     const urlParams = new URLSearchParams({
       scenario: resolvedParams.id,
       currentMaterials: JSON.stringify(currentMaterials),
@@ -161,7 +161,7 @@ export default function ScenarioDetailPage({ params }: PageProps) {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          {/* ヘッダー情報 */}
+          {/* Header information */}
           <div className="mb-8">
             <div className="flex items-center space-x-3 mb-6">
               <span className="text-4xl">{scenario.icon}</span>
@@ -174,21 +174,21 @@ export default function ScenarioDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* 現在の素材構成セクション */}
+          {/* Current material composition section */}
           <div className="mb-10">
             <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
               <span className="bg-gray-100 px-3 py-1 rounded-lg mr-3">
-                現在
+                Current
               </span>
-              既存の素材構成
+              Existing Material Composition
             </h2>
 
             <Card className="bg-gray-50 border-2 border-gray-300">
               <div className="space-y-6">
-                {/* 素材構成の詳細 */}
+                {/* Material composition details */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    素材構成:{' '}
+                    Material Composition:{' '}
                     <span className="font-mono text-xl text-blue-600">
                       {enhancedMaterial
                         ? enhancedMaterial.composition
@@ -196,15 +196,15 @@ export default function ScenarioDetailPage({ params }: PageProps) {
                     </span>
                     {enhancedMaterial && (
                       <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                        AI分析結果
+                        AI Analysis Result
                       </span>
                     )}
                   </h3>
 
-                  {/* 層構造の視覚的表現 */}
+                  {/* Visual representation of layer structure */}
                   <div className="bg-white rounded-lg p-4 mb-4">
                     <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                      層構造
+                      Layer Structure
                     </h4>
                     <div className="flex items-center justify-center space-x-2">
                       {(enhancedMaterial
@@ -239,11 +239,11 @@ export default function ScenarioDetailPage({ params }: PageProps) {
                     </div>
                   </div>
 
-                  {/* 特性と性能 */}
+                  {/* Properties and performance */}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="bg-white rounded-lg p-4">
                       <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                        機能特性
+                        Functional Properties
                       </h4>
                       <div className="space-y-2">
                         {(enhancedMaterial
@@ -266,7 +266,7 @@ export default function ScenarioDetailPage({ params }: PageProps) {
 
                     <div className="bg-white rounded-lg p-4">
                       <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                        性能要求
+                        Performance Requirements
                       </h4>
                       <div className="space-y-2">
                         {scenario.requirements.performance.map((req, index) => (
@@ -280,7 +280,7 @@ export default function ScenarioDetailPage({ params }: PageProps) {
                   </div>
                 </div>
 
-                {/* アップロード確認 */}
+                {/* Upload Confirmation */}
                 <div className="border-t pt-4">
                   {analysisResults.length > 0 ? (
                     <div className="bg-green-50 rounded-lg p-4 border border-green-200">
@@ -299,12 +299,12 @@ export default function ScenarioDetailPage({ params }: PageProps) {
                           />
                         </svg>
                         <div className="text-sm text-green-800">
-                          <p className="font-semibold mb-2">AI分析完了</p>
+                          <p className="font-semibold mb-2">AI Analysis Complete</p>
                           <div className="space-y-1">
                             {analysisResults.map((result, index) => (
                               <p key={index}>
                                 • {result.fileName} (
-                                {result.requirements.length}個の要件を抽出)
+                                {result.requirements.length} requirements extracted)
                               </p>
                             ))}
                           </div>
@@ -328,7 +328,7 @@ export default function ScenarioDetailPage({ params }: PageProps) {
                           />
                         </svg>
                         <p className="text-sm text-blue-800">
-                          ファイルをアップロードしていない場合は、デフォルトの素材構成を使用します
+                          If no file is uploaded, default material composition will be used
                         </p>
                       </div>
                     </div>
@@ -338,7 +338,7 @@ export default function ScenarioDetailPage({ params }: PageProps) {
             </Card>
           </div>
 
-          {/* 要件入力フォーム */}
+          {/* Requirements Input Form */}
           <div className="mb-8">
             <MaterialRequirementsForm
               scenario={scenario}
@@ -351,7 +351,7 @@ export default function ScenarioDetailPage({ params }: PageProps) {
                 variant="outline"
                 onClick={() => router.push('/scenarios')}
               >
-                シナリオ選択に戻る
+                Back to Scenario Selection
               </Button>
             </div>
           </div>

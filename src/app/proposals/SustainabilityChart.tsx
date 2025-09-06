@@ -44,16 +44,16 @@ export function SustainabilityChart({
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // レーダーチャートの軸（性能要件と同じ軸を使用）
+    // Radar chart axes (use same axes as performance requirements)
     const axes =
       performanceReqs.length > 0
         ? performanceReqs
-            .slice(0, 8) // 最大8軸まで
+            .slice(0, 8) // Maximum 8 axes
             .map((req) => (typeof req === 'object' ? req.name : req))
-        : ['物性', '環境性', 'コスト', '安全性', '供給性'];
+        : ['Physical', 'Environmental', 'Cost', 'Safety', 'Supply Chain'];
     const angleStep = (Math.PI * 2) / axes.length;
 
-    // グリッド描画
+    // Draw grid
     ctx.strokeStyle = '#e5e7eb';
     ctx.lineWidth = 1;
     for (let i = 1; i <= 5; i++) {
@@ -195,12 +195,12 @@ export function SustainabilityChart({
   }
 
   return (
-    <Card title="サステナビリティ素材構成">
-      {/* 提案素材選択プルダウン */}
+    <Card title="Sustainability Material Composition">
+      {/* Proposal material selection dropdown */}
       {proposals.length > 0 && (
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            提案素材を選択:
+            Select Proposal Material:
           </label>
           <select
             value={selectedProposalIndex}

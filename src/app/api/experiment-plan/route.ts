@@ -87,91 +87,91 @@ async function generateExperimentPlan(
   }
 
   const prompt = `
-あなたは包装材料開発の専門家です。以下の情報に基づいて、詳細な実験計画を作成してください。
+You are an expert in packaging material development. Based on the following information, create a detailed experimental plan.
 
 ${DETAILED_GRADING_CRITERIA}
 
-【推奨素材】
-- 素材名: ${material.materialName}
-- 構成: ${material.composition.join('/')}
-- 総合評価: ${material.totalScore}点
-- 推奨理由: ${material.reasoning}
-- 特徴: ${material.features.join(', ')}
+[Recommended Material]
+- Material Name: ${material.materialName}
+- Composition: ${material.composition.join('/')}
+- Total Score: ${material.totalScore} points
+- Reason for Recommendation: ${material.reasoning}
+- Features: ${material.features.join(', ')}
 
-【現在の素材】
-- 構成: ${currentMaterial.composition}
-- 特性: ${currentMaterial.properties.join(', ')}
+[Current Material]
+- Composition: ${currentMaterial.composition}
+- Properties: ${currentMaterial.properties.join(', ')}
 
-【性能要件】
-${requirements.map((r) => `- ${r.name}: ${r.value} ${r.unit || ''} (重要度: ${r.importance})`).join('\n')}
+[Performance Requirements]
+${requirements.map((r) => `- ${r.name}: ${r.value} ${r.unit || ''} (Importance: ${r.importance})`).join('\n')}
 
-【評価スコア詳細】
-- 物理的性能: ${material.scores.physical}点
-- 環境性能: ${material.scores.environmental}点
-- コスト効率: ${material.scores.cost}点
-- 安全性: ${material.scores.safety}点
-- 供給安定性: ${material.scores.supply}点
+[Detailed Evaluation Scores]
+- Physical Performance: ${material.scores.physical} points
+- Environmental Performance: ${material.scores.environmental} points
+- Cost Efficiency: ${material.scores.cost} points
+- Safety: ${material.scores.safety} points
+- Supply Stability: ${material.scores.supply} points
 
-【実験計画作成指示】
-上記の情報に基づいて、現在の素材から推奨素材への移行を実現するための包括的な実験計画を作成してください。
-評価基準と各スコアを考慮し、特に低いスコアの項目については重点的な検証を含めてください。
+[Instructions for Creating the Experimental Plan]
+Based on the above information, create a comprehensive experimental plan to enable the transition from the current material to the recommended material.  
+Consider the evaluation criteria and each score, and especially include focused verification for categories with lower scores.
 
-以下のJSON形式で出力してください：
+Output in the following JSON format:
 
 {
   "overview": {
-    "title": "実験計画のタイトル",
-    "objective": "実験の目的と期待される成果",
-    "duration": "全体の期間（例：3-6ヶ月）",
-    "budget": "予想予算（例：500-800万円）"
+    "title": "Title of the Experimental Plan",
+    "objective": "Objective of the experiment and expected outcomes",
+    "duration": "Overall duration (e.g., 3-6 months)",
+    "budget": "Estimated budget (e.g., 5-8 million JPY)"
   },
   "phases": [
     {
-      "phase": "Phase 1: フェーズ名",
-      "duration": "期間",
+      "phase": "Phase 1: Phase Name",
+      "duration": "Duration",
       "tasks": [
-        "具体的なタスク1",
-        "具体的なタスク2"
+        "Specific Task 1",
+        "Specific Task 2"
       ]
     }
   ],
   "keyTests": [
     {
-      "category": "テストカテゴリ",
+      "category": "Test Category",
       "tests": [
         {
-          "name": "テスト名",
-          "method": "測定方法・規格",
-          "target": "目標値",
-          "frequency": "実施頻度"
+          "name": "Test Name",
+          "method": "Measurement Method/Standard",
+          "target": "Target Value",
+          "frequency": "Testing Frequency"
         }
       ]
     }
   ],
   "risks": [
     {
-      "risk": "リスク内容",
-      "impact": "影響度",
-      "mitigation": "対策"
+      "risk": "Description of Risk",
+      "impact": "Level of Impact",
+      "mitigation": "Mitigation Measures"
     }
   ],
   "deliverables": [
     {
-      "deliverable": "成果物名",
-      "timeline": "提出時期",
-      "description": "詳細説明"
+      "deliverable": "Name of Deliverable",
+      "timeline": "Submission Timeline",
+      "description": "Detailed Description"
     }
   ]
 }
 
-【重要な考慮点】
-1. スコアが低い項目（70点未満）については重点的な検証を含める
-2. 実際の包装材料業界の標準的な試験方法を参考にする
-3. 段階的なリスク管理とマイルストーンを設定
-4. 実用化に向けた現実的なタイムラインと予算を提案
-5. サステナビリティ評価と環境負荷測定を重視
+[Important Considerations]
+1. Include focused verification for items with scores below 70.
+2. Reference standard testing methods commonly used in the packaging materials industry.
+3. Define phased risk management and milestones.
+4. Propose a realistic timeline and budget for practical implementation.
+5. Emphasize sustainability evaluation and environmental impact assessment.
 
-JSONのみを出力し、他の説明は含めないでください。
+Only output the JSON. Do not include any other explanation.
 `;
 
   try {

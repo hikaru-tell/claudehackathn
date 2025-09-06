@@ -45,15 +45,15 @@ export default function ProposalsPage() {
     null
   );
 
-  // 進捗管理用のstate
+  // State for progress management
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState<string>('');
 
-  // URLパラメータを文字列として取得（useEffectの無限ループを防ぐため）
+  // Get URL parameters as strings (to prevent useEffect infinite loop)
   const performanceReqsStr = searchParams.get('performanceReqs');
   const currentMaterialsStr = searchParams.get('currentMaterials');
 
-  // 表示用にパース（useEffectの外で一度だけ）
+  // Parse for display (only once outside useEffect)
   const performanceReqs = performanceReqsStr
     ? JSON.parse(performanceReqsStr)
     : [];
@@ -64,10 +64,10 @@ export default function ProposalsPage() {
     const loadProposals = async () => {
       setIsLoading(true);
       setLoadingProgress(0);
-      setCurrentStep('初期化中...');
+      setCurrentStep('Initializing...');
 
       try {
-        // URLパラメータをuseEffect内でパース
+        // Parse URL parameters inside useEffect
         const currentMaterials = currentMaterialsStr
           ? JSON.parse(currentMaterialsStr)
           : null;
@@ -75,31 +75,31 @@ export default function ProposalsPage() {
           ? JSON.parse(performanceReqsStr)
           : [];
 
-        // 実際のtotalAI APIを呼び出す（URLパラメータから材料と要件がある場合）
+        // Call actual totalAI API (if materials and requirements from URL parameters)
         if (currentMaterials && requirements.length > 0) {
-          // ステップ1: フィルタリング生成中 (0-25%)
-          setCurrentStep('フィルタリング生成中...');
+          // Step 1: Generating filters (0-25%)
+          setCurrentStep('Generating filters...');
           setLoadingProgress(10);
           await new Promise((resolve) => setTimeout(resolve, 500));
           setLoadingProgress(25);
 
-          // ステップ2: Deep Research中 (25-50%)
-          setCurrentStep('Deep Research中...');
+          // Step 2: Deep Research (25-50%)
+          setCurrentStep('Deep Research in progress...');
           setLoadingProgress(30);
 
-          // ステップ3: DB検索中 (50-75%)
+          // Step 3: Database search (50-75%)
           setTimeout(() => {
-            setCurrentStep('データベース検索中...');
+            setCurrentStep('Searching database...');
             setLoadingProgress(50);
           }, 1000);
 
-          // ステップ4: Total AI稼働中 (75-100%)
+          // Step 4: Total AI processing (75-100%)
           setTimeout(() => {
-            setCurrentStep('Total AI 統合分析中...');
+            setCurrentStep('Total AI integration analysis...');
             setLoadingProgress(75);
           }, 2000);
 
-          // 実際のAPI呼び出し
+          // Actual API call
           const response = await fetch('/api/materials/totalAI', {
             method: 'POST',
             headers: {
@@ -118,24 +118,24 @@ export default function ProposalsPage() {
             setLoadingProgress(95);
 
             if (data.success && data.recommendations.length > 0) {
-              setCurrentStep('完了！');
+              setCurrentStep('Complete!');
               setLoadingProgress(100);
               await new Promise((resolve) => setTimeout(resolve, 300));
               setProposals(data.recommendations);
             } else {
-              // APIが成功したが推奨素材がない場合、モックデータを使用
+              // If API succeeded but no recommended materials, use mock data
               const mockProposals = generateMockProposals(scenarioId || '');
               setProposals(mockProposals);
             }
           } else {
-            // APIエラーの場合、モックデータを使用
+            // If API error, use mock data
             console.error('Total AI API error:', response.status);
             const mockProposals = generateMockProposals(scenarioId || '');
             setProposals(mockProposals);
           }
         } else {
-          // URLパラメータが不完全な場合、モックデータを使用
-          setCurrentStep('デフォルトデータ読み込み中...');
+          // If URL parameters are incomplete, use mock data
+          setCurrentStep('Loading default data...');
           setLoadingProgress(50);
           await new Promise((resolve) => setTimeout(resolve, 1000));
           const mockProposals = generateMockProposals(scenarioId || '');
@@ -145,8 +145,8 @@ export default function ProposalsPage() {
         }
       } catch (error) {
         console.error('Error loading proposals:', error);
-        // エラーの場合、モックデータを使用
-        setCurrentStep('エラー回復中...');
+        // If error, use mock data
+        setCurrentStep('Recovering from error...');
         const mockProposals = generateMockProposals(scenarioId || '');
         setProposals(mockProposals);
       } finally {
@@ -157,7 +157,7 @@ export default function ProposalsPage() {
     if (scenarioId) {
       loadProposals();
     }
-  }, [scenarioId, currentMaterialsStr, performanceReqsStr]); // 文字列を依存配列に使用
+  }, [scenarioId, currentMaterialsStr, performanceReqsStr]); // Use strings in dependency array
 
   const handleProposalClick = (proposal: RecommendedMaterial) => {
     setSelectedProposal(proposal);
@@ -171,7 +171,7 @@ export default function ProposalsPage() {
     setIsGeneratingReport(true);
 
     try {
-      // 現在の素材情報を取得
+      // Get current material information
       const currentMaterials = JSON.parse(currentMaterialsStr || '{}');
       const performanceReqs = JSON.parse(performanceReqsStr || '[]');
 
@@ -195,7 +195,7 @@ export default function ProposalsPage() {
       });
 
       if (!response.ok) {
-        throw new Error('実験計画の生成に失敗しました');
+        throw new Error('Failed to generate experiment plan');
       }
 
       const data = await response.json();
@@ -204,11 +204,11 @@ export default function ProposalsPage() {
         setExperimentPlan(data.experimentPlan);
         setShowReport(true);
       } else {
-        throw new Error(data.error || '実験計画の生成に失敗しました');
+        throw new Error(data.error || 'Failed to generate experiment plan');
       }
     } catch (error) {
       console.error('Error generating experiment plan:', error);
-      alert('実験計画の生成に失敗しました。もう一度お試しください。');
+      alert('Failed to generate experiment plan. Please try again.');
     } finally {
       setIsGeneratingReport(false);
     }
@@ -225,7 +225,7 @@ export default function ProposalsPage() {
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
         <Header />
         <div className="container mx-auto px-4 py-8">
-          <p>シナリオが選択されていません</p>
+          <p>No scenario selected</p>
         </div>
       </div>
     );
@@ -237,16 +237,16 @@ export default function ProposalsPage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
-          {/* ヘッダー情報 */}
+          {/* Header information */}
           <div className="mb-8">
             <div className="flex items-center space-x-4 mb-4">
               <span className="text-4xl">{scenario.icon}</span>
               <div>
                 <h2 className="text-3xl font-bold text-gray-800">
-                  {scenario.name} の代替素材提案
+                  Alternative Material Proposals for {scenario.name}
                 </h2>
                 <p className="text-gray-600">
-                  AIが最適なサステナブル素材を分析しました
+                  AI has analyzed optimal sustainable materials
                 </p>
               </div>
             </div>
@@ -255,7 +255,7 @@ export default function ProposalsPage() {
           {isLoading ? (
             <Card className="text-center py-12">
               <div className="space-y-6 max-w-2xl mx-auto">
-                {/* プログレスステップ表示 */}
+                {/* Progress Step Display */}
                 <div className="flex justify-between items-center mb-8">
                   <div
                     className={`flex flex-col items-center ${loadingProgress >= 0 ? 'text-green-600' : 'text-gray-400'}`}
@@ -265,7 +265,7 @@ export default function ProposalsPage() {
                     >
                       {loadingProgress >= 25 ? '✓' : '1'}
                     </div>
-                    <span className="text-xs mt-2">フィルタリング</span>
+                    <span className="text-xs mt-2">Filtering</span>
                   </div>
                   <div
                     className={`flex-1 h-0.5 ${loadingProgress >= 25 ? 'bg-green-600' : 'bg-gray-300'}`}
@@ -293,7 +293,7 @@ export default function ProposalsPage() {
                     >
                       {loadingProgress >= 75 ? '✓' : '3'}
                     </div>
-                    <span className="text-xs mt-2">DB検索</span>
+                    <span className="text-xs mt-2">DB Search</span>
                   </div>
                   <div
                     className={`flex-1 h-0.5 ${loadingProgress >= 75 ? 'bg-green-600' : 'bg-gray-300'}`}
@@ -311,7 +311,7 @@ export default function ProposalsPage() {
                   </div>
                 </div>
 
-                {/* プログレスバー */}
+                {/* Progress Bar */}
                 <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-green-500 to-green-600 transition-all duration-500 ease-out"
@@ -319,7 +319,7 @@ export default function ProposalsPage() {
                   />
                 </div>
 
-                {/* 現在のステップ表示 */}
+                {/* Current step display */}
                 <div className="flex items-center justify-center space-x-3">
                   {loadingProgress < 100 && (
                     <svg
@@ -348,31 +348,31 @@ export default function ProposalsPage() {
                   </span>
                 </div>
 
-                {/* 進捗パーセンテージ */}
+                {/* Progress percentage */}
                 <p className="text-2xl font-bold text-green-600">
                   {loadingProgress}%
                 </p>
 
-                {/* 説明文 */}
+                {/* Description text */}
                 <p className="text-gray-500 text-sm">
                   {loadingProgress < 25 &&
-                    '要件を分析してフィルタリング条件を生成しています...'}
+                    'Analyzing requirements and generating filtering conditions...'}  
                   {loadingProgress >= 25 &&
                     loadingProgress < 50 &&
-                    '最新の研究論文と実用化事例を調査しています...'}
+                    'Researching latest academic papers and practical applications...'}
                   {loadingProgress >= 50 &&
                     loadingProgress < 75 &&
-                    '有機ポリマーデータベースから候補材料を検索しています...'}
+                    'Searching candidate materials from organic polymer database...'}
                   {loadingProgress >= 75 &&
                     loadingProgress < 100 &&
-                    'AIが全ての結果を統合分析し、最適な素材を選定しています...'}
-                  {loadingProgress >= 100 && '分析完了！結果を表示します...'}
+                    'AI is integrating all results and selecting optimal materials...'}
+                  {loadingProgress >= 100 && 'Analysis complete! Displaying results...'}
                 </p>
               </div>
             </Card>
           ) : (
             <>
-              {/* 比較チャート */}
+              {/* Comparison Charts */}
               <div className="mb-8">
                 <div className="grid lg:grid-cols-2 gap-6">
                   <ComparisonChart
@@ -388,10 +388,10 @@ export default function ProposalsPage() {
                 </div>
               </div>
 
-              {/* 提案リスト */}
+              {/* Proposal List */}
               <div className="space-y-6">
                 <h3 className="text-2xl font-bold text-gray-800">
-                  推奨素材 TOP 3
+                  Top 3 Recommended Materials
                 </h3>
                 {proposals.map((proposal, index) => (
                   <ProposalCard
@@ -410,69 +410,69 @@ export default function ProposalsPage() {
               variant="outline"
               onClick={() => router.push(`/scenarios/${scenarioId}`)}
             >
-              要件を修正する
+              Modify Requirements
             </Button>
             {!isLoading && (
               <div className="flex gap-4">
                 <Button
                   variant="outline"
                   onClick={() => {
-                    // PDF分析結果のモックデータを作成
+                    // Create mock data for PDF analysis results
                     const analysisData = [
                       {
                         fileName:
-                          'フィルム規格書 - 製品コード_ TK-FILM-2024-STD.pdf',
+                          'Film Specification - Product Code_ TK-FILM-2024-STD.pdf',
                         requirements: [
                           {
-                            name: '引張強度',
+                            name: 'Tensile Strength',
                             value: '100',
                             unit: 'N/15mm',
                             importance: 'high',
                           },
                           {
-                            name: '伸び率',
+                            name: 'Elongation',
                             value: '150',
                             unit: '%',
                             importance: 'medium',
                           },
                           {
-                            name: '衝撃強度',
+                            name: 'Impact Strength',
                             value: '1.0',
                             unit: 'J',
                             importance: 'medium',
                           },
                           {
-                            name: 'ヒートシール強度',
+                            name: 'Heat Seal Strength',
                             value: '20',
                             unit: 'N/15mm',
                             importance: 'high',
                           },
                           {
-                            name: '酸素透過率',
+                            name: 'Oxygen Transmission Rate',
                             value: '1.0',
-                            unit: 'cc/m²・day・atm',
+                            unit: 'cc/m²·day·atm',
                             importance: 'high',
                           },
                           {
-                            name: '水蒸気透過率',
+                            name: 'Water Vapor Transmission Rate',
                             value: '2.0',
-                            unit: 'g/m²・day',
+                            unit: 'g/m²·day',
                             importance: 'high',
                           },
                           {
-                            name: '遮光性',
+                            name: 'Light Blocking',
                             value: '99',
                             unit: '%',
                             importance: 'high',
                           },
                           {
-                            name: '耐熱温度',
+                            name: 'Heat Resistance Temperature',
                             value: '120',
                             unit: '℃',
                             importance: 'high',
                           },
                           {
-                            name: '耐寒温度',
+                            name: 'Cold Resistance Temperature',
                             value: '-20',
                             unit: '℃',
                             importance: 'medium',
@@ -481,19 +481,19 @@ export default function ProposalsPage() {
                         materials: {
                           composition: 'PET(12μm)/Al-PET(12μm)/CPP(30μm)',
                           properties: [
-                            '印刷適性',
-                            '機械的強度',
-                            '高バリア性',
-                            '遮光性',
-                            'ヒートシール性',
-                            '耐油性',
+                            'Printability',
+                            'Mechanical Strength',
+                            'High Barrier Properties',
+                            'Light Blocking',
+                            'Heat Sealability',
+                            'Oil Resistance',
                           ],
                           analysisConfidence: 'high',
                         },
                       },
                     ];
 
-                    // testページへ遷移
+                    // Navigate to test page
                     const encodedAnalysis = encodeURIComponent(
                       JSON.stringify(analysisData)
                     );
@@ -501,25 +501,25 @@ export default function ProposalsPage() {
                   }}
                   className="bg-green-600 text-white hover:bg-green-700"
                 >
-                  Materials Projectで詳細分析
+                  Detailed Analysis with Materials Project
                 </Button>
-                <Button onClick={() => window.print()}>レポートを印刷</Button>
+                <Button onClick={() => window.print()}>Print Report</Button>
               </div>
             )}
           </div>
         </div>
       </main>
 
-      {/* ダイアログ */}
+      {/* Dialog */}
       <Dialog
         isOpen={showDialog}
         onClose={() => setShowDialog(false)}
         onConfirm={handleDialogConfirm}
-        title="実験計画レポートを生成"
-        message="AIによる実験計画レポートを生成しますか？"
+        title="Generate Experiment Plan Report"
+        message="Generate an AI-powered experiment plan report?"
       />
 
-      {/* レポート生成中のローディング */}
+      {/* Loading while generating report */}
       {isGeneratingReport && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
           <Card className="p-8 max-w-md">
@@ -545,17 +545,17 @@ export default function ProposalsPage() {
                 ></path>
               </svg>
               <h3 className="text-xl font-bold text-gray-800 mb-2">
-                AI が実験計画を分析中...
+                AI is analyzing experiment plan...
               </h3>
               <p className="text-gray-600">
-                最適な実験条件とテスト項目を生成しています
+                Generating optimal experimental conditions and test items
               </p>
             </div>
           </Card>
         </div>
       )}
 
-      {/* 実験計画レポート */}
+      {/* Experiment Plan Report */}
       {showReport && selectedProposal && experimentPlan && (
         <ExperimentPlanReport
           material={selectedProposal}

@@ -102,71 +102,71 @@ async function analyzeWithClaude(
   }
 
   const prompt = `
-あなたは包装材料の専門家です。以下の検索結果を統合・分析して、最適な推奨素材TOP3を選定してください。
+You are a packaging materials expert. Please integrate and analyze the following search results to select the TOP 3 recommended materials.
 
 ${DETAILED_GRADING_CRITERIA}
 
-【現在の素材構成】
+[Current Material Composition]
 ${currentMaterials.composition}
-特性: ${currentMaterials.properties.join(', ')}
+Properties: ${currentMaterials.properties.join(', ')}
 
-【性能要件】
-${requirements.map((r) => `- ${r.name}: ${r.value} ${r.unit || ''} (重要度: ${r.importance})`).join('\n')}
+[Performance Requirements]
+${requirements.map((r) => `- ${r.name}: ${r.value} ${r.unit || ''} (Importance: ${r.importance})`).join('\n')}
 
-【データベース検索結果】
+[Database Search Results]
 ${dbResults
   .map(
     (m, i) => `
 ${i + 1}. ${m.name} (${m.composition})
-- マッチスコア: ${m.matchScore}
-- サステナビリティスコア: ${m.sustainabilityScore}
-- 利点: ${m.advantages.join(', ')}
-- 考慮事項: ${m.considerations.join(', ')}
+- Match Score: ${m.matchScore}
+- Sustainability Score: ${m.sustainabilityScore}
+- Advantages: ${m.advantages.join(', ')}
+- Considerations: ${m.considerations.join(', ')}
 `
   )
   .join('\n')}
 
-【GPT深層研究結果】
+[GPT In-Depth Research Results]
 ${
   gptResults
     ? `
-発見された材料: ${gptResults.materials.map((m) => m.name).join(', ')}
-技術トレンド: ${gptResults.trends.slice(0, 3).join(', ')}
-考慮事項: ${gptResults.considerations.slice(0, 3).join(', ')}
+Discovered Materials: ${gptResults.materials.map((m) => m.name).join(', ')}
+Technology Trends: ${gptResults.trends.slice(0, 3).join(', ')}
+Considerations: ${gptResults.considerations.slice(0, 3).join(', ')}
 `
-    : '深層研究結果なし'
+    : 'No in-depth research results'
 }
 
-【指示】
-上記の評価基準に従って、検索結果を総合的に分析し、推奨素材TOP3を以下のJSON形式で出力してください。
-各素材について、データベース検索とGPT研究の両方の観点から評価し、A-D評価基準に基づいて適切なスコアを付与してください。
+[Instructions]
+Based on the above evaluation criteria, comprehensively analyze the search results and output the TOP 3 recommended materials in the following JSON format.
+For each material, evaluate from both the database search and GPT research perspectives, and assign appropriate scores according to the A-D evaluation criteria.
 
 {
   "recommendations": [
     {
-      "materialName": "素材名",
-      "composition": ["構成要素1", "構成要素2"],
+      "materialName": "Material Name",
+      "composition": ["Component1", "Component2"],
       "scores": {
-        "physical": 85,  // 物理的性能 (0-100, A=85-100, B=70-84, C=55-69, D=0-54)
-        "environmental": 90,  // 環境性能 (0-100, 同上)
-        "cost": 75,  // コスト効率 (0-100, 同上)
-        "safety": 95,  // 安全性 (0-100, 同上)
-        "supply": 80  // 供給安定性 (0-100, 同上)
+        "physical": 85,  // Physical performance (0-100, A=85-100, B=70-84, C=55-69, D=0-54)
+        "environmental": 90,  // Environmental performance (0-100, same scale)
+        "cost": 75,  // Cost efficiency (0-100, same scale)
+        "safety": 95,  // Safety (0-100, same scale)
+        "supply": 80  // Supply stability (0-100, same scale)
       },
-      "totalScore": 85,  // 総合スコア (0-100, A-D評価基準に従って算出)
-      "reasoning": "選定理由の詳細説明",
-      "features": ["特徴1", "特徴2", "特徴3", "特徴4"],
-      "dataSources": ["Convexデータベース", "最新Web情報", "AI分析"]
+      "totalScore": 85,  // Overall score (0-100, calculated using weighted average, same A-D scale)
+      "reasoning": "Detailed reasoning for selection",
+      "features": ["Feature1", "Feature2", "Feature3", "Feature4"],
+      "dataSources": ["Convex Database", "Latest Web Information", "AI Analysis"]
     }
   ]
 }
 
-【重要】
-- 各項目のスコアは必ずA-D評価基準（A:85-100, B:70-84, C:55-69, D:0-54）に従って算出してください
-- 総合スコアは各項目の重み付け平均で計算し、同じ評価基準を適用してください
-- 評価の根拠を推奨理由に明記してください
+[Important]
+- Each score must strictly follow the A-D evaluation criteria (A:85-100, B:70-84, C:55-69, D:0-54).
+- The total score must be calculated using the weighted average of each category and follow the same evaluation scale.
+- Clearly state the rationale for the recommendation in the reasoning section.
 
-JSONのみを出力し、他の説明は含めないでください。
+Only output the JSON. Do not include any other explanation.
 `;
 
   try {

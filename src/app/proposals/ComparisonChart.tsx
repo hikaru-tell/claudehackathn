@@ -43,16 +43,16 @@ export function ComparisonChart({
     // Clear canvas
     ctx.clearRect(0, 0, width, height);
 
-    // レーダーチャートの軸（性能要件が設定されている場合はそれを使用、なければデフォルト）
+    // Radar chart axes (use performance requirements if set, otherwise default)
     const axes =
       performanceReqs.length > 0
         ? performanceReqs
-            .slice(0, 8) // 最大8軸まで
+            .slice(0, 8) // Maximum 8 axes
             .map((req) => (typeof req === 'object' ? req.name : req))
-        : ['物性', '環境性', 'コスト', '安全性', '供給性'];
+        : ['Physical', 'Environmental', 'Cost', 'Safety', 'Supply Chain'];
     const angleStep = (Math.PI * 2) / axes.length;
 
-    // グリッド描画
+    // Draw grid
     ctx.strokeStyle = '#e5e7eb';
     ctx.lineWidth = 1;
     for (let i = 1; i <= 5; i++) {
@@ -101,16 +101,16 @@ export function ComparisonChart({
       ctx.fillText(label, x, y);
     }
 
-    // 現在の素材の各成分を個別に描画
+    // Draw each component of current material individually
     const currentComponents = currentMaterial.composition.split('/');
-    const componentColors = ['#dc2626', '#ea580c', '#f97316', '#fb923c']; // 赤系のグラデーション
+    const componentColors = ['#dc2626', '#ea580c', '#f97316', '#fb923c']; // Red gradient
 
     currentComponents.forEach((component, index) => {
-      if (index >= 4) return; // 最大4つまで表示
-      // 各成分ごとにランダムなスコアを生成（実際のアプリでは適切なデータを使用）
+      if (index >= 4) return; // Show up to 4 items
+      // Generate random scores for each component (use proper data in actual app)
       const scores = Array(axes.length)
         .fill(0)
-        .map(() => Math.floor(Math.random() * 30) + 40 + index * 10); // 成分ごとに異なるスコア範囲
+        .map(() => Math.floor(Math.random() * 30) + 40 + index * 10); // Different score range per component
       drawPolygon(
         ctx,
         centerX,
@@ -122,25 +122,25 @@ export function ComparisonChart({
       );
     });
 
-    // 凡例（改善されたレイアウト）
+    // Legend (improved layout)
     const legendY = height - 30;
-    const legendItemWidth = 100; // 各凡例項目の幅を固定
-    const totalWidth = 4 * legendItemWidth; // 4つの項目分の幅
-    const legendStartX = (width - totalWidth) / 2; // 中央揃え
+    const legendItemWidth = 100; // Fixed width for each legend item
+    const totalWidth = 4 * legendItemWidth; // Width for 4 items
+    const legendStartX = (width - totalWidth) / 2; // Center alignment
 
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'left';
 
-    // 凡例に現在の素材の個別成分を表示（既に定義済みの変数を使用）
+    // Display individual components of current material in legend (using already defined variables)
     currentComponents.forEach((component, index) => {
-      if (index >= 4) return; // 最大4つまで表示
+      if (index >= 4) return; // Show up to 4 items
       const x = legendStartX + index * legendItemWidth;
 
-      // 色付きの四角
+      // Colored square
       ctx.fillStyle = componentColors[index] || '#dc2626';
       ctx.fillRect(x, legendY, 12, 12);
 
-      // ラベルテキスト（成分名）
+      // Label text (component name)
       ctx.fillStyle = '#374151';
       const label =
         component.length > 10 ? component.substring(0, 8) + '...' : component;
@@ -186,7 +186,7 @@ export function ComparisonChart({
   }
 
   return (
-    <Card title="現在の素材構成">
+    <Card title="Current Material Composition">
       <div className="flex justify-center">
         <canvas
           ref={canvasRef}
