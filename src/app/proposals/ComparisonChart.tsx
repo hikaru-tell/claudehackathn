@@ -4,8 +4,15 @@ import { useEffect, useRef } from 'react';
 import { Card } from '../components/Card';
 
 interface ComparisonChartProps {
-  currentMaterial: any;
-  proposals: any[];
+  currentMaterial: {
+    composition: string;
+    properties: string[];
+  };
+  proposals: {
+    materialName: string;
+    composition: string[];
+    scores: Record<string, number>;
+  }[];
   performanceReqs: string[];
 }
 
@@ -115,16 +122,19 @@ export function ComparisonChart({
     ctx.fillStyle = '#374151';
     ctx.fillText('現在', 30, legendY + 6);
 
-    // 提案素材
+    // 提案素材（compositionの最初の2要素を使用）
     proposals.slice(0, 3).forEach((proposal, index) => {
       const x = 70 + index * 80;
       ctx.fillStyle = colors[index];
       ctx.fillRect(x, legendY, 12, 12);
       ctx.fillStyle = '#374151';
+
+      // compositionの最初の2要素を"/"で結合して表示
+      const compositionLabel = proposal.composition.slice(0, 2).join('/');
       const shortName =
-        proposal.materialName.length > 8
-          ? proposal.materialName.substring(0, 6) + '...'
-          : proposal.materialName;
+        compositionLabel.length > 10
+          ? compositionLabel.substring(0, 8) + '...'
+          : compositionLabel;
       ctx.fillText(shortName, x + 15, legendY + 6);
     });
   }, [currentMaterial, proposals, performanceReqs]);
